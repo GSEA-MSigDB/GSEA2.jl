@@ -1,0 +1,17 @@
+# https://comonicon.org/stable/configurations/
+
+name = "gsea"
+
+[sysimg]
+filter_stdlibs=false
+incremental=false
+
+[sysimg.precompile]
+execution_file = ["test/runtests.jl"]
+
+[application]
+filter_stdlibs=false
+incremental=false
+
+[application.precompile]
+execution_file = ["test/runtests.jl"]

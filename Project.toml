@@ -4,9 +4,14 @@ authors = ["KwatME <kwat.me@icloud.com>"]
 version = "0.1.0"
 
 [deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+Comonicon = "863f3e99-da2a-4334-8734-de3dacbe5542"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+IJulia = "7073ff75-c697-5162-941a-fcdaad2a7d2a"
 Kwat = "fb31f113-4a63-4a8e-817a-4bdffc7e605a"
+OhMyREPL = "5fb14364-9ced-5910-84b2-373655c76a03"
 OrderedCollections = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
