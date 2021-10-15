@@ -10,11 +10,7 @@ Run single-sample GSEA.
 """
 @cast function single_sample_gsea(ar; op = "Option", fl = false)
 
-    println("ar = ", ar)
-
-    println("op = ", op)
-
-    println("fl = ", fl)
+    Kwat
 
     return
 
@@ -25,11 +21,7 @@ Run prerank GSEA.
 """
 @cast function prerank_gsea(ar; op = "Option", fl = false)
 
-    println("ar = ", ar)
-
-    println("op = ", op)
-
-    println("fl = ", fl)
+    Kwat
 
     return
 
@@ -40,11 +32,7 @@ Run GSEA.
 """
 @cast function gsea(ar; op = "Option", fl = false)
 
-    println("ar = ", ar)
-
-    println("op = ", op)
-
-    println("fl = ", fl)
+    Kwat
 
     return
 

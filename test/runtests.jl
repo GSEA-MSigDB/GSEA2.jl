@@ -16,7 +16,7 @@ score_set(fe_, sc_, fe1_, in_)
 
 score_set(fe_, sc_, fe1_; si = false, pa = joinpath(dw, "old_algorithm.png"))
 
-score_set_new(fe_, sc_, fe1_; pa = joinpath(dw, "new_algorithm.jpeg"))
+score_set_new(fe_, sc_, fe1_; si = false, pa = joinpath(dw, "new_algorithm.jpeg"))
 
 #
 se_fe_ = Dict(string("Set ", id) => fe1_ for id in 1:10)
