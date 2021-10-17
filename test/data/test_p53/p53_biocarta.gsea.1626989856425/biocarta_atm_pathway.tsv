@@ -1,0 +1,20 @@
+NAME	SYMBOL	TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	RELA	"RELA proto-oncogene, NF-kB subunit [Source:HGNC Symbol;Acc:HGNC:9955]"	50	0.38378918170928955	0.10300404	No	
+row_1	CHEK1	checkpoint kinase 1 [Source:HGNC Symbol;Acc:HGNC:1925]	243	0.2990494966506958	0.16607727	No	
+row_2	MRE11	"MRE11 homolog, double strand break repair nuclease [Source:HGNC Symbol;Acc:HGNC:7230]"	1323	0.16194385290145874	0.0907289	No	
+row_3	GADD45A	growth arrest and DNA damage inducible alpha [Source:HGNC Symbol;Acc:HGNC:4095]	1490	0.1493876576423645	0.114365086	No	
+row_4	RBBP8	"RB binding protein 8, endonuclease [Source:HGNC Symbol;Acc:HGNC:9891]"	1502	0.14815494418144226	0.15506029	No	
+row_5	NFKBIA	NFKB inhibitor alpha [Source:HGNC Symbol;Acc:HGNC:7797]	1878	0.11964825540781021	0.14680707	No	
+row_6	MAPK8	mitogen-activated protein kinase 8 [Source:HGNC Symbol;Acc:HGNC:6881]	2011	0.11189831048250198	0.16365159	No	
+row_7	ATM	ATM serine/threonine kinase [Source:HGNC Symbol;Acc:HGNC:795]	2213	0.10003810375928879	0.1693901	No	
+row_8	CHEK2	checkpoint kinase 2 [Source:HGNC Symbol;Acc:HGNC:16627]	2476	0.08393528312444687	0.16372037	No	
+row_9	TP53	tumor protein p53 [Source:HGNC Symbol;Acc:HGNC:11998]	3072	0.05013217404484749	0.11108481	No	
+row_10	BRCA1	BRCA1 DNA repair associated [Source:HGNC Symbol;Acc:HGNC:1100]	3511	0.02717648446559906	0.069584884	No	
+row_11	NFKB1	nuclear factor kappa B subunit 1 [Source:HGNC Symbol;Acc:HGNC:7794]	4124	-0.004002309404313564	0.0019844596	No	
+row_12	JUN	"Jun proto-oncogene, AP-1 transcription factor subunit [Source:HGNC Symbol;Acc:HGNC:6204]"	4217	-0.009145811200141907	-0.0057595405	No	
+row_13	RAD50	RAD50 double strand break repair protein [Source:HGNC Symbol;Acc:HGNC:9816]	4708	-0.03226151317358017	-0.051660378	No	
+row_14	ABL1	"ABL proto-oncogene 1, non-receptor tyrosine kinase [Source:HGNC Symbol;Acc:HGNC:76]"	4767	-0.03595592826604843	-0.047998108	No	
+row_15	RAD51	RAD51 recombinase [Source:HGNC Symbol;Acc:HGNC:9817]	5500	-0.07213743776082993	-0.10979211	No	
+row_16	NBN	nibrin [Source:HGNC Symbol;Acc:HGNC:7652]	8352	-0.2714969515800476	-0.3531466	Yes	
+row_17	MDM2	MDM2 proto-oncogene [Source:HGNC Symbol;Acc:HGNC:6973]	8920	-0.6306317448616028	-0.23834532	Yes	
+row_18	CDKN1A	cyclin dependent kinase inhibitor 1A [Source:HGNC Symbol;Acc:HGNC:1784]	8922	-0.8425507545471191	-7.299241E-8	Yes	

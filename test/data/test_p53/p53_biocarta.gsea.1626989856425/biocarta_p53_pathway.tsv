@@ -1,0 +1,17 @@
+NAME	SYMBOL	TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	GADD45A	growth arrest and DNA damage inducible alpha [Source:HGNC Symbol;Acc:HGNC:4095]	1490	0.1493876576423645	-0.12968934	No	
+row_1	ATM	ATM serine/threonine kinase [Source:HGNC Symbol;Acc:HGNC:795]	2213	0.10003810375928879	-0.18557364	No	
+row_2	TP53	tumor protein p53 [Source:HGNC Symbol;Acc:HGNC:11998]	3072	0.05013217404484749	-0.26928613	No	
+row_3	CCND1	cyclin D1 [Source:HGNC Symbol;Acc:HGNC:1582]	3325	0.03689315542578697	-0.28829396	No	
+row_4	E2F1	E2F transcription factor 1 [Source:HGNC Symbol;Acc:HGNC:3113]	3374	0.034448545426130295	-0.28501368	No	
+row_5	APAF1	apoptotic peptidase activating factor 1 [Source:HGNC Symbol;Acc:HGNC:576]	3905	0.006815385539084673	-0.3428023	No	
+row_6	CCNE1	cyclin E1 [Source:HGNC Symbol;Acc:HGNC:1589]	5016	-0.048704952001571655	-0.4551663	No	
+row_7	RB1	RB transcriptional corepressor 1 [Source:HGNC Symbol;Acc:HGNC:9884]	5391	-0.06647887825965881	-0.48042572	No	
+row_8	PCNA	proliferating cell nuclear antigen [Source:HGNC Symbol;Acc:HGNC:8729]	6305	-0.11707744747400284	-0.5534657	No	
+row_9	TIMP3	TIMP metallopeptidase inhibitor 3 [Source:HGNC Symbol;Acc:HGNC:11822]	6409	-0.12295911461114883	-0.5340858	No	
+row_10	CDK4	cyclin dependent kinase 4 [Source:HGNC Symbol;Acc:HGNC:1773]	7598	-0.20110788941383362	-0.61685336	No	
+row_11	CDK2	cyclin dependent kinase 2 [Source:HGNC Symbol;Acc:HGNC:1771]	8774	-0.361755907535553	-0.6577328	Yes	
+row_12	BCL2	BCL2 apoptosis regulator [Source:HGNC Symbol;Acc:HGNC:990]	8868	-0.4196628928184509	-0.5625618	Yes	
+row_13	MDM2	MDM2 proto-oncogene [Source:HGNC Symbol;Acc:HGNC:6973]	8920	-0.6306317448616028	-0.40958318	Yes	
+row_14	BAX	"BCL2 associated X, apoptosis regulator [Source:HGNC Symbol;Acc:HGNC:959]"	8921	-0.7849780321121216	-0.21203598	Yes	
+row_15	CDKN1A	cyclin dependent kinase inhibitor 1A [Source:HGNC Symbol;Acc:HGNC:1784]	8922	-0.8425507545471191	-6.036862E-8	Yes	

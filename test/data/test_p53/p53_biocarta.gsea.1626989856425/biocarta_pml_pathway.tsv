@@ -1,0 +1,16 @@
+NAME	SYMBOL	TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	TNFRSF1B	TNF receptor superfamily member 1B [Source:HGNC Symbol;Acc:HGNC:11917]	118	0.3422623574733734	0.108924635	No	
+row_1	SUMO1	small ubiquitin like modifier 1 [Source:HGNC Symbol;Acc:HGNC:12502]	730	0.2115803211927414	0.11585858	No	
+row_2	DAXX	death domain associated protein [Source:HGNC Symbol;Acc:HGNC:2681]	1508	0.1477729082107544	0.08138141	No	
+row_3	HRAS	"HRas proto-oncogene, GTPase [Source:HGNC Symbol;Acc:HGNC:5173]"	2371	0.0904378741979599	0.016896414	No	
+row_4	TP53	tumor protein p53 [Source:HGNC Symbol;Acc:HGNC:11998]	3072	0.05013217404484749	-0.04378987	No	
+row_5	FASLG	Fas ligand [Source:HGNC Symbol;Acc:HGNC:11936]	3561	0.024497399106621742	-0.0898277	No	
+row_6	CREBBP	CREB binding protein [Source:HGNC Symbol;Acc:HGNC:2348]	5229	-0.05864676460623741	-0.2560288	No	
+row_7	RB1	RB transcriptional corepressor 1 [Source:HGNC Symbol;Acc:HGNC:9884]	5391	-0.06647887825965881	-0.25037268	No	
+row_8	TNFRSF1A	TNF receptor superfamily member 1A [Source:HGNC Symbol;Acc:HGNC:11916]	5788	-0.08730477839708328	-0.26366353	No	
+row_9	RARA	retinoic acid receptor alpha [Source:HGNC Symbol;Acc:HGNC:9864]	6060	-0.10331501811742783	-0.25720713	No	
+row_10	SP100	SP100 nuclear antigen [Source:HGNC Symbol;Acc:HGNC:11206]	7087	-0.16373108327388763	-0.3139404	No	
+row_11	PAX3	paired box 3 [Source:HGNC Symbol;Acc:HGNC:8617]	7104	-0.16525450348854065	-0.25674865	No	
+row_12	TNF	tumor necrosis factor [Source:HGNC Symbol;Acc:HGNC:11892]	8714	-0.33980971574783325	-0.31607714	Yes	
+row_13	PML	PML nuclear body scaffold [Source:HGNC Symbol;Acc:HGNC:9113]	8867	-0.41952943801879883	-0.18338867	Yes	
+row_14	FAS	Fas cell surface death receptor [Source:HGNC Symbol;Acc:HGNC:11920]	8910	-0.5307454466819763	0.001347004	Yes	

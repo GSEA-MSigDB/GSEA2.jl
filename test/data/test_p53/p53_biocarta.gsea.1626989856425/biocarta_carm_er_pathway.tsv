@@ -1,0 +1,25 @@
+NAME	SYMBOL	TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	EP300	E1A binding protein p300 [Source:HGNC Symbol;Acc:HGNC:3373]	103	0.34926384687423706	0.067190476	Yes	
+row_1	HDAC2	histone deacetylase 2 [Source:HGNC Symbol;Acc:HGNC:4853]	209	0.3077402412891388	0.12479195	Yes	
+row_2	HDAC6	histone deacetylase 6 [Source:HGNC Symbol;Acc:HGNC:14064]	236	0.3001497983932495	0.18955904	Yes	
+row_3	HDAC1	histone deacetylase 1 [Source:HGNC Symbol;Acc:HGNC:4852]	321	0.2803480923175812	0.24334295	Yes	
+row_4	SPEN	spen family transcriptional repressor [Source:HGNC Symbol;Acc:HGNC:17575]	345	0.27282848954200745	0.30228576	Yes	
+row_5	MEF2C	myocyte enhancer factor 2C [Source:HGNC Symbol;Acc:HGNC:6996]	524	0.24018780887126923	0.33644986	Yes	
+row_6	HDAC5	histone deacetylase 5 [Source:HGNC Symbol;Acc:HGNC:14068]	767	0.20803949236869812	0.35617217	Yes	
+row_7	HDAC3	histone deacetylase 3 [Source:HGNC Symbol;Acc:HGNC:4854]	815	0.20338623225688934	0.39675766	Yes	
+row_8	SRA1	steroid receptor RNA activator 1 [Source:HGNC Symbol;Acc:HGNC:11281]	1018	0.18588608503341675	0.41597888	Yes	
+row_9	TBP	TATA-box binding protein [Source:HGNC Symbol;Acc:HGNC:11588]	1025	0.1853194683790207	0.45709726	Yes	
+row_10	CARM1	coactivator associated arginine methyltransferase 1 [Source:HGNC Symbol;Acc:HGNC:23393]	1399	0.1562177836894989	0.45041215	No	
+row_11	MED1	mediator complex subunit 1 [Source:HGNC Symbol;Acc:HGNC:9234]	2526	0.08100856840610504	0.34214988	No	
+row_12	CCND1	cyclin D1 [Source:HGNC Symbol;Acc:HGNC:1582]	3325	0.03689315542578697	0.2607969	No	
+row_13	BRCA1	BRCA1 DNA repair associated [Source:HGNC Symbol;Acc:HGNC:1100]	3511	0.02717648446559906	0.2461368	No	
+row_14	HDAC4	histone deacetylase 4 [Source:HGNC Symbol;Acc:HGNC:14063]	4004	0.002119042444974184	0.19132757	No	
+row_15	CREBBP	CREB binding protein [Source:HGNC Symbol;Acc:HGNC:2348]	5229	-0.05864676460623741	0.06700985	No	
+row_16	GTF2A1	general transcription factor IIA subunit 1 [Source:HGNC Symbol;Acc:HGNC:4646]	6127	-0.10649614036083221	-0.009771332	No	
+row_17	GRIP1	glutamate receptor interacting protein 1 [Source:HGNC Symbol;Acc:HGNC:18708]	6222	-0.11181548982858658	0.004881939	No	
+row_18	NRIP1	nuclear receptor interacting protein 1 [Source:HGNC Symbol;Acc:HGNC:8001]	6795	-0.14569124579429626	-0.026539143	No	
+row_19	PELP1	"proline, glutamate and leucine rich protein 1 [Source:HGNC Symbol;Acc:HGNC:30134]"	6814	-0.1465415358543396	0.0044857147	No	
+row_20	PHB2	prohibitin 2 [Source:HGNC Symbol;Acc:HGNC:30306]	7318	-0.18079987168312073	-0.011264104	No	
+row_21	NCOR2	nuclear receptor corepressor 2 [Source:HGNC Symbol;Acc:HGNC:7673]	8280	-0.26156753301620483	-0.060265932	No	
+row_22	ESR1	estrogen receptor 1 [Source:HGNC Symbol;Acc:HGNC:3467]	8320	-0.26719003915786743	-0.004392642	No	
+row_23	NR0B1	nuclear receptor subfamily 0 group B member 1 [Source:HGNC Symbol;Acc:HGNC:7960]	8625	-0.31894901394844055	0.033374533	No	

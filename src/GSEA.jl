@@ -1,43 +1,10 @@
 module GSEA
 
-using Kwat
-
 using Comonicon
 
+include("select.jl")
 
-"""
-Run single-sample GSEA.
-"""
-@cast function single_sample_gsea(ar; op = "Option", fl = false)
-
-    Kwat
-
-    return
-
-end
-
-"""
-Run prerank GSEA.
-"""
-@cast function prerank_gsea(ar; op = "Option", fl = false)
-
-    Kwat
-
-    return
-
-end
-
-"""
-Run GSEA.
-"""
-@cast function gsea(ar; op = "Option", fl = false)
-
-    Kwat
-
-    return
-
-end
-
+include("run.jl")
 
 """
 Gene Set Enrichment Analysis.
