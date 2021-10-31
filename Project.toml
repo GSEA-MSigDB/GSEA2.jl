@@ -1,6 +1,6 @@
 name = "GSEA"
 uuid = "7aeab671-a469-4577-83ec-5ec2c3db479b"
-authors = ["KwatME <kwat.me@icloud.com>"]
+authors = ["KwatMDPhD <kwat.me@icloud.com>"]
 version = "0.1.0"
 
 [deps]
