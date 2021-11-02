@@ -9,6 +9,12 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
+[[CodeTracking]]
+deps = ["InteractiveUtils", "UUIDs"]
+git-tree-sha1 = "9aa8a5ebb6b5bf469a7e0e2b5202cf6f8c291104"
+uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
+version = "1.0.6"
+
 [[Comonicon]]
 deps = ["ComoniconBuilder", "ComoniconOptions", "ComoniconTargetExpr", "ComoniconTypes", "ComoniconZSHCompletion", "Configurations", "ExproniconLite", "Markdown", "Pkg"]
 git-tree-sha1 = "3ad48ea7ea9ec4659514c95c26f81bdd89894d12"
@@ -54,18 +60,31 @@ version = "0.16.6"
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
+[[Distributed]]
+deps = ["Random", "Serialization", "Sockets"]
+uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
+
 [[Downloads]]
 deps = ["ArgTools", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 
 [[ExproniconLite]]
-git-tree-sha1 = "c04d5c3442126d75ee4500aa6b0e402cae3bf6ac"
+git-tree-sha1 = "8b08cc88844e4d01db5a2405a08e9178e19e479e"
 uuid = "55351af7-c7e9-48d6-89ff-24e801d99491"
-version = "0.6.12"
+version = "0.6.13"
+
+[[FileWatching]]
+uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+
+[[JuliaInterpreter]]
+deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
+git-tree-sha1 = "e273807f38074f033d94207a201e6e827d8417db"
+uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
+version = "0.8.21"
 
 [[LazyArtifacts]]
 deps = ["Artifacts", "Pkg"]
@@ -92,6 +111,12 @@ uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
+
+[[LoweredCodeUtils]]
+deps = ["JuliaInterpreter"]
+git-tree-sha1 = "491a883c4fef1103077a7f648961adbf9c8dd933"
+uuid = "6f1432cf-f94c-5a45-995e-cdbf5db27b0b"
+version = "2.1.2"
 
 [[Markdown]]
 deps = ["Base64"]
@@ -139,6 +164,18 @@ deps = ["SHA", "Scratch"]
 git-tree-sha1 = "df2be5142a2a3db2da37b21d87c9fa7973486bfd"
 uuid = "05181044-ff0b-4ac5-8273-598c1e38db00"
 version = "0.1.2"
+
+[[Requires]]
+deps = ["UUIDs"]
+git-tree-sha1 = "4036a3bd08ac7e968e27c203d45f5fff15020621"
+uuid = "ae029012-a4dd-5104-9daa-d747884805df"
+version = "1.1.3"
+
+[[Revise]]
+deps = ["CodeTracking", "Distributed", "FileWatching", "JuliaInterpreter", "LibGit2", "LoweredCodeUtils", "OrderedCollections", "Pkg", "REPL", "Requires", "UUIDs", "Unicode"]
+git-tree-sha1 = "41deb3df28ecf75307b6e492a738821b031f8425"
+uuid = "295af30f-e4ad-537b-8983-00126c2a3abe"
+version = "3.1.20"
 
 [[SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
