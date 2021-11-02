@@ -5,4 +5,3 @@ version = "0.1.0"
 
 [deps]
 Comonicon = "863f3e99-da2a-4334-8734-de3dacbe5542"
-Kwat = "fb31f113-4a63-4a8e-817a-4bdffc7e605a"
