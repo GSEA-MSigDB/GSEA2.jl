@@ -4,10 +4,10 @@ Official Gene Set Enrichment Analysis program :dna: :mountain:
 
 ## Use `gsea` command line interface
 
-### Run standard GSEA
+### Run single-sample GSEA
 
 ```sh
-gsea st
+gsea si
 ```
 
 ### Run pre-rank GSEA
@@ -16,10 +16,10 @@ gsea st
 gsea pr
 ```
 
-### Run single-sample GSEA
+### Run standard GSEA
 
 ```sh
-gsea si
+gsea st
 ```
 
 ## Use in julia
@@ -28,22 +28,22 @@ gsea si
 using GSEA
 ```
 
-### Run standard GSEA
+### Run single-sample GSEA
 
 ```jl
-run_standard_gsea()
+run_single_sample_gsea()
 ```
 
 ### Run pre-rank GSEA
 
 ```jl
-run_prepank_gsea()
+run_pre_pank_gsea()
 ```
 
-### Run single-sample GSEA
+### Run standard GSEA
 
 ```jl
-run_single_sample_gsea()
+run_standard_gsea()
 ```
 
 ## Install

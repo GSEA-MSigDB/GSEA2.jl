@@ -1,5 +1,3 @@
-using Kwat.dictionary: summarize
-
 function select(
     se_fe_::Dict{String, Vector{String}},
     mi::Int64,
