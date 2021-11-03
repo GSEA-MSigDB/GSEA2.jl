@@ -73,7 +73,7 @@ function run_pre_rank_gsea(
 
     return run_pre_rank_gsea(
         ke_ar,
-        se_fe_ = read_set(gm, ke_ar),
+        read_set(gm, ke_ar),
         convert(Vector{String}, fe_sc[!, 1]),
         fe_sc[!, 2],
         pop!(ke_ar, "n_pe"),

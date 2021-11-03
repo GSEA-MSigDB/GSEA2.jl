@@ -1,44 +1,73 @@
-using DataFrames
+TE = joinpath(homedir(), "Downloads", "GSEA.test", "")
+
+if isdir(TE)
+
+    rm(TE; recursive = true)
+
+end
+
+mkdir(TE)
+
+println("Made ", TE, ".")
+
+using Revise
+using BenchmarkTools
+
+using GMTAccess
+using TableAccess
 
 using GSEA
-using Kwat
 
-#
-dw = joinpath(homedir(), "Downloads", "")
+da = joinpath("data", "")
 
-#
-fe_, sc_, fe1_ = make_benchmark("card AK")
+gm = joinpath(da, "h.all.v7.1.symbols.gmt")
 
-in_ = Kwat.vector.check_in(fe_, fe1_)
+;
 
-#
-score_set(fe_, sc_, fe1_, in_)
+read_set(gm, Dict("mi" => 33, "ma" => 36))
 
-score_set(fe_, sc_, fe1_; si = false, pa = joinpath(dw, "old_algorithm.png"))
+select_set(GMTAccess.read(gm), 33, 36)
 
-score_set_new(
-    fe_,
-    sc_,
-    fe1_;
-    si = false,
-    pa = joinpath(dw, "new_algorithm.jpeg"),
+ou = joinpath(TE, "single_sample_gsea.tsv")
+
+;
+
+en_se_sa = run_single_sample_gsea(
+    joinpath(da, "setting_for_single_sample_gsea.json"),
+    gm,
+    joinpath(da, "nmf_k9_w.tsv"),
+    ou,
 )
 
-#
-se_fe_ = Dict(string("Set ", id) => fe1_ for id in 1:10)
+TableAccess.read(ou)
 
-sc_fe_sa = DataFrame(
-    "Feature" => fe_,
-    "Score" => sc_,
-    "Score x 10" => sc_ * 10,
-    "Constant" => fill(0.8, length(fe_)),
+ou = joinpath(TE, "pre_rank_gsea", "")
+
+mkdir(ou)
+
+;
+
+fl_se_st = run_pre_rank_gsea(
+    joinpath(da, "setting_for_pre_rank_gsea.json"),
+    gm,
+    joinpath(da, "gene_score.tsv"),
+    ou,
 )
 
-#
-score_set(fe_, sc_, se_fe_)
+ou = joinpath(TE, "standard_gsea", "")
 
-score_set_new(fe_, sc_, se_fe_)
+mkdir(ou)
 
-score_set(sc_fe_sa, se_fe_; n_jo = 1)
+;
 
-try_method(fe_, sc_, fe1_; plp = false)
+fl_se_st = run_standard_gsea(
+    joinpath(da, "setting_for_standard_gsea.json"),
+    gm,
+    joinpath(da, "sample_value.tsv"),
+    joinpath(da, "nmf_k9_w.tsv"),
+    ou,
+)
+
+rm(TE; recursive = true)
+
+println("Removed ", TE, ".")
