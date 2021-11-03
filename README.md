@@ -1,6 +1,8 @@
 # GSEA.jl
 
-Official Gene Set Enrichment Analysis program :dna: :mountain:
+Official Gene Set Enrichment Analysis :dna: :mountain:
+
+![gsea2](media/gsea2.gif)
 
 ## Use `gsea` command line interface
 
