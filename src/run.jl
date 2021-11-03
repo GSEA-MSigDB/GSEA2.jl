@@ -15,9 +15,9 @@ end
 
 
 """
-Run single-sample GSEA.
+Run single-sample GSEA
 """
-@cast function run_si(
+@cast function run_single_sample_gsea(
     ke_ar::String,
     se_fe_::String,
     sc_fe_sa::String,
@@ -39,9 +39,9 @@ Run single-sample GSEA.
 end
 
 """
-Run prerank GSEA.
+Run pre-rank GSEA
 """
-@cast function run_pr(
+@cast function run_prepank_gsea(
     ke_ar::String,
     se_fe_::String,
     fe_va::String,
@@ -59,9 +59,9 @@ Run prerank GSEA.
 end
 
 """
-Run GSEA.
+Run standard GSEA
 """
-@cast function run_st(
+@cast function run_standard_gsea(
     ke_ar::String,
     se_fe_::String,
     sa_va::String,

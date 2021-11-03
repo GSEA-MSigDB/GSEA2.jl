@@ -1,6 +1,6 @@
 # GSEA.jl
 
-Official Gene Set Enrichment Analysis program :mountain:
+Official Gene Set Enrichment Analysis program :dna: :mountain:
 
 ## Use `gsea` command line interface
 
@@ -58,7 +58,7 @@ julia --project deps/build.jl
 
 :point_up: commands install `gsea` into `~/.julia/bin`.
 
-If not already, add this `bin` to the path by adding :point_down: to the profile (~/.zshrc, ~/.bashrc, ...):
+If not already, add this `bin` to the path by adding :point_down: to the profile (`~/.zshrc`, `~/.bashrc`, ...):
 
 ```sh
 PATH=~/.julia/bin:$PATH
