@@ -1,9 +1,9 @@
 function read_set(
-    se_fe_::String,
-    ke_ar::Dict{String, Any},
+    gm::String,
+    ke_ar::Dict{String, T} where {T <: Any},
 )::Dict{String, Vector{String}}
 
-    return select(gmt_read(se_fe_), pop!(ke_ar, "mi"), pop!(ke_ar, "ma"))
+    return select_set(GMTAccess.read(gm), pop!(ke_ar, "mi"), pop!(ke_ar, "ma"))
 
 end
 

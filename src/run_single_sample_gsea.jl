@@ -1,25 +1,25 @@
 """
 Run single-sample GSEA
 """
-@cast function run_single_sample_gsea(
-    ke_ar::String,
-    se_fe_::String,
-    sc_fe_sa::String,
+function run_single_sample_gsea(
+    js::String,
+    gm::String,
+    ts::String,
     ou::String,
-)::Nothing
+)::DataFrame
 
-    ke_ar = DictExtension.read(ke_ar)
+    ke_ar = DictExtension.read(js)
 
-    se_fe_ = read_set(se_fe_, ke_ar)
+    se_fe_ = read_set(gm, ke_ar)
 
-    sc_fe_sa = table_read(sc_fe_sa)
+    sc_fe_sa = TableAccess.read(ts)
 
     en_se_sa =
         score_set(sc_fe_sa, se_fe_; convert_to_keyword_argument(ke_ar)...)
 
-    write(ou, en_se_sa)
+    TableAccess.write(ou, en_se_sa)
 
-    return
+    return en_se_sa
 
 end
 

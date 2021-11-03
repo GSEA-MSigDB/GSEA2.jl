@@ -1,20 +1,23 @@
 """
 Run standard GSEA
 """
-@cast function run_standard_gsea(
-    ke_ar::String,
-    se_fe_::String,
-    sa_va::String,
+function run_standard_gsea(
+    js::String,
+    gm::String,
+    tst::String,
+    tsd::String,
     ou::String,
 )::Any
 
-    ke_ar = DictExtension.read(ke_ar)
+    ke_ar = DictExtension.read(js)
 
-    se_fe_ = read_set(se_fe_, ke_ar)
+    se_fe_ = read_set(gm, ke_ar)
 
-    sa_va = table_read(sa_va)
+    sa_va = TableAccess.read(tst)
 
-    return ke_ar, se_fe_, sa_va
+    sc_fe_sa = TableAccess.read(tsd)
+
+    return ke_ar, se_fe_, sa_va, sc_fe_sa
 
 end
 

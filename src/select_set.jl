@@ -1,4 +1,4 @@
-function select(
+function select_set(
     se_fe_::Dict{String, Vector{String}},
     mi::Int64,
     ma::Int64,
@@ -18,4 +18,4 @@ function select(
 
 end
 
-export select
+export select_set
