@@ -1,8 +1,8 @@
-# PkgRepository.jl
+# GSEA.jl
 
-Official Gene Set Enrichment Analysis program :mountain: ::
+Official Gene Set Enrichment Analysis program :mountain:
 
-## Use
+## Use `gsea` command line interface
 
 ### Run standard GSEA
 
@@ -10,16 +10,40 @@ Official Gene Set Enrichment Analysis program :mountain: ::
 gsea st
 ```
 
-### Pre-rank GSEA
+### Run pre-rank GSEA
 
 ```sh
 gsea pr
 ```
 
-### Run single sample GSEA
+### Run single-sample GSEA
 
 ```sh
 gsea si
+```
+
+## Use in julia
+
+```jl
+using GSEA
+```
+
+### Run standard GSEA
+
+```jl
+run_standard_gsea()
+```
+
+### Run pre-rank GSEA
+
+```jl
+run_prepank_gsea()
+```
+
+### Run single-sample GSEA
+
+```jl
+run_single_sample_gsea()
 ```
 
 ## Install
