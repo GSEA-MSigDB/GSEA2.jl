@@ -2,9 +2,11 @@ module GSEA
 
 using Comonicon
 using DataFrames
+using Random
 using StatsBase
 
 using DictExtension
+using FeatureBySample
 using FeatureSetEnrichment
 using GMTAccess
 using Significance

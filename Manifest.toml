@@ -238,6 +238,14 @@ git-tree-sha1 = "c6033cc3892d0ef5bb9cd29b7f2f0331ea5184ea"
 uuid = "f5851436-0d7a-5f13-b9de-f02708fd171a"
 version = "3.3.10+0"
 
+[[FeatureBySample]]
+deps = ["BenchmarkTools", "FinalFigure", "InformationMetric", "Revise", "TensorExtension", "TensorFunction"]
+git-tree-sha1 = "bd49ae8657f4dd6feb5ccc68c45f46bc6ac26790"
+repo-rev = "main"
+repo-url = "https://github.com/KwatMDPhD/FeatureBySample.jl"
+uuid = "17396600-f8ee-44a7-9d7d-b6508070e752"
+version = "0.1.0"
+
 [[FeatureSetEnrichment]]
 deps = ["BenchmarkTools", "ConstantExtension", "DataFrames", "FinalFigure", "GMTAccess", "GeometryExtension", "InformationMetric", "OrderedCollections", "PlotlyJS", "Printf", "Revise", "StatsBase", "TableAccess", "TensorExtension", "VectorExtension"]
 git-tree-sha1 = "c42463aaf845767c3d5fe2d1333c7e8c6532a931"
@@ -799,6 +807,14 @@ git-tree-sha1 = "d4651d7b74f5e92152cdbe5cebb3dead3c05e417"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/TensorExtension.jl"
 uuid = "3f024651-0030-486f-9838-1e091a269f98"
+version = "0.1.0"
+
+[[TensorFunction]]
+deps = ["BenchmarkTools", "Revise"]
+git-tree-sha1 = "a53fb808a07aa2168dca6288a5ff10ee9aa1f2ca"
+repo-rev = "main"
+repo-url = "https://github.com/KwatMDPhD/TensorFunction.jl"
+uuid = "b5bf068d-715e-43a4-ab5f-ce272ccd184b"
 version = "0.1.0"
 
 [[Test]]

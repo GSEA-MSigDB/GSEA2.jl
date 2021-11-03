@@ -1,24 +1,11 @@
-"""
-Run pre-rank GSEA
-"""
 function run_pre_rank_gsea(
-    js::String,
-    gm::String,
-    ts::String,
+    ke_ar::Dict{String, Any},
+    se_fe_::Dict{String, Vector{String}},
+    fe_::Vector{String},
+    sc_::Vector{Float64},
+    n_pe::Int64,
     ou::String,
 )::DataFrame
-
-    ke_ar = DictExtension.read(js)
-
-    se_fe_ = read_set(gm, ke_ar)
-
-    fe_sc = TableAccess.read(ts)
-
-    fe_ = convert(Vector{String}, fe_sc[!, 1])
-
-    sc_ = fe_sc[!, 2]
-
-    n_pe = pop!(ke_ar, "n_pe")
 
     ke_ar = DictExtension.convert_to_keyword_argument(ke_ar)
 
@@ -26,7 +13,7 @@ function run_pre_rank_gsea(
 
     if 0 < n_pe
 
-        println("Permuting sets to compute p-values")
+        println("Permuting sets to compute significance")
 
         se_si = Dict(se => length(fe_) for (se, fe_) in se_fe_)
 
@@ -61,11 +48,37 @@ function run_pre_rank_gsea(
 
     end
 
-    fl_se_st = make_set_by_statistic(se_en, pv_, ad_)
+    fl_se_st = make_set_by_statistic(se_en, pv_, ad_, ou)
 
-    TableAccess.write(joinpath(ou, "set_by_statistic.tsv"), fl_se_st)
+    println("Plotting")
 
     return fl_se_st
+
+
+end
+
+"""
+Run pre-rank GSEA
+"""
+function run_pre_rank_gsea(
+    js::String,
+    gm::String,
+    ts::String,
+    ou::String,
+)::DataFrame
+
+    ke_ar = DictExtension.read(js)
+
+    fe_sc = TableAccess.read(ts)
+
+    return run_pre_rank_gsea(
+        ke_ar,
+        se_fe_ = read_set(gm, ke_ar),
+        convert(Vector{String}, fe_sc[!, 1]),
+        fe_sc[!, 2],
+        pop!(ke_ar, "n_pe"),
+        ou,
+    )
 
 end
 
