@@ -1,6 +1,6 @@
 # GSEA.jl
 
-Official Gene Set Enrichment Analysis :dna: :mountain:
+The official code for Gene Set Enrichment Analysis 🧬 ⛰️
 
 ![gsea_logo](media/gsea2.gif)
 
