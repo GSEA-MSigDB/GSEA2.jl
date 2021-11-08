@@ -2,7 +2,10 @@
 
 Official Gene Set Enrichment Analysis :dna: :mountain:
 
-![gsea2](media/gsea2.gif)
+![gsea_logo](media/gsea2.gif)
+
+
+![cli_example](media/cli_example.gif)
 
 ## Use `gsea` command line interface
 
