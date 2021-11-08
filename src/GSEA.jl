@@ -32,6 +32,6 @@ include("run_standard_gsea.jl")
 """
 Gene Set Enrichment Analysis.
 """
-#@main
+@main
 
 end

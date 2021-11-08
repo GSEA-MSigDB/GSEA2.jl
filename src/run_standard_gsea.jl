@@ -1,7 +1,7 @@
 """
 Run standard GSEA
 """
-function run_standard_gsea(
+@cast function run_standard_gsea(
     js::String,
     gm::String,
     tst::String,

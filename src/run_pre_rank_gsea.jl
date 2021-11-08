@@ -60,7 +60,7 @@ end
 """
 Run pre-rank GSEA
 """
-function run_pre_rank_gsea(
+@cast function run_pre_rank_gsea(
     js::String,
     gm::String,
     ts::String,

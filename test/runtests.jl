@@ -18,7 +18,7 @@ using TableAccess
 
 using GSEA
 
-da = joinpath("data", "")
+da = joinpath(@__DIR__, "data", "")
 
 gm = joinpath(da, "h.all.v7.1.symbols.gmt")
 

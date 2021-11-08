@@ -1,7 +1,7 @@
 """
 Run single-sample GSEA
 """
-function run_single_sample_gsea(
+@cast function run_single_sample_gsea(
     js::String,
     gm::String,
     ts::String,
