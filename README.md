@@ -4,7 +4,6 @@ The official code for Gene Set Enrichment Analysis 🧬 ⛰️
 
 ![gsea_logo](media/gsea2.gif)
 
-
 ![cli_example](media/cli_example.gif)
 
 ## Use `gsea` command line interface
