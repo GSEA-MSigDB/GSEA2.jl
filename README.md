@@ -2,9 +2,9 @@
 
 The official code for Gene Set Enrichment Analysis 🧬 ⛰️
 
-![gsea_logo](media/gsea2.gif)
+![gsea2.gif](media/gsea2.gif)
 
-![cli_example](media/cli_example.gif)
+![cli_example.gif](media/cli_example.gif)
 
 ## Use `gsea` command line interface
 
@@ -77,10 +77,6 @@ gsea -h
 ```
 
 :tada:
-
-## Shoutout
-
-[Roger-luo](https://github.com/Roger-luo) made [Comonicon.jl](https://github.com/comonicon/Comonicon.jl), which powers the installation process of this project :raised_hands:
 
 ## Howdy :wave: :cowboy_hat_face:
 
