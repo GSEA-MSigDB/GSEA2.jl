@@ -252,7 +252,7 @@ version = "3.3.10+0"
 
 [[FeatureBySample]]
 deps = ["BenchmarkTools", "FinalFigure", "InformationMetric", "Revise", "TensorExtension", "TensorFunction"]
-git-tree-sha1 = "cd95f9aefd64c7792099a11dbe6b8619b23de0bc"
+git-tree-sha1 = "0d7a888e61b17cb6a15036b5e5209537fccf4b54"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/FeatureBySample.jl"
 uuid = "17396600-f8ee-44a7-9d7d-b6508070e752"
@@ -260,7 +260,7 @@ version = "0.1.0"
 
 [[FeatureSetEnrichment]]
 deps = ["BenchmarkTools", "ConstantExtension", "DataFrames", "FinalFigure", "GMTAccess", "GeometryExtension", "InformationMetric", "OrderedCollections", "PlotlyJS", "Printf", "Revise", "StatsBase", "TableAccess", "TensorExtension", "VectorExtension"]
-git-tree-sha1 = "1c3640546448cebe986a4a54b14c4716a075bbab"
+git-tree-sha1 = "555fb4c0625c0ae94ae1c3b74c15f5acc6141f0d"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/FeatureSetEnrichment.jl"
 uuid = "31f5d874-04ed-4913-a836-5dfb4db0e9a0"
@@ -339,7 +339,7 @@ version = "0.2.2"
 
 [[InformationMetric]]
 deps = ["BenchmarkTools", "FinalFigure", "KernelDensity", "PlotlyJS", "Revise", "Statistics", "TensorExtension"]
-git-tree-sha1 = "a29bce3bb6d49cf6a25a5b23ba8ec1622cb15e9c"
+git-tree-sha1 = "3c6b547926516c8bb513b22145242d9b51d3f0c0"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/InformationMetric.jl"
 uuid = "8a8dc11e-0ada-4e96-9b6f-f012301946a0"
@@ -719,7 +719,7 @@ uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
 [[Significance]]
 deps = ["BenchmarkTools", "Revise", "StatisticsExtension", "StatsBase", "TensorExtension"]
-git-tree-sha1 = "195f50f00a35b9122a4159126cf6ec2bcef480de"
+git-tree-sha1 = "f5861dbbf9cc6b7dfe55825fed152f9a56676e13"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/Significance.jl"
 uuid = "9312258a-18e7-4ed1-a012-746784b35684"
@@ -821,7 +821,7 @@ version = "0.1.0"
 
 [[TensorFunction]]
 deps = ["BenchmarkTools", "Revise"]
-git-tree-sha1 = "182b5ef78dc2c234765005b70908a1f20e9538c9"
+git-tree-sha1 = "7946efd18c171c030b31ce85574128b5ab4a3e10"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/TensorFunction.jl"
 uuid = "b5bf068d-715e-43a4-ab5f-ce272ccd184b"
