@@ -1,6 +1,6 @@
 # GSEA.jl
 
-The official code for Gene Set Enrichment Analysis :dna:
+The official Gene Set Enrichment Analysis :dna:
 
 ![gsea2.gif](media/gsea2.gif)
 
