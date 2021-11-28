@@ -17,7 +17,7 @@ Run standard GSEA
 
     fe_ = string.(sc_fe_sa[:, 1])
 
-    sc_ = compare_with_target(
+    sc_ = FeatureBySample.compare_with_target(
         BitVector(nu_ta_sa[1, :]),
         Matrix(sc_fe_sa[:, 2:end]),
         "signal_to_noise_ratio",
@@ -76,5 +76,3 @@ Run standard GSEA
     end
 
 end
-
-export run_standard_gsea

@@ -14,13 +14,14 @@ Run single-sample GSEA
 
     sc_fe_sa = TableAccess.read(ts)
 
-    en_se_sa =
-        score_set(sc_fe_sa, se_fe_; convert_to_keyword_argument(ke_ar)...)
+    en_se_sa = FeatureSetEnrichment.score_set(
+        sc_fe_sa,
+        se_fe_;
+        DictExtension.convert_to_keyword_argument(ke_ar)...,
+    )
 
     TableAccess.write(ou, en_se_sa)
 
     return en_se_sa
 
 end
-
-export run_single_sample_gsea

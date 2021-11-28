@@ -20,5 +20,3 @@ function make_set_by_statistic(
     return fl_se_st
 
 end
-
-export make_set_by_statistic

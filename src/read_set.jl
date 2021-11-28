@@ -6,5 +6,3 @@ function read_set(
     return select_set(GMTAccess.read(gm), pop!(ke_ar, "mi"), pop!(ke_ar, "ma"))
 
 end
-
-export read_set

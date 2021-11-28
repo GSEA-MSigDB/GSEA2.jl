@@ -9,7 +9,7 @@ function run_pre_rank_gsea(
 
     ke_ar = DictExtension.convert_to_keyword_argument(ke_ar)
 
-    se_en = score_set(fe_, sc_, se_fe_; ke_ar...)
+    se_en = FeatureSetEnrichment.score_set(fe_, sc_, se_fe_; ke_ar...)
 
     if 0 < n_pe
 
@@ -81,5 +81,3 @@ Run pre-rank GSEA
     )
 
 end
-
-export run_pre_rank_gsea

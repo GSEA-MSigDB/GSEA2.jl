@@ -19,12 +19,10 @@ function get_p_value_and_adjust(
 
         ra_ = [se_ra[se] for se_ra in se_ra_]
 
-        push!(pv_, get_p_value(en, ra_, si))
+        push!(pv_, Significance.get_p_value(en, ra_, si))
 
     end
 
-    return pv_, adjust_p_value(pv_)
+    return pv_, Significance.adjust_p_value(pv_)
 
 end
-
-export get_p_value_and_adjust
