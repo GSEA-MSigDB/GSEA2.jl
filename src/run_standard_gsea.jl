@@ -35,7 +35,7 @@ Run standard GSEA
 
         ke_ar = DictExtension.convert_to_keyword_argument(ke_ar)
 
-        se_en = score_set(fe_, sc_, se_fe_; ke_ar...)
+        se_en = FeatureSetEnrichment.score_set(fe_, sc_, se_fe_; ke_ar...)
 
         println("SET UP RANDOM GENERATOR")
 
@@ -49,7 +49,15 @@ Run standard GSEA
 
                 println("  ", it, "/", n_pe)
 
-                push!(_se_ra, score_set(fe_, shuffle!(sh_), se_fe_; ke_ar...))
+                push!(
+                    _se_ra,
+                    FeatureSetEnrichment.score_set(
+                        fe_,
+                        shuffle!(sh_),
+                        se_fe_;
+                        ke_ar...,
+                    ),
+                )
 
             end
 

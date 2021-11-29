@@ -27,7 +27,7 @@ function run_pre_rank_gsea(
 
             push!(
                 se_ra_,
-                score_set(
+                FeatureSetEnrichment.score_set(
                     fe_,
                     sc_,
                     Dict(
