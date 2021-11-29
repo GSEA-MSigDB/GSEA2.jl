@@ -2,8 +2,6 @@
 
 The official Gene Set Enrichment Analysis :dna:
 
-![gsea2.gif](media/gsea2.gif)
-
 ![cli_example.gif](media/cli_example.gif)
 
 ## Use `gsea` command line interface
@@ -64,7 +62,7 @@ julia --project deps/build.jl
 
 :point_up: commands install `gsea` into `~/.julia/bin`.
 
-If not already, add this `bin` to the path by adding :point_down: to the profile (`~/.zshrc`, `~/.bashrc`, ...):
+If not already, add this `bin` to the path by adding :point_down: to the profile (`~/.zshrc`, `~/.bashrc`, ...)
 
 ```sh
 PATH=~/.julia/bin:$PATH
@@ -72,7 +70,7 @@ PATH=~/.julia/bin:$PATH
 
 Start a new shell to load the updated profile.
 
-Test installation:
+Test installation
 
 ```sh
 gsea -h
