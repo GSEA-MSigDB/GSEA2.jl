@@ -57,6 +57,8 @@ git clone https://github.com/KwatMDPhD/GSEA.jl &&
 
 cd GSEA.jl &&
 
+julia --eval "using Pkg; Pkg.instantiate(); Pkg.update(); Pkg.test()" &&
+
 julia --project deps/build.jl
 ```
 
