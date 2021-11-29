@@ -2,8 +2,6 @@
 
 The official Gene Set Enrichment Analysis :dna:
 
-![cli_example.gif](media/cli_example.gif)
-
 ## Use `gsea` command line interface
 
 ### Run single-sample GSEA
