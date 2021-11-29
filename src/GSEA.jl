@@ -30,7 +30,7 @@ include("run_pre_rank_gsea.jl")
 include("run_standard_gsea.jl")
 
 """
-Gene Set Enrichment Analysis.
+Gene Set Enrichment Analysis
 """
 @main
 
