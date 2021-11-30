@@ -1,6 +1,6 @@
 function run_pre_rank_gsea(
-    ke_ar::Dict{String, Any},
-    se_fe_::Dict{String, Vector{String}},
+    ke_ar::Dict{String,Any},
+    se_fe_::Dict{String,Vector{String}},
     fe_::Vector{String},
     sc_::Vector{Float64},
     n_pe::Int64,
@@ -17,11 +17,11 @@ function run_pre_rank_gsea(
 
         se_si = Dict(se => length(fe_) for (se, fe_) in se_fe_)
 
-        se_ra_ = Vector{Dict{String, Float64}}()
+        se_ra_ = Vector{Dict{String,Float64}}()
 
         println("SET UP RANDOM GENERATOR")
 
-        for id in 1:n_pe
+        for id = 1:n_pe
 
             println("  ", id, "/", n_pe)
 
@@ -30,10 +30,7 @@ function run_pre_rank_gsea(
                 FeatureSetEnrichment.score_set(
                     fe_,
                     sc_,
-                    Dict(
-                        se => sample(fe_, si; replace = false) for
-                        (se, si) in se_si
-                    );
+                    Dict(se => sample(fe_, si; replace = false) for (se, si) in se_si);
                     ke_ar...,
                 ),
             )
@@ -60,12 +57,7 @@ end
 """
 Run pre-rank GSEA
 """
-@cast function run_pre_rank_gsea(
-    js::String,
-    gm::String,
-    ts::String,
-    ou::String,
-)::DataFrame
+@cast function run_pre_rank_gsea(js::String, gm::String, ts::String, ou::String)::DataFrame
 
     ke_ar = DictExtension.read(js)
 

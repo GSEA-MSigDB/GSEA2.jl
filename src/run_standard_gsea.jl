@@ -45,18 +45,13 @@ Run standard GSEA
 
             _se_ra = []
 
-            for it in 1:n_pe
+            for it = 1:n_pe
 
                 println("  ", it, "/", n_pe)
 
                 push!(
                     _se_ra,
-                    FeatureSetEnrichment.score_set(
-                        fe_,
-                        shuffle!(sh_),
-                        se_fe_;
-                        ke_ar...,
-                    ),
+                    FeatureSetEnrichment.score_set(fe_, shuffle!(sh_), se_fe_; ke_ar...),
                 )
 
             end
