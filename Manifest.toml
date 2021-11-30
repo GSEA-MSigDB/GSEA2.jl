@@ -252,7 +252,7 @@ version = "3.3.10+0"
 
 [[FeatureBySample]]
 deps = ["BenchmarkTools", "FinalFigure", "InformationMetric", "Revise", "TensorExtension", "TensorFunction"]
-git-tree-sha1 = "f4caee3be24709fc3510313d55ae2ac8a11e9cfb"
+git-tree-sha1 = "83c53853d84c588dabe3b9048bd11c8ed4a479a7"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/FeatureBySample.jl"
 uuid = "17396600-f8ee-44a7-9d7d-b6508070e752"
@@ -260,7 +260,7 @@ version = "0.1.0"
 
 [[FeatureSetEnrichment]]
 deps = ["BenchmarkTools", "ConstantExtension", "DataFrames", "FinalFigure", "GMTAccess", "GeometryExtension", "InformationMetric", "OrderedCollections", "PlotlyJS", "Printf", "Revise", "StatsBase", "TableAccess", "TensorExtension", "VectorExtension"]
-git-tree-sha1 = "6a6a171e579d6753bb73c850f1b4cc49c8167af1"
+git-tree-sha1 = "4781b69030801026b6b64bd369d32aef128e182e"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/FeatureSetEnrichment.jl"
 uuid = "31f5d874-04ed-4913-a836-5dfb4db0e9a0"
@@ -339,7 +339,7 @@ version = "0.2.2"
 
 [[InformationMetric]]
 deps = ["BenchmarkTools", "FinalFigure", "KernelDensity", "PlotlyJS", "Revise", "Statistics", "TensorExtension"]
-git-tree-sha1 = "af7bca7ec98746d284f955ce124deee14a9a5c0c"
+git-tree-sha1 = "5c26440f8f97fa23019d750640f0cbc3104fe6ba"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/InformationMetric.jl"
 uuid = "8a8dc11e-0ada-4e96-9b6f-f012301946a0"
@@ -719,7 +719,7 @@ uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
 [[Significance]]
 deps = ["BenchmarkTools", "Revise", "StatisticsExtension", "StatsBase", "TensorExtension"]
-git-tree-sha1 = "0ff8e9882a9dfb9a382c339ee0d0dc95eb065069"
+git-tree-sha1 = "ca2dea0e17db6af8878c89cd5ac04d989b3d9948"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/Significance.jl"
 uuid = "9312258a-18e7-4ed1-a012-746784b35684"
