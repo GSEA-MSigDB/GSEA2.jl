@@ -152,7 +152,7 @@ version = "0.16.6"
 
 [[ConstantExtension]]
 deps = ["BenchmarkTools", "Revise"]
-git-tree-sha1 = "f7131ee881059668bb99cad29e46e8729782a944"
+git-tree-sha1 = "dad0164a2f04ec2fe0fc6895a11065258d7b881c"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/ConstantExtension.jl"
 uuid = "015e97f4-45c8-4214-a4dc-47accb159b32"
