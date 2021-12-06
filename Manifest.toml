@@ -226,7 +226,7 @@ version = "3.3.10+0"
 
 [[deps.FeatureBySample]]
 deps = ["BenchmarkTools", "FinalFigure", "InformationMetric", "Revise", "TensorExtension", "TensorFunction"]
-git-tree-sha1 = "1eb9141c175b5b2693e8922aa09e70ec9d243a34"
+git-tree-sha1 = "764b952e7e03a94ceb0915e40e089e336269df6d"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/FeatureBySample.jl"
 uuid = "17396600-f8ee-44a7-9d7d-b6508070e752"
@@ -234,7 +234,7 @@ version = "0.1.0"
 
 [[deps.FeatureSetEnrichment]]
 deps = ["BenchmarkTools", "ConstantExtension", "DataFrames", "FinalFigure", "GMTAccess", "GeometryExtension", "InformationMetric", "OrderedCollections", "PlotlyJS", "Printf", "Revise", "StatsBase", "TableAccess", "TensorExtension", "VectorExtension"]
-git-tree-sha1 = "a28f4c4dace08fba4a9bade121cfbdce45925629"
+git-tree-sha1 = "c4f3b79f47631cc59a056ac8189247ebb9de5c1f"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/FeatureSetEnrichment.jl"
 uuid = "31f5d874-04ed-4913-a836-5dfb4db0e9a0"
@@ -313,7 +313,7 @@ version = "0.2.2"
 
 [[deps.InformationMetric]]
 deps = ["BenchmarkTools", "FinalFigure", "KernelDensity", "PlotlyJS", "Revise", "Statistics", "TensorExtension"]
-git-tree-sha1 = "be6bf20bcb22d604e4bf60cd8998cd710dc51864"
+git-tree-sha1 = "35d1582d3e430b86ae368731bffd3b54e53daff1"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/InformationMetric.jl"
 uuid = "8a8dc11e-0ada-4e96-9b6f-f012301946a0"
@@ -697,7 +697,7 @@ uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
 [[deps.Significance]]
 deps = ["BenchmarkTools", "Revise", "StatisticsExtension", "StatsBase", "TensorExtension"]
-git-tree-sha1 = "e28cde73f5eb4bd68386d868a601d114ab792db1"
+git-tree-sha1 = "d69599f5a5545ecd5edad8813221548ed70c9dda"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/Significance.jl"
 uuid = "9312258a-18e7-4ed1-a012-746784b35684"
@@ -734,7 +734,7 @@ uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [[deps.StatisticsExtension]]
 deps = ["BenchmarkTools", "Distributions", "Revise"]
-git-tree-sha1 = "b831b79a2d58b9a9ea320151391add871a475b69"
+git-tree-sha1 = "48b6b5f11d899a3cfc2d4f88642f117c6b19f958"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/StatisticsExtension.jl"
 uuid = "6247709b-0a0b-4ea4-b1ff-806dcee8e6b7"
