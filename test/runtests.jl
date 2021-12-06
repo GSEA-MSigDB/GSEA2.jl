@@ -1,4 +1,4 @@
-TE = joinpath(homedir(), "Downloads", "GSEA.test", "")
+TE = joinpath(tempdir(), "GSEA.test", "")
 
 if isdir(TE)
 
@@ -8,7 +8,7 @@ end
 
 mkdir(TE)
 
-println("Made ", TE, ".")
+println("Made ", TE)
 
 using Revise
 using BenchmarkTools
@@ -70,4 +70,4 @@ fl_se_st = GSEA.run_standard_gsea(
 
 rm(TE; recursive = true)
 
-println("Removed ", TE, ".")
+println("Removed ", TE)
