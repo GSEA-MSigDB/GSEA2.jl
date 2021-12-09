@@ -226,7 +226,7 @@ version = "3.3.10+0"
 
 [[deps.FeatureBySample]]
 deps = ["BenchmarkTools", "FinalFigure", "InformationMetric", "Revise", "TensorExtension", "TensorFunction"]
-git-tree-sha1 = "ec2491d01f2c7db729fc8a9d63b431f8443822c8"
+git-tree-sha1 = "0b360b89a31bd47c2f2e1b428e75094f7014b16a"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/FeatureBySample.jl"
 uuid = "17396600-f8ee-44a7-9d7d-b6508070e752"
@@ -234,7 +234,7 @@ version = "0.1.0"
 
 [[deps.FeatureSetEnrichment]]
 deps = ["BenchmarkTools", "ConstantExtension", "DataFrames", "FinalFigure", "GMTAccess", "GeometryExtension", "InformationMetric", "OrderedCollections", "PlotlyJS", "Printf", "Revise", "StatsBase", "TableAccess", "TensorExtension", "VectorExtension"]
-git-tree-sha1 = "2f20051a4f46cb93e0aa2107c0cf4edf63a0cf4a"
+git-tree-sha1 = "6fa8966a909850fa8b4f2823774a17d4ede345b7"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/FeatureSetEnrichment.jl"
 uuid = "31f5d874-04ed-4913-a836-5dfb4db0e9a0"
@@ -257,7 +257,7 @@ version = "0.12.7"
 
 [[deps.FinalFigure]]
 deps = ["BenchmarkTools", "PlotlyJS", "Revise"]
-git-tree-sha1 = "6ac867b5dd083849ce81251fb57a6ff01cba684b"
+git-tree-sha1 = "120a1badda02162757971e104d51842c592b0c88"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/FinalFigure.jl"
 uuid = "99c8cfd0-9233-4d48-b167-a54679e170ff"
@@ -313,7 +313,7 @@ version = "0.2.2"
 
 [[deps.InformationMetric]]
 deps = ["BenchmarkTools", "FinalFigure", "KernelDensity", "PlotlyJS", "Revise", "Statistics", "TensorExtension"]
-git-tree-sha1 = "191c6c870a2a3c7b9c6f7ee7cfd375b481ce3a2c"
+git-tree-sha1 = "d58dd8c7a1aca4baca703f83eef5830ae6636142"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/InformationMetric.jl"
 uuid = "8a8dc11e-0ada-4e96-9b6f-f012301946a0"
@@ -697,7 +697,7 @@ uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
 [[deps.Significance]]
 deps = ["BenchmarkTools", "Revise", "StatisticsExtension", "StatsBase", "TensorExtension"]
-git-tree-sha1 = "02bb63f62353429315041b346780e912e23c0c88"
+git-tree-sha1 = "c98fc6ef590d6a72fca60b2cb0a9eeb6314a6cc0"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/Significance.jl"
 uuid = "9312258a-18e7-4ed1-a012-746784b35684"
@@ -767,7 +767,7 @@ uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 
 [[deps.TableAccess]]
 deps = ["BenchmarkTools", "CSV", "CodecZlib", "DataFrames", "Mmap", "Revise", "XLSX"]
-git-tree-sha1 = "22d2a3855c74293e2021dc83fb64038f0bc0fa0b"
+git-tree-sha1 = "dfeb0e1bfd50cd7393d25cd7886886bc088d77ef"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/TableAccess.jl"
 uuid = "a707cf2c-1109-433c-8482-52c38c7a14cd"
@@ -799,7 +799,7 @@ version = "0.1.0"
 
 [[deps.TensorFunction]]
 deps = ["BenchmarkTools", "Revise"]
-git-tree-sha1 = "03d5edb4909c7fd6a928dd0d333f1cdd8950699b"
+git-tree-sha1 = "f337f332334a1a62a68c6445373b855ff9744ffe"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/TensorFunction.jl"
 uuid = "b5bf068d-715e-43a4-ab5f-ce272ccd184b"
