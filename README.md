@@ -34,30 +34,6 @@ gsea convert-gct-and-cls bad.gct output/
 gsea convert-gmt bad.gmt good.json
 ```
 
-## Use in julia
-
-```jl
-using GSEA
-```
-
-### Run single-sample GSEA
-
-```jl
-run_single_sample_gsea()
-```
-
-### Run pre-rank GSEA
-
-```jl
-run_pre_pank_gsea()
-```
-
-### Run standard GSEA
-
-```jl
-run_standard_gsea()
-```
-
 ### Test sarcopenia
 
 ```sh

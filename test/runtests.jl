@@ -86,16 +86,6 @@ GSEA.convert_gmt(gm, js)
 
 readdir(di)
 
-GSEA.run_standard_gsea(
-    joinpath(da, "setting_for_standard_gsea.json"),
-    joinpath(di, "set_to_genes.json"),
-    joinpath(di, "score.target_by_sample.tsv"),
-    joinpath(di, "score.gene_by_sample.tsv"),
-    di,
-)
-
-readdir(di)
-
 rm(TE; recursive = true)
 
 println("Removed ", TE)

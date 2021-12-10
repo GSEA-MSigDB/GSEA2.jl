@@ -2,7 +2,8 @@ function run_pre_rank_gsea(
     ke_ar::Dict{String,Any},
     se_fe_::Dict{String,Vector{String}},
     fe_::Vector{String},
-    sc_::Vector{Float64}, n_pe::Int64,
+    sc_::Vector{Float64},
+    n_pe::Int64,
     ou::String,
 )::Nothing
 
