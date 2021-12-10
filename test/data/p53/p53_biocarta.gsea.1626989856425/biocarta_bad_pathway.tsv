@@ -1,0 +1,26 @@
+NAME	SYMBOL	TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	PIK3CA	"phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit alpha [Source:HGNC Symbol;Acc:HGNC:8975]"	74	0.36631518602371216	0.06772205	No	
+row_1	PRKAR2A	protein kinase cAMP-dependent type II regulatory subunit alpha [Source:HGNC Symbol;Acc:HGNC:9391]	1033	0.18448324501514435	-0.0016481598	No	
+row_2	IL3RA	interleukin 3 receptor subunit alpha [Source:HGNC Symbol;Acc:HGNC:6012]	1198	0.17098955810070038	0.015414191	No	
+row_3	MAPK1	mitogen-activated protein kinase 1 [Source:HGNC Symbol;Acc:HGNC:6871]	1626	0.138785719871521	-0.0037654294	No	
+row_4	IGF1	insulin like growth factor 1 [Source:HGNC Symbol;Acc:HGNC:5464]	1642	0.13787026703357697	0.023167461	No	
+row_5	BAD	BCL2 associated agonist of cell death [Source:HGNC Symbol;Acc:HGNC:936]	2220	0.09945542365312576	-0.021033935	No	
+row_6	YWHAH	tyrosine 3-monooxygenase/tryptophan 5-monooxygenase activation protein eta [Source:HGNC Symbol;Acc:HGNC:12853]	2699	0.07139141857624054	-0.059934672	No	
+row_7	PRKACB	protein kinase cAMP-activated catalytic subunit beta [Source:HGNC Symbol;Acc:HGNC:9381]	2740	0.06880541890859604	-0.050147656	No	
+row_8	PRKAR2B	protein kinase cAMP-dependent type II regulatory subunit beta [Source:HGNC Symbol;Acc:HGNC:9392]	3954	0.004125337582081556	-0.18561411	No	
+row_9	RPS6KA1	ribosomal protein S6 kinase A1 [Source:HGNC Symbol;Acc:HGNC:10430]	4158	-0.006285857874900103	-0.20712341	No	
+row_10	KITLG	KIT ligand [Source:HGNC Symbol;Acc:HGNC:6343]	4892	-0.04219255596399307	-0.2807433	No	
+row_11	PIK3R1	phosphoinositide-3-kinase regulatory subunit 1 [Source:HGNC Symbol;Acc:HGNC:8979]	5650	-0.07974905520677567	-0.34926453	No	
+row_12	AKT1	AKT serine/threonine kinase 1 [Source:HGNC Symbol;Acc:HGNC:391]	6229	-0.11235494911670685	-0.39090067	No	
+row_13	IGF1R	insulin like growth factor 1 receptor [Source:HGNC Symbol;Acc:HGNC:5465]	6288	-0.1161089614033699	-0.37331748	No	
+row_14	MAPK3	mitogen-activated protein kinase 3 [Source:HGNC Symbol;Acc:HGNC:6877]	6466	-0.12533026933670044	-0.36719394	No	
+row_15	IL3	interleukin 3 [Source:HGNC Symbol;Acc:HGNC:6011]	6693	-0.13808341324329376	-0.36393	No	
+row_16	KIT	"KIT proto-oncogene, receptor tyrosine kinase [Source:HGNC Symbol;Acc:HGNC:6342]"	6950	-0.15487898886203766	-0.3605512	No	
+row_17	PRKAR1B	protein kinase cAMP-dependent type I regulatory subunit beta [Source:HGNC Symbol;Acc:HGNC:9390]	7914	-0.22486501932144165	-0.42210102	Yes	
+row_18	PIK3CG	"phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit gamma [Source:HGNC Symbol;Acc:HGNC:8978]"	8021	-0.23332446813583374	-0.38558108	Yes	
+row_19	CSF2RB	colony stimulating factor 2 receptor subunit beta [Source:HGNC Symbol;Acc:HGNC:2436]	8226	-0.25388848781585693	-0.35580623	Yes	
+row_20	PRKACG	protein kinase cAMP-activated catalytic subunit gamma [Source:HGNC Symbol;Acc:HGNC:9382]	8322	-0.26731014251708984	-0.31099543	Yes	
+row_21	ADCY1	adenylate cyclase 1 [Source:HGNC Symbol;Acc:HGNC:232]	8531	-0.30156511068344116	-0.27177355	Yes	
+row_22	PRKAR1A	protein kinase cAMP-dependent type I regulatory subunit alpha [Source:HGNC Symbol;Acc:HGNC:9388]	8599	-0.31469544768333435	-0.21397987	Yes	
+row_23	BCL2	BCL2 apoptosis regulator [Source:HGNC Symbol;Acc:HGNC:990]	8868	-0.4196628928184509	-0.15698673	Yes	
+row_24	BAX	"BCL2 associated X, apoptosis regulator [Source:HGNC Symbol;Acc:HGNC:959]"	8921	-0.7849780321121216	1.124601E-4	Yes	

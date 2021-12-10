@@ -22,6 +22,18 @@ gsea pr
 gsea st
 ```
 
+### Convert `.gct` and `.cls` to `.tsv`s
+
+```sh
+gsea convert-gct-and-cls bad.gct output/
+```
+
+### Convert `.gmt` to `.json`
+
+```sh
+gsea convert-gmt bad.gmt good.json
+```
+
 ## Use in julia
 
 ```jl
@@ -44,6 +56,25 @@ run_pre_pank_gsea()
 
 ```jl
 run_standard_gsea()
+```
+
+### Test sarcopenia
+
+```sh
+
+cd test/data/sarcopenia
+
+gsea convert-gct-and-cls gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcopenia.vs.normal_counts_collapsed_to_symbols.gct sarcopenia_bianry.cls .
+
+ls score.*
+
+gsea convert-gmt c2.cp.wikipathways.v7.4.symbols.gmt set_to_genes.json
+
+head set_to_genes.json
+
+gsea run-standard-gsea ../setting_for_standard_gsea.json set_to_genes.json score.target_by_sample.tsv score.gene_by_sample.tsv .
+
+head set_by_statistic.tsv
 ```
 
 ## Install

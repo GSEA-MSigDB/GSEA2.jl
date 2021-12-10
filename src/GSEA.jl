@@ -8,26 +8,28 @@ using StatsBase
 using DictExtension
 using FeatureBySample
 using FeatureSetEnrichment
+using GCTAccess
 using GMTAccess
 using Significance
 using TableAccess
 
-#
-include("read_set.jl")
+include("set/select_set.jl")
 
-include("select_set.jl")
+include("set/read_set.jl")
 
-#
-include("get_p_value_and_adjust.jl")
+include("support/get_p_value_and_adjust.jl")
 
-include("make_set_by_statistic.jl")
+include("support/make_set_by_statistic.jl")
 
-#
-include("run_single_sample_gsea.jl")
+include("command/convert_gct_and_cls.jl")
 
-include("run_pre_rank_gsea.jl")
+include("command/convert_gmt.jl")
 
-include("run_standard_gsea.jl")
+include("command/run_single_sample_gsea.jl")
+
+include("command/run_pre_rank_gsea.jl")
+
+include("command/run_standard_gsea.jl")
 
 """
 Gene Set Enrichment Analysis

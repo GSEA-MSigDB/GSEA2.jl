@@ -1,0 +1,20 @@
+NAME	SYMBOL	TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	MAP2K1	mitogen-activated protein kinase kinase 1 [Source:HGNC Symbol;Acc:HGNC:6840]	32	0.40987110137939453	0.1493366	Yes	
+row_1	PIK3CA	"phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit alpha [Source:HGNC Symbol;Acc:HGNC:8975]"	74	0.36631518602371216	0.2814109	Yes	
+row_2	RHOA	ras homolog family member A [Source:HGNC Symbol;Acc:HGNC:667]	1007	0.18702130019664764	0.24651997	Yes	
+row_3	ROCK1	Rho associated coiled-coil containing protein kinase 1 [Source:HGNC Symbol;Acc:HGNC:10251]	1009	0.18687939643859863	0.31613582	Yes	
+row_4	RAF1	"Raf-1 proto-oncogene, serine/threonine kinase [Source:HGNC Symbol;Acc:HGNC:9829]"	1292	0.16379843652248383	0.3455809	Yes	
+row_5	MAPK1	mitogen-activated protein kinase 1 [Source:HGNC Symbol;Acc:HGNC:6871]	1626	0.138785719871521	0.3599655	Yes	
+row_6	ARHGAP5	Rho GTPase activating protein 5 [Source:HGNC Symbol;Acc:HGNC:675]	1664	0.13636648654937744	0.40669093	Yes	
+row_7	FYN	"FYN proto-oncogene, Src family tyrosine kinase [Source:HGNC Symbol;Acc:HGNC:4037]"	2247	0.0979047566652298	0.37785712	Yes	
+row_8	HRAS	"HRas proto-oncogene, GTPase [Source:HGNC Symbol;Acc:HGNC:5173]"	2371	0.0904378741979599	0.39778712	Yes	
+row_9	TLN1	talin 1 [Source:HGNC Symbol;Acc:HGNC:11845]	2449	0.086101233959198	0.4212653	Yes	
+row_10	MYL2	myosin light chain 2 [Source:HGNC Symbol;Acc:HGNC:7583]	2663	0.07327114045619965	0.4246823	Yes	
+row_11	ITGB1	integrin subunit beta 1 [Source:HGNC Symbol;Acc:HGNC:6153]	2711	0.07071434706449509	0.4457886	Yes	
+row_12	DIAPH1	diaphanous related formin 1 [Source:HGNC Symbol;Acc:HGNC:2876]	3077	0.04978173226118088	0.42337027	No	
+row_13	SHC1	SHC adaptor protein 1 [Source:HGNC Symbol;Acc:HGNC:10840]	3414	0.031910285353660583	0.39754075	No	
+row_14	GSN	gelsolin [Source:HGNC Symbol;Acc:HGNC:4620]	5581	-0.07566230744123459	0.18251029	No	
+row_15	PFN1	profilin 1 [Source:HGNC Symbol;Acc:HGNC:8881]	5600	-0.07688872516155243	0.20917733	No	
+row_16	PIK3R1	phosphoinositide-3-kinase regulatory subunit 1 [Source:HGNC Symbol;Acc:HGNC:8979]	5650	-0.07974905520677567	0.23343003	No	
+row_17	MAPK3	mitogen-activated protein kinase 3 [Source:HGNC Symbol;Acc:HGNC:6877]	6466	-0.12533026933670044	0.18866117	No	
+row_18	PIK3CG	"phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit gamma [Source:HGNC Symbol;Acc:HGNC:8978]"	8021	-0.23332446813583374	0.10119055	No	

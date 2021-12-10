@@ -285,6 +285,14 @@ version = "0.5.0"
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
+[[deps.GCTAccess]]
+deps = ["BenchmarkTools", "CSV", "DataFrames", "Revise"]
+git-tree-sha1 = "c735c0bd05e963af428aafb2109310b4f3f13fd0"
+repo-rev = "main"
+repo-url = "https://github.com/KwatMDPhD/GCTAccess.jl"
+uuid = "1826ff36-e735-464f-baa4-30cb618cd5cb"
+version = "0.1.0"
+
 [[deps.GMTAccess]]
 deps = ["BenchmarkTools", "Revise"]
 git-tree-sha1 = "1ab2acd70274b7e40cae58bf3da55c1454864b0b"

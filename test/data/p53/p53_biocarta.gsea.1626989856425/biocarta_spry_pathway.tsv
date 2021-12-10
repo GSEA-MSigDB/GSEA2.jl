@@ -1,0 +1,16 @@
+NAME	SYMBOL	TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	MAP2K1	mitogen-activated protein kinase kinase 1 [Source:HGNC Symbol;Acc:HGNC:6840]	32	0.40987110137939453	0.21178067	Yes	
+row_1	SPRY2	sprouty RTK signaling antagonist 2 [Source:HGNC Symbol;Acc:HGNC:11270]	537	0.23824429512023926	0.28039137	Yes	
+row_2	SPRY1	sprouty RTK signaling antagonist 1 [Source:HGNC Symbol;Acc:HGNC:11269]	846	0.2001994252204895	0.3510135	Yes	
+row_3	RAF1	"Raf-1 proto-oncogene, serine/threonine kinase [Source:HGNC Symbol;Acc:HGNC:9829]"	1292	0.16379843652248383	0.38712877	Yes	
+row_4	EGFR	epidermal growth factor receptor [Source:HGNC Symbol;Acc:HGNC:3236]	1405	0.15559937059879303	0.45631784	Yes	
+row_5	MAPK1	mitogen-activated protein kinase 1 [Source:HGNC Symbol;Acc:HGNC:6871]	1626	0.138785719871521	0.50454795	Yes	
+row_6	HRAS	"HRas proto-oncogene, GTPase [Source:HGNC Symbol;Acc:HGNC:5173]"	2371	0.0904378741979599	0.4685495	Yes	
+row_7	RASA1	RAS p21 protein activator 1 [Source:HGNC Symbol;Acc:HGNC:9871]	2398	0.08889597654342651	0.5123425	Yes	
+row_8	PTPRB	protein tyrosine phosphatase receptor type B [Source:HGNC Symbol;Acc:HGNC:9665]	2539	0.08037634193897247	0.5388613	Yes	
+row_9	SHC1	SHC adaptor protein 1 [Source:HGNC Symbol;Acc:HGNC:10840]	3414	0.031910285353660583	0.45751494	No	
+row_10	SOS1	SOS Ras/Rac guanine nucleotide exchange factor 1 [Source:HGNC Symbol;Acc:HGNC:11187]	4714	-0.03273424506187439	0.32889166	No	
+row_11	CBL	Cbl proto-oncogene [Source:HGNC Symbol;Acc:HGNC:1541]	4720	-0.03289775922894478	0.345617	No	
+row_12	EGF	epidermal growth factor [Source:HGNC Symbol;Acc:HGNC:3229]	4935	-0.0443342886865139	0.34488976	No	
+row_13	GRB2	growth factor receptor bound protein 2 [Source:HGNC Symbol;Acc:HGNC:4566]	5455	-0.06966076791286469	0.32323182	No	
+row_14	MAPK3	mitogen-activated protein kinase 3 [Source:HGNC Symbol;Acc:HGNC:6877]	6466	-0.12533026933670044	0.27570727	No	

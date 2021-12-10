@@ -1,0 +1,27 @@
+NAME	SYMBOL	TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	IL6	interleukin 6 [Source:HGNC Symbol;Acc:HGNC:6018]	1948	0.11536508053541183	-0.19097798	No	
+row_1	CSF2	colony stimulating factor 2 [Source:HGNC Symbol;Acc:HGNC:2434]	1967	0.1142176017165184	-0.16530713	No	
+row_2	TGFB1	transforming growth factor beta 1 [Source:HGNC Symbol;Acc:HGNC:11766]	2140	0.10462617129087448	-0.15927109	No	
+row_3	TGFB3	transforming growth factor beta 3 [Source:HGNC Symbol;Acc:HGNC:11769]	2713	0.07067940384149551	-0.20642501	No	
+row_4	TGFB2	transforming growth factor beta 2 [Source:HGNC Symbol;Acc:HGNC:11768]	2732	0.06941182166337967	-0.19161808	No	
+row_5	IL11	interleukin 11 [Source:HGNC Symbol;Acc:HGNC:5966]	3150	0.04569629579782486	-0.22740796	No	
+row_6	HLA-DRB4	"major histocompatibility complex, class II, DR beta 4 [Source:HGNC Symbol;Acc:HGNC:4952]"	3859	0.009257825091481209	-0.30474064	No	
+row_7	IL13	interleukin 13 [Source:HGNC Symbol;Acc:HGNC:5973]	4022	0.001447303220629692	-0.3225981	No	
+row_8	CSF1	colony stimulating factor 1 [Source:HGNC Symbol;Acc:HGNC:2432]	4993	-0.04741920530796051	-0.42012602	No	
+row_9	IL5	interleukin 5 [Source:HGNC Symbol;Acc:HGNC:6016]	5064	-0.05076282098889351	-0.41568553	No	
+row_10	CXCL8	C-X-C motif chemokine ligand 8 [Source:HGNC Symbol;Acc:HGNC:6025]	5172	-0.05645006150007248	-0.41402477	No	
+row_11	IL10	interleukin 10 [Source:HGNC Symbol;Acc:HGNC:5962]	6208	-0.11082838475704193	-0.5034839	No	
+row_12	PDGFA	platelet derived growth factor subunit A [Source:HGNC Symbol;Acc:HGNC:8799]	6564	-0.13096097111701965	-0.51163125	Yes	
+row_13	IL3	interleukin 3 [Source:HGNC Symbol;Acc:HGNC:6011]	6693	-0.13808341324329376	-0.49253747	Yes	
+row_14	HLA-DRA	"major histocompatibility complex, class II, DR alpha [Source:HGNC Symbol;Acc:HGNC:4947]"	6977	-0.15669366717338562	-0.4863529	Yes	
+row_15	IL15	interleukin 15 [Source:HGNC Symbol;Acc:HGNC:5977]	7125	-0.1671571582555771	-0.4623452	Yes	
+row_16	IL7	interleukin 7 [Source:HGNC Symbol;Acc:HGNC:6023]	7174	-0.171297088265419	-0.4262064	Yes	
+row_17	IL2	interleukin 2 [Source:HGNC Symbol;Acc:HGNC:6001]	7416	-0.1872665286064148	-0.40788823	Yes	
+row_18	IFNG	interferon gamma [Source:HGNC Symbol;Acc:HGNC:5438]	7462	-0.19068045914173126	-0.3667124	Yes	
+row_19	HLA-DRB1	"major histocompatibility complex, class II, DR beta 1 [Source:HGNC Symbol;Acc:HGNC:4948]"	7534	-0.1963568776845932	-0.32708254	Yes	
+row_20	IFNB1	interferon beta 1 [Source:HGNC Symbol;Acc:HGNC:5434]	8172	-0.2489132285118103	-0.33832645	Yes	
+row_21	CSF3	colony stimulating factor 3 [Source:HGNC Symbol;Acc:HGNC:2438]	8211	-0.2519446611404419	-0.2815093	Yes	
+row_22	TNF	tumor necrosis factor [Source:HGNC Symbol;Acc:HGNC:11892]	8714	-0.33980971574783325	-0.25554016	Yes	
+row_23	CD4	CD4 molecule [Source:HGNC Symbol;Acc:HGNC:1678]	8727	-0.3434375524520874	-0.17361665	Yes	
+row_24	IL4	interleukin 4 [Source:HGNC Symbol;Acc:HGNC:6014]	8760	-0.3543785512447357	-0.09128826	Yes	
+row_25	IFNA1	interferon alpha 1 [Source:HGNC Symbol;Acc:HGNC:5417]	8888	-0.4511306881904602	0.003821576	Yes	

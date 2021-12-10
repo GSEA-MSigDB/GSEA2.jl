@@ -1,0 +1,16 @@
+NAME	SYMBOL	TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	MAP2K1	mitogen-activated protein kinase kinase 1 [Source:HGNC Symbol;Acc:HGNC:6840]	32	0.40987110137939453	0.19058235	Yes	
+row_1	RELA	"RELA proto-oncogene, NF-kB subunit [Source:HGNC Symbol;Acc:HGNC:9955]"	50	0.38378918170928955	0.3704924	Yes	
+row_2	RAF1	"Raf-1 proto-oncogene, serine/threonine kinase [Source:HGNC Symbol;Acc:HGNC:9829]"	1292	0.16379843652248383	0.30877823	Yes	
+row_3	FOS	"Fos proto-oncogene, AP-1 transcription factor subunit [Source:HGNC Symbol;Acc:HGNC:3796]"	1302	0.16291888058185577	0.38494998	Yes	
+row_4	MAPK1	mitogen-activated protein kinase 1 [Source:HGNC Symbol;Acc:HGNC:6871]	1626	0.138785719871521	0.41443956	Yes	
+row_5	NFKBIA	NFKB inhibitor alpha [Source:HGNC Symbol;Acc:HGNC:7797]	1878	0.11964825540781021	0.44294548	Yes	
+row_6	HRAS	"HRas proto-oncogene, GTPase [Source:HGNC Symbol;Acc:HGNC:5173]"	2371	0.0904378741979599	0.43055877	Yes	
+row_7	PLCB1	phospholipase C beta 1 [Source:HGNC Symbol;Acc:HGNC:15917]	2387	0.08975800126791	0.47139737	Yes	
+row_8	PRKCB	protein kinase C beta [Source:HGNC Symbol;Acc:HGNC:9395]	3469	0.029252463951706886	0.363904	No	
+row_9	NFKB1	nuclear factor kappa B subunit 1 [Source:HGNC Symbol;Acc:HGNC:7794]	4124	-0.004002309404313564	0.2923829	No	
+row_10	JUN	"Jun proto-oncogene, AP-1 transcription factor subunit [Source:HGNC Symbol;Acc:HGNC:6204]"	4217	-0.009145811200141907	0.2863879	No	
+row_11	MYC	"MYC proto-oncogene, bHLH transcription factor [Source:HGNC Symbol;Acc:HGNC:7553]"	4375	-0.01740240678191185	0.2770076	No	
+row_12	PRKCA	protein kinase C alpha [Source:HGNC Symbol;Acc:HGNC:9393]	4594	-0.026886962354183197	0.2652728	No	
+row_13	MAPK3	mitogen-activated protein kinase 3 [Source:HGNC Symbol;Acc:HGNC:6877]	6466	-0.12533026933670044	0.11461154	No	
+row_14	TNF	tumor necrosis factor [Source:HGNC Symbol;Acc:HGNC:11892]	8714	-0.33980971574783325	0.023349732	No	

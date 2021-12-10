@@ -1,0 +1,28 @@
+NAME	SYMBOL	TITLE	RANK IN GENE LIST	RANK METRIC SCORE	RUNNING ES	CORE ENRICHMENT	
+row_0	MAP2K1	mitogen-activated protein kinase kinase 1 [Source:HGNC Symbol;Acc:HGNC:6840]	32	0.40987110137939453	0.12352936	Yes	
+row_1	RAC1	Rac family small GTPase 1 [Source:HGNC Symbol;Acc:HGNC:9801]	421	0.25772741436958313	0.15985154	Yes	
+row_2	PAK1	p21 (RAC1) activated kinase 1 [Source:HGNC Symbol;Acc:HGNC:8590]	678	0.21842214465141296	0.19882083	Yes	
+row_3	CALM2	calmodulin 2 [Source:HGNC Symbol;Acc:HGNC:1445]	797	0.20504066348075867	0.24915229	Yes	
+row_4	ELK1	ETS transcription factor ELK1 [Source:HGNC Symbol;Acc:HGNC:3321]	798	0.2049763798713684	0.3127282	Yes	
+row_5	MAP3K1	mitogen-activated protein kinase kinase kinase 1 [Source:HGNC Symbol;Acc:HGNC:6848]	1121	0.17684262990951538	0.33138204	Yes	
+row_6	RAF1	"Raf-1 proto-oncogene, serine/threonine kinase [Source:HGNC Symbol;Acc:HGNC:9829]"	1292	0.16379843652248383	0.3630764	Yes	
+row_7	EGFR	epidermal growth factor receptor [Source:HGNC Symbol;Acc:HGNC:3236]	1405	0.15559937059879303	0.3987475	Yes	
+row_8	MAPK1	mitogen-activated protein kinase 1 [Source:HGNC Symbol;Acc:HGNC:6871]	1626	0.138785719871521	0.41706336	Yes	
+row_9	CALM3	calmodulin 3 [Source:HGNC Symbol;Acc:HGNC:1449]	1906	0.11785062402486801	0.42225373	Yes	
+row_10	MAPK8	mitogen-activated protein kinase 8 [Source:HGNC Symbol;Acc:HGNC:6881]	2011	0.11189831048250198	0.4452697	Yes	
+row_11	HRAS	"HRas proto-oncogene, GTPase [Source:HGNC Symbol;Acc:HGNC:5173]"	2371	0.0904378741979599	0.4329649	No	
+row_12	MAP2K2	mitogen-activated protein kinase kinase 2 [Source:HGNC Symbol;Acc:HGNC:6842]	2827	0.06450290232896805	0.40182468	No	
+row_13	CALM1	calmodulin 1 [Source:HGNC Symbol;Acc:HGNC:1442]	2944	0.05775121599435806	0.40669733	No	
+row_14	SHC1	SHC adaptor protein 1 [Source:HGNC Symbol;Acc:HGNC:10840]	3414	0.031910285353660583	0.36387438	No	
+row_15	PRKCB	protein kinase C beta [Source:HGNC Symbol;Acc:HGNC:9395]	3469	0.029252463951706886	0.36687723	No	
+row_16	AGTR1	angiotensin II receptor type 1 [Source:HGNC Symbol;Acc:HGNC:336]	3759	0.013675274327397346	0.3386323	No	
+row_17	JUN	"Jun proto-oncogene, AP-1 transcription factor subunit [Source:HGNC Symbol;Acc:HGNC:6204]"	4217	-0.009145811200141907	0.29009756	No	
+row_18	PRKCA	protein kinase C alpha [Source:HGNC Symbol;Acc:HGNC:9393]	4594	-0.026886962354183197	0.2561707	No	
+row_19	AGT	angiotensinogen [Source:HGNC Symbol;Acc:HGNC:333]	4614	-0.027887269854545593	0.26268446	No	
+row_20	SOS1	SOS Ras/Rac guanine nucleotide exchange factor 1 [Source:HGNC Symbol;Acc:HGNC:11187]	4714	-0.03273424506187439	0.2617088	No	
+row_21	MAP2K4	mitogen-activated protein kinase kinase 4 [Source:HGNC Symbol;Acc:HGNC:6844]	5267	-0.06049327552318573	0.21842116	No	
+row_22	ATF2	activating transcription factor 2 [Source:HGNC Symbol;Acc:HGNC:784]	5324	-0.06345947831869125	0.23180892	No	
+row_23	GRB2	growth factor receptor bound protein 2 [Source:HGNC Symbol;Acc:HGNC:4566]	5455	-0.06966076791286469	0.23880175	No	
+row_24	GNAQ	G protein subunit alpha q [Source:HGNC Symbol;Acc:HGNC:4390]	6302	-0.11697883158922195	0.17998523	No	
+row_25	MAPK3	mitogen-activated protein kinase 3 [Source:HGNC Symbol;Acc:HGNC:6877]	6466	-0.12533026933670044	0.20053507	No	
+row_26	PTK2B	protein tyrosine kinase 2 beta [Source:HGNC Symbol;Acc:HGNC:9612]	8120	-0.2432011067867279	0.090152994	No	

@@ -14,59 +14,87 @@ using Revise
 using BenchmarkTools
 
 using GMTAccess
-using TableAccess
 
 using GSEA
 
-da = joinpath(@__DIR__, "data", "")
+da = joinpath(@__DIR__, "data")
 
-gm = joinpath(da, "h.all.v7.1.symbols.gmt")
+se = joinpath(da, "h.all.v7.1.symbols.gmt")
 
 ;
 
-GSEA.read_set(gm, Dict("mi" => 33, "ma" => 36))
+GSEA.select_set(GMTAccess.read(se), 33, 36)
 
-GSEA.select_set(GMTAccess.read(gm), 33, 36)
+GSEA.read_set(se, Dict("mi" => 33, "ma" => 36))
 
 ou = joinpath(TE, "single_sample_gsea.tsv")
 
-;
-
-en_se_sa = GSEA.run_single_sample_gsea(
+GSEA.run_single_sample_gsea(
     joinpath(da, "setting_for_single_sample_gsea.json"),
-    gm,
+    se,
     joinpath(da, "nmf_k9_w.tsv"),
     ou,
 )
 
-TableAccess.read(ou)
+readdir(TE)
 
-ou = joinpath(TE, "pre_rank_gsea", "")
+ou = joinpath(TE, "pre_rank_gsea")
 
 mkdir(ou)
 
-;
-
-fl_se_st = GSEA.run_pre_rank_gsea(
+GSEA.run_pre_rank_gsea(
     joinpath(da, "setting_for_pre_rank_gsea.json"),
-    gm,
+    se,
     joinpath(da, "gene_score.tsv"),
     ou,
 )
 
-ou = joinpath(TE, "standard_gsea", "")
+readdir(ou)
+
+ou = joinpath(TE, "standard_gsea")
 
 mkdir(ou)
 
-;
-
-fl_se_st = GSEA.run_standard_gsea(
+GSEA.run_standard_gsea(
     joinpath(da, "setting_for_standard_gsea.json"),
-    gm,
+    se,
     joinpath(da, "sample_value.tsv"),
     joinpath(da, "nmf_k9_w.tsv"),
     ou,
 )
+
+readdir(ou)
+
+di = joinpath(da, "sarcopenia")
+
+gc = joinpath(
+    di,
+    "gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcopenia.vs.normal_counts_collapsed_to_symbols.gct",
+)
+
+cl = joinpath(di, "sarcopenia_bianry.cls")
+
+GSEA.convert_gct_and_cls(gc, cl, di)
+
+readdir(di)
+
+gm = joinpath(di, "c2.cp.wikipathways.v7.4.symbols.gmt")
+
+js = joinpath(di, "set_to_genes.json")
+
+GSEA.convert_gmt(gm, js)
+
+readdir(di)
+
+GSEA.run_standard_gsea(
+    joinpath(da, "setting_for_standard_gsea.json"),
+    joinpath(di, "set_to_genes.json"),
+    joinpath(di, "score.target_by_sample.tsv"),
+    joinpath(di, "score.gene_by_sample.tsv"),
+    di,
+)
+
+readdir(di)
 
 rm(TE; recursive = true)
 
