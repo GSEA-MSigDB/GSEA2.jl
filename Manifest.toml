@@ -799,7 +799,7 @@ uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 
 [[deps.TensorExtension]]
 deps = ["BenchmarkTools", "Revise"]
-git-tree-sha1 = "54f28f25725d74e083c3afd79f948c1be553e93a"
+git-tree-sha1 = "03106cb9e21f54cc7efc0b2a09926d75f29fdcaa"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/TensorExtension.jl"
 uuid = "3f024651-0030-486f-9838-1e091a269f98"
