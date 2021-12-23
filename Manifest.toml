@@ -226,7 +226,7 @@ version = "3.3.10+0"
 
 [[deps.FeatureBySample]]
 deps = ["BenchmarkTools", "FinalFigure", "InformationMetric", "Revise", "TensorExtension", "TensorFunction"]
-git-tree-sha1 = "5a208706936d6b9bbc2492a871c17748c55169f6"
+git-tree-sha1 = "882336aac21b8f3b6440f6505b8b78aca13b05f8"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/FeatureBySample.jl"
 uuid = "17396600-f8ee-44a7-9d7d-b6508070e752"
@@ -234,7 +234,7 @@ version = "0.1.0"
 
 [[deps.FeatureSetEnrichment]]
 deps = ["BenchmarkTools", "ConstantExtension", "DataFrames", "FinalFigure", "GMTAccess", "GeometryExtension", "InformationMetric", "OrderedCollections", "PlotlyJS", "Printf", "Revise", "StatsBase", "TableAccess", "TensorExtension", "VectorExtension"]
-git-tree-sha1 = "ef16364ab32cffd36517db6765d1bd1787ca61d5"
+git-tree-sha1 = "6e6f11df3d0332e9267103aafc996ecd81f4198b"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/FeatureSetEnrichment.jl"
 uuid = "31f5d874-04ed-4913-a836-5dfb4db0e9a0"
