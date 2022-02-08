@@ -6,7 +6,6 @@ Convert `.gct` and `.cls` to `.tsv`s
   - `gc`: `.gct`
   - `cl`: `.cls`
   - `ou`: output directory
-
 """
 @cast function convert_gct_and_cls(gc::String, cl::String, ou::String)::Nothing
 

@@ -1,5 +1,5 @@
 function make_set_by_statistic(
-    se_en::Dict{String,Float64},
+    se_en::Dict{String, Float64},
     pv_::Vector{Float64},
     ad_::Vector{Float64},
     ou::String,

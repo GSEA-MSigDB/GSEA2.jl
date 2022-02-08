@@ -5,7 +5,6 @@ Convert `.gmt` to `.json`
 
   - `gm`: `.gmt`
   - `js`: output `.json`
-
 """
 @cast function convert_gmt(gm::String, js::String)::Nothing
 

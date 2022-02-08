@@ -1,7 +1,7 @@
 function read_set(
     pa::String,
-    ke_ar::Dict{String,T} where {T<:Any},
-)::Dict{String,Vector{String}}
+    ke_ar::Dict{String, T} where {T <: Any},
+)::Dict{String, Vector{String}}
 
     ex = splitext(pa)[2]
 
@@ -11,7 +11,7 @@ function read_set(
 
     elseif ex == ".json"
 
-        se_ge_ = convert(Dict{String,Vector{String}}, DictExtension.read(pa))
+        se_ge_ = convert(Dict{String, Vector{String}}, DictExtension.read(pa))
 
     else
 

@@ -1,7 +1,7 @@
 function get_p_value_and_adjust(
-    se_en::Dict{String,Float64},
-    se_ra_::Vector{Dict{String,Float64}},
-)::Tuple{Vector{Float64},Vector{Float64}}
+    se_en::Dict{String, Float64},
+    se_ra_::Vector{Dict{String, Float64}},
+)::Tuple{Vector{Float64}, Vector{Float64}}
 
     pv_ = Vector{Float64}()
 

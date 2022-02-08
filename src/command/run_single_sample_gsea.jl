@@ -7,14 +7,8 @@ Run single-sample GSEA
   - `se`:
   - `ts`:
   - `ou`: output directory
-
 """
-@cast function run_single_sample_gsea(
-    js::String,
-    se::String,
-    ts::String,
-    ou::String,
-)::Nothing
+@cast function run_single_sample_gsea(js::String, se::String, ts::String, ou::String)::Nothing
 
     ke_ar = DictExtension.read(js)
 
