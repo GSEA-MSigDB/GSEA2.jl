@@ -9,23 +9,17 @@ Run standard GSEA
   - `tsd`:
   - `ou`: output directory
 """
-@cast function run_standard_gsea(
-    js::String,
-    se::String,
-    tst::String,
-    tsd::String,
-    ou::String,
-)::Nothing
+@cast function run_standard_gsea(js, se, tst, tsd, ou)
 
-    ke_ar = DictExtension.read(js)
+    ke_ar = dict_read(js)
 
-    nu_ta_sa = TableAccess.read(tst)
+    nu_ta_sa = table_read(tst)
 
-    sc_fe_sa = TableAccess.read(tsd)
+    sc_fe_sa = table_read(tsd)
 
     fe_ = string.(sc_fe_sa[:, 1])
 
-    sc_ = FeatureBySample.compare_with_target(
+    sc_ = compare_with_target(
         BitVector(nu_ta_sa[1, :]),
         Matrix(sc_fe_sa[:, 2:end]),
         "signal_to_noise_ratio",
@@ -41,9 +35,9 @@ Run standard GSEA
 
         n_pe = pop!(ke_ar, "n_pe")
 
-        ke_ar = DictExtension.convert_to_keyword_argument(ke_ar)
+        ke_ar = symbolize_key(ke_ar)
 
-        se_en = FeatureSetEnrichment.score_set(fe_, sc_, se_fe_; ke_ar...)
+        se_en = score_set(fe_, sc_, se_fe_; ke_ar...)
 
         # TODO: set random generator
 
@@ -57,7 +51,7 @@ Run standard GSEA
 
                 println("  ", it, "/", n_pe)
 
-                push!(_se_ra, FeatureSetEnrichment.score_set(fe_, shuffle!(sh_), se_fe_; ke_ar...))
+                push!(_se_ra, score_set(fe_, shuffle!(sh_), se_fe_; ke_ar...))
 
             end
 
@@ -73,13 +67,11 @@ Run standard GSEA
 
         println("Plotting")
 
-        return nothing
-
     elseif pe == "set"
 
         n_pe = pop!(ke_ar, "n_pe")
 
-        return run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
+        run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
 
     else
 

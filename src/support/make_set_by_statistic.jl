@@ -1,9 +1,4 @@
-function make_set_by_statistic(
-    se_en::Dict{String, Float64},
-    pv_::Vector{Float64},
-    ad_::Vector{Float64},
-    ou::String,
-)::DataFrame
+function make_set_by_statistic(se_en, pv_, ad_, ou)
 
     fl_se_st = sort(
         DataFrame(
@@ -15,8 +10,8 @@ function make_set_by_statistic(
         "Enrichment",
     )
 
-    TableAccess.write(joinpath(ou, "set_by_statistic.tsv"), fl_se_st)
+    table_write(joinpath(ou, "set_by_statistic.tsv"), fl_se_st)
 
-    return fl_se_st
+    fl_se_st
 
 end

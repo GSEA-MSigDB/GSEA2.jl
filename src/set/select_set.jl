@@ -1,19 +1,15 @@
-function select_set(
-    se_fe_::Dict{String, Vector{String}},
-    mi::Int64,
-    ma::Int64,
-)::Dict{String, Vector{String}}
+function select_set(se_fe_, mi, ma)
 
     println("Before selecting set:")
 
-    DictExtension.summarize(se_fe_; n_pr = 0)
+    summarize(se_fe_; n_pr = 0)
 
     se_fe_ = Dict(se => fe_ for (se, fe_) in se_fe_ if mi <= length(fe_) <= ma)
 
     println("After:")
 
-    DictExtension.summarize(se_fe_; n_pr = 0)
+    summarize(se_fe_; n_pr = 0)
 
-    return se_fe_
+    se_fe_
 
 end

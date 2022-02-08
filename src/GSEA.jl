@@ -1,17 +1,17 @@
 module GSEA
 
 using Comonicon
-using DataFrames
+using DataFrames: DataFrame, names
 using Random
 using StatsBase
 
-using DictExtension
-using FeatureBySample
-using FeatureSetEnrichment
-using GCTAccess
-using GMTAccess
-using Significance
-using TableAccess
+using OnePiece.extension.dict: read as dict_read, summarize, symbolize_key, write as dict_write
+using OnePiece.feature_by_sample: compare_with_target
+using OnePiece.feature_set_enrichment: score_set
+using OnePiece.informatics.significance: adjust_p_value, get_p_value
+using OnePiece.io.gct: read as gct_read
+using OnePiece.io.gmt: read as gmt_read
+using OnePiece.io.table: read as table_read, write as table_write
 
 include("set/select_set.jl")
 

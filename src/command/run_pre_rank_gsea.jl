@@ -1,15 +1,8 @@
-function run_pre_rank_gsea(
-    ke_ar::Dict{String, Any},
-    se_fe_::Dict{String, Vector{String}},
-    fe_::Vector{String},
-    sc_::Vector{Float64},
-    n_pe::Int64,
-    ou::String,
-)::Nothing
+function run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
 
-    ke_ar = DictExtension.convert_to_keyword_argument(ke_ar)
+    ke_ar = symbolize_key(ke_ar)
 
-    se_en = FeatureSetEnrichment.score_set(fe_, sc_, se_fe_; ke_ar...)
+    se_en = score_set(fe_, sc_, se_fe_; ke_ar...)
 
     if 0 < n_pe
 
@@ -17,7 +10,7 @@ function run_pre_rank_gsea(
 
         se_si = Dict(se => length(fe_) for (se, fe_) in se_fe_)
 
-        se_ra_ = Vector{Dict{String, Float64}}()
+        se_ra_ = []
 
         # TODO: set random generator
 
@@ -27,7 +20,7 @@ function run_pre_rank_gsea(
 
             push!(
                 se_ra_,
-                FeatureSetEnrichment.score_set(
+                score_set(
                     fe_,
                     sc_,
                     Dict(se => sample(fe_, si; replace = false) for (se, si) in se_si);
@@ -49,8 +42,6 @@ function run_pre_rank_gsea(
 
     println("Plotting")
 
-    return nothing
-
 end
 
 """
@@ -63,16 +54,16 @@ Run pre-rank GSEA
   - `ts`:
   - `ou`: output directory
 """
-@cast function run_pre_rank_gsea(js::String, se::String, ts::String, ou::String)::Nothing
+@cast function run_pre_rank_gsea(js, se, ts, ou)
 
-    ke_ar = DictExtension.read(js)
+    ke_ar = dict_read(js)
 
-    fe_sc = TableAccess.read(ts)
+    fe_sc = table_read(ts)
 
-    return run_pre_rank_gsea(
+    run_pre_rank_gsea(
         ke_ar,
         read_set(se, ke_ar),
-        convert(Vector{String}, fe_sc[!, 1]),
+        fe_sc[!, 1],
         fe_sc[!, 2],
         pop!(ke_ar, "n_pe"),
         ou,

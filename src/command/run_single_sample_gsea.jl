@@ -8,22 +8,16 @@ Run single-sample GSEA
   - `ts`:
   - `ou`: output directory
 """
-@cast function run_single_sample_gsea(js::String, se::String, ts::String, ou::String)::Nothing
+@cast function run_single_sample_gsea(js, se, ts, ou)
 
-    ke_ar = DictExtension.read(js)
+    ke_ar = dict_read(js)
 
     se_fe_ = read_set(se, ke_ar)
 
-    sc_fe_sa = TableAccess.read(ts)
+    sc_fe_sa = table_read(ts)
 
-    en_se_sa = FeatureSetEnrichment.score_set(
-        sc_fe_sa,
-        se_fe_;
-        DictExtension.convert_to_keyword_argument(ke_ar)...,
-    )
+    en_se_sa = score_set(sc_fe_sa, se_fe_; symbolize_key(ke_ar)...)
 
-    TableAccess.write(ou, en_se_sa)
-
-    return nothing
+    table_write(ou, en_se_sa)
 
 end

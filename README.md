@@ -6,56 +6,73 @@ The official Gene Set Enrichment Analysis :dna:
 
 ### Run single-sample GSEA
 
-```sh
+```bash
 gsea si
 ```
 
 ### Run pre-rank GSEA
 
-```sh
+```bash
 gsea pr
 ```
 
 ### Run standard GSEA
 
-```sh
+```bash
 gsea st
 ```
 
 ### Convert `.gct` and `.cls` to `.tsv`s
 
-```sh
+```bash
 gsea convert-gct-and-cls bad.gct output/
 ```
 
 ### Convert `.gmt` to `.json`
 
-```sh
+```bash
 gsea convert-gmt bad.gmt good.json
 ```
 
-### Test sarcopenia
+Settings are just [`.json` files](test/data/setting).
 
-```sh
+## Run test
 
+Go to the test directory
+
+```bash
 cd test/data/sarcopenia
 
+ls
+```
+
+Convert `.gct` and `.cls` into `.tsv`
+
+```bash
 gsea convert-gct-and-cls gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcopenia.vs.normal_counts_collapsed_to_symbols.gct sarcopenia_bianry.cls .
 
 ls score.*
+```
 
+Convert `.gmt` into `.json`
+
+```bash
 gsea convert-gmt c2.cp.wikipathways.v7.4.symbols.gmt set_to_genes.json
 
 head set_to_genes.json
+```
 
-gsea run-standard-gsea ../setting_for_standard_gsea.json set_to_genes.json score.target_by_sample.tsv score.gene_by_sample.tsv .
+Run standard GSEA
+
+```bash
+gsea run-standard-gsea ../setting/standard_gsea.json set_to_genes.json score.target_by_sample.tsv score.gene_by_sample.tsv .
 
 head set_by_statistic.tsv
 ```
 
 ## Install
 
-```sh
+```bash
 git clone https://github.com/KwatMDPhD/GSEA.jl &&
 
 cd GSEA.jl &&
@@ -67,17 +84,17 @@ julia --project deps/build.jl
 
 :point_up: commands install `gsea` into `~/.julia/bin`.
 
-If not already, add this `bin` to the path by adding :point_down: to the profile (`~/.zshrc`, `~/.bashrc`, ...)
+If not already, add this `bin` to the path by adding :point_down: to the profile (`~/.zbashrc`, `~/.babashrc`, ...)
 
-```sh
+```bash
 PATH=~/.julia/bin:$PATH
 ```
 
-Start a new shell to load the updated profile.
+Start a new bashell to load the updated profile.
 
 Test installation
 
-```sh
+```bash
 gsea -h
 ```
 

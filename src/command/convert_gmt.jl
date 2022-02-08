@@ -6,12 +6,10 @@ Convert `.gmt` to `.json`
   - `gm`: `.gmt`
   - `js`: output `.json`
 """
-@cast function convert_gmt(gm::String, js::String)::Nothing
+@cast function convert_gmt(gm, js)
 
-    se_ge_ = GMTAccess.read(gm)
+    se_ge_ = gmt_read(gm)
 
-    DictExtension.write(js, se_ge_)
-
-    return nothing
+    dict_write(js, se_ge_)
 
 end

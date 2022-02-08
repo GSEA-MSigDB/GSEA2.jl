@@ -1,17 +1,14 @@
-function read_set(
-    pa::String,
-    ke_ar::Dict{String, T} where {T <: Any},
-)::Dict{String, Vector{String}}
+function read_set(pa, ke_ar)
 
     ex = splitext(pa)[2]
 
     if ex == ".gmt"
 
-        se_ge_ = GMTAccess.read(pa)
+        se_ge_ = gmt_read(pa)
 
     elseif ex == ".json"
 
-        se_ge_ = convert(Dict{String, Vector{String}}, DictExtension.read(pa))
+        se_ge_ = dict_read(pa)
 
     else
 
@@ -19,6 +16,6 @@ function read_set(
 
     end
 
-    return select_set(se_ge_, pop!(ke_ar, "mi"), pop!(ke_ar, "ma"))
+    select_set(se_ge_, pop!(ke_ar, "mi"), pop!(ke_ar, "ma"))
 
 end
