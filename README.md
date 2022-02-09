@@ -2,6 +2,8 @@
 
 The official Gene Set Enrichment Analysis :dna:
 
+**:information_desk_person: Join the [bioinformatics community](https://discord.gg/Q8XyvCfH) to get live help on GSEA and everything bioinformatics :circus_tent: :keyboard: :beginner: :bulb:**
+
 ## Use `gsea` command line interface
 
 ### Run single-sample GSEA
