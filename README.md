@@ -40,7 +40,7 @@ Settings are just [`.json` files](test/data/setting).
 
 ## Run test
 
-Go to the test directory
+1. Go to the test directory
 
 ```bash
 cd test/data/sarcopenia
@@ -48,26 +48,32 @@ cd test/data/sarcopenia
 ls
 ```
 
-Convert `.gct` and `.cls` into `.tsv`
+2. Make output directory
 
 ```bash
-gsea convert-gct-and-cls gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcopenia.vs.normal_counts_collapsed_to_symbols.gct sarcopenia_bianry.cls .
+mkdir output
+```
+
+3. Convert `.gct` and `.cls` into `.tsv`
+
+```bash
+gsea convert-gct-and-cls gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcopenia.vs.normal_counts_collapsed_to_symbols.gct sarcopenia_bianry.cls output
 
 ls score.*
 ```
 
-Convert `.gmt` into `.json`
+4. Convert `.gmt` into `.json`
 
 ```bash
-gsea convert-gmt c2.cp.wikipathways.v7.4.symbols.gmt set_to_genes.json
+gsea convert-gmt c2.cp.wikipathways.v7.4.symbols.gmt output/set_to_genes.json
 
 head set_to_genes.json
 ```
 
-Run standard GSEA
+5. Run standard GSEA
 
 ```bash
-gsea run-standard-gsea ../setting/standard_gsea.json set_to_genes.json score.target_by_sample.tsv score.gene_by_sample.tsv .
+gsea run-standard-gsea ../setting/standard_gsea.json output/set_to_genes.json output/score.target_by_sample.tsv output/score.gene_by_sample.tsv output
 
 head set_by_statistic.tsv
 ```
