@@ -1,4 +1,4 @@
-TE = joinpath(tempdir(), "GSEA.test", "")
+TE = joinpath(tempdir(), "GSEA.test")
 
 if isdir(TE)
 
@@ -9,7 +9,7 @@ end
 mkdir(TE)
 
 #using Revise
-#using BenchmarkTools
+using BenchmarkTools
 
 using OnePiece
 
