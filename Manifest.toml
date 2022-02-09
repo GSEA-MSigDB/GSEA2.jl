@@ -60,12 +60,6 @@ git-tree-sha1 = "19a35467a82e236ff51bc17a3a44b69ef35185a2"
 uuid = "6e34b625-4abd-537c-b88f-471c36dfa7a0"
 version = "1.0.8+0"
 
-[[deps.CSTParser]]
-deps = ["Tokenize"]
-git-tree-sha1 = "6cc1759204bed5a4e2a5c2f00901fd5d90bc7a62"
-uuid = "00ebfdb7-1f24-5e51-bd34-a7502290713f"
-version = "3.3.1"
-
 [[deps.CSV]]
 deps = ["CodecZlib", "Dates", "FilePathsBase", "InlineStrings", "Mmap", "Parsers", "PooledArrays", "SentinelArrays", "Tables", "Unicode", "WeakRefStrings"]
 git-tree-sha1 = "9519274b50500b8029973d241d32cfbf0b127d97"
@@ -125,12 +119,6 @@ deps = ["ColorTypes", "FixedPointNumbers", "Reexport"]
 git-tree-sha1 = "417b0ed7b8b838aa6ca0a87aadf1bb9eb111ce40"
 uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
 version = "0.12.8"
-
-[[deps.CommonMark]]
-deps = ["Crayons", "JSON", "URIs"]
-git-tree-sha1 = "4aff51293dbdbd268df314827b7f409ea57f5b70"
-uuid = "a80b9123-70ca-4bc0-993e-6e3bcb318db6"
-version = "0.8.5"
 
 [[deps.Comonicon]]
 deps = ["Configurations", "ExproniconLite", "Libdl", "Logging", "Markdown", "PackageCompiler", "Pkg", "Scratch", "TOML", "UUIDs"]
@@ -432,12 +420,6 @@ git-tree-sha1 = "b53380851c6e6664204efb2e62cd24fa5c47e4ba"
 uuid = "aacddb02-875f-59d6-b918-886e6ef4fbf8"
 version = "2.1.2+0"
 
-[[deps.JuliaFormatter]]
-deps = ["CSTParser", "CommonMark", "DataStructures", "Pkg", "Tokenize"]
-git-tree-sha1 = "0d1eb5e5a6b8b9d324a9abfa5ee092156e59a6da"
-uuid = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
-version = "0.22.2"
-
 [[deps.JuliaInterpreter]]
 deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
 git-tree-sha1 = "b55aae9a2bf436fc797d9c253a900913e0e90178"
@@ -663,12 +645,12 @@ uuid = "e7412a2a-1a6e-54c0-be00-318e2571c051"
 version = "1.3.5+1"
 
 [[deps.OnePiece]]
-deps = ["BenchmarkTools", "CSV", "CodecZlib", "DataFrames", "Distributions", "JSON", "JuliaFormatter", "KernelDensity", "Mmap", "OrderedCollections", "PlotlyJS", "Printf", "Revise", "Statistics", "StatsBase", "TOML", "UUIDs", "WebIO", "XLSX"]
-git-tree-sha1 = "c0886fc41e087b55dd07c4d53d3ff3b6f14f16e0"
+deps = ["BenchmarkTools", "CSV", "CodecZlib", "DataFrames", "Distributions", "JSON", "KernelDensity", "Mmap", "OrderedCollections", "PlotlyJS", "Printf", "Revise", "Statistics", "StatsBase", "TOML", "UUIDs", "XLSX"]
+git-tree-sha1 = "3ee5ecfba27a76216f249aba460b03a774f52519"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/OnePiece.jl"
 uuid = "1fe83854-81c0-42f7-afc9-71ba9af673ca"
-version = "0.5.0"
+version = "0.5.1"
 
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
@@ -948,11 +930,6 @@ uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
-[[deps.Tokenize]]
-git-tree-sha1 = "0952c9cee34988092d73a5708780b3917166a0dd"
-uuid = "0796e94c-ce3b-5d07-9a54-7f471281c624"
-version = "0.5.21"
-
 [[deps.TranscodingStreams]]
 deps = ["Random", "Test"]
 git-tree-sha1 = "216b95ea110b5972db65aa90f88d8d89dcb8851c"
@@ -990,9 +967,7 @@ version = "1.4.1"
 
 [[deps.WebIO]]
 deps = ["AssetRegistry", "Base64", "Distributed", "FunctionalCollections", "JSON", "Logging", "Observables", "Pkg", "Random", "Requires", "Sockets", "UUIDs", "WebSockets", "Widgets"]
-git-tree-sha1 = "32a2192ad49572472534df9dd75c510fe271fb91"
-repo-rev = "master"
-repo-url = "https://github.com/JuliaGizmos/WebIO.jl"
+git-tree-sha1 = "5fe32e4086d49f7ab9b087296742859f3ae6d62a"
 uuid = "0f1e0344-ec1d-5b48-a673-e5cf874b6c29"
 version = "0.8.16"
 

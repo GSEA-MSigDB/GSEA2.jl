@@ -1,7 +1,7 @@
 name = "GSEA"
 uuid = "f74a9ba8-6f1f-48f2-98b6-a79c46cc06f7"
 authors = ["KwatMDPhD <kwat.me@icloud.com>"]
-version = "0.2.0"
+version = "0.2.2"
 
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
@@ -11,4 +11,3 @@ OnePiece = "1fe83854-81c0-42f7-afc9-71ba9af673ca"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-WebIO = "0f1e0344-ec1d-5b48-a673-e5cf874b6c29"
