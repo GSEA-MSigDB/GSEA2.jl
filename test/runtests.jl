@@ -70,7 +70,7 @@ gc = joinpath(
     "gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcopenia.vs.normal_counts_collapsed_to_symbols.gct",
 )
 
-cl = joinpath(di, "sarcopenia_bianry.cls")
+cl = joinpath(di, "sarcopenia_binary.cls")
 
 GSEA.convert_gct_and_cls(gc, cl, di)
 
