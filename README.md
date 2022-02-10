@@ -82,7 +82,7 @@ head output/set_by_statistic.tsv
 
 ## Install
 
-### 1. Clone
+### 1. Download
 
 ```bash
 git clone https://github.com/KwatMDPhD/GSEA.jl &&
