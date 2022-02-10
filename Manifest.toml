@@ -646,11 +646,11 @@ version = "1.3.5+1"
 
 [[deps.OnePiece]]
 deps = ["BenchmarkTools", "CSV", "CodecZlib", "DataFrames", "Distributions", "JSON", "KernelDensity", "Mmap", "OrderedCollections", "PlotlyJS", "Printf", "Revise", "Statistics", "StatsBase", "TOML", "UUIDs", "XLSX"]
-git-tree-sha1 = "3ee5ecfba27a76216f249aba460b03a774f52519"
+git-tree-sha1 = "096345abe73308c864bb0888f9a9e871a680d10f"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/OnePiece.jl"
 uuid = "1fe83854-81c0-42f7-afc9-71ba9af673ca"
-version = "0.5.1"
+version = "0.5.3"
 
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
