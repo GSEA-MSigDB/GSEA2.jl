@@ -82,6 +82,8 @@ head output/set_by_statistic.tsv
 
 ## Install
 
+### 1. Clone
+
 ```bash
 git clone https://github.com/KwatMDPhD/GSEA.jl &&
 
@@ -90,13 +92,15 @@ cd GSEA.jl &&
 julia --project --eval "using Pkg; Pkg.instantiate()"
 ```
 
-### Build a personal binary
+### 2. Build a personal or transferable binary
+
+#### Personal binary
 
 ```bash
 julia --project deps/build.jl
 ```
 
-:point_up: commands install `gsea` into `~/.julia/bin`.
+:point_up: command installs `gsea` into `~/.julia/bin`.
 
 If not already, add this `bin` to the path by adding :point_down: to the profile (`~/.zbashrc`, `~/.babashrc`, ...)
 
@@ -104,15 +108,19 @@ If not already, add this `bin` to the path by adding :point_down: to the profile
 PATH=~/.julia/bin:$PATH
 ```
 
-### Build a transferable binary
+#### Transferable binary
 
 ```bash
 julia --project deps/build.jl app tarball
 ```
 
-Start a new bashell to load the updated profile.
+:point_up: command makes `build` and `gsea...tar.gz`.
 
-Test installation
+Add `build/bin` to the path.
+
+### 3. Test installation
+
+Start a new bash just in case.
 
 ```bash
 gsea -h
