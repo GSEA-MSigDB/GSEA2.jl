@@ -4,7 +4,6 @@ authors = ["KwatMDPhD <kwat.me@icloud.com>"]
 version = "0.3.0"
 
 [deps]
-BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 Comonicon = "863f3e99-da2a-4334-8734-de3dacbe5542"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 OnePiece = "1fe83854-81c0-42f7-afc9-71ba9af673ca"
