@@ -4,7 +4,7 @@ The official Gene Set Enrichment Analysis :dna:
 
 **:information_desk_person: Join the [bioinformatics community](https://discord.gg/Q8XyvCfH) to get live help on GSEA (and everything bioinformatics) :circus_tent: :keyboard: :beginner: :bulb:**
 
-## Use `gsea` command line interface
+## Use `gsea` command-line interface
 
 ### Run single-sample GSEA
 
@@ -100,7 +100,7 @@ julia --project --eval "using Pkg; Pkg.instantiate()"
 julia --project deps/build.jl
 ```
 
-:point_up: command installs `gsea` into `~/.julia/bin`.
+:point_up: installs `gsea` into `~/.julia/bin`.
 
 If not already, add this `bin` to the path by adding :point_down: to the profile (`~/.zbashrc`, `~/.babashrc`, ...)
 
@@ -114,7 +114,7 @@ PATH=~/.julia/bin:$PATH
 julia --project deps/build.jl app tarball
 ```
 
-:point_up: command makes `build` and `gsea...tar.gz`.
+:point_up: makes `build` and `gsea...tar.gz`.
 
 Add `build/bin` to the path.
 
