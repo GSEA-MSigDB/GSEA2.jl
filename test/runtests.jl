@@ -1,15 +1,6 @@
 TE = joinpath(tempdir(), "GSEA.test")
 
-if isdir(TE)
-
-    rm(TE; recursive = true)
-
-end
-
-mkdir(TE)
-
-#using Revise
-#using BenchmarkTools
+mkpath(TE)
 
 using OnePiece
 
