@@ -59,7 +59,7 @@ mkdir output
 3. Convert `.gct` and `.cls` into `.tsv`
 
 ```bash
-gsea convert-gct-and-cls gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcopenia.vs.normal_counts_collapsed_to_symbols.gct sarcopenia_bianry.cls output
+gsea convert-gct-and-cls gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcopenia.vs.normal_counts_collapsed_to_symbols.gct sarcopenia_binary.cls output
 
 ls score.*
 ```
@@ -116,7 +116,7 @@ julia --project deps/build.jl app tarball
 
 :point_up: makes `build` and `gsea-application-N.N.N-julia-N.N.N-MACHINE-xNN.tar.gz`.
 
-Add `build/bin` to the path.
+Add `build/gsea/bin` to the path.
 
 ### 3. Test installation
 
