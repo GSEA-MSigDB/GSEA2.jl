@@ -51,6 +51,8 @@ ls
 2. Make output directory
 
 ```bash
+rm -rf output
+
 mkdir output
 ```
 
@@ -75,7 +77,7 @@ head set_to_genes.json
 ```bash
 gsea run-standard-gsea ../setting/standard_gsea.json output/set_to_genes.json output/score.target_by_sample.tsv output/score.gene_by_sample.tsv output
 
-head set_by_statistic.tsv
+head output/set_by_statistic.tsv
 ```
 
 ## Install
