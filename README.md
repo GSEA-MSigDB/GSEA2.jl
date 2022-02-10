@@ -114,7 +114,7 @@ PATH=~/.julia/bin:$PATH
 julia --project deps/build.jl app tarball
 ```
 
-:point_up: makes `build` and `gsea...tar.gz`.
+:point_up: makes `build` and `gsea-application-N.N.N-julia-N.N.N-MACHINE-xNN.tar.gz`.
 
 Add `build/bin` to the path.
 
