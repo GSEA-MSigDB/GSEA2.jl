@@ -1,6 +1,8 @@
 # GSEA.jl
 
-The official Gene Set Enrichment Analysis :dna:
+The :sparkles: **new** :sparkles: Gene Set Enrichment Analysis :dna:
+
+:construction: Under rapid development :construction:
 
 **:information_desk_person: Join the [bioinformatics community](https://discord.gg/Q8XyvCfH) to get live help on GSEA (and everything bioinformatics) :circus_tent: :keyboard: :beginner: :bulb:**
 
