@@ -69,7 +69,7 @@ ls score.*
 ```bash
 gsea convert-gmt c2.cp.wikipathways.v7.4.symbols.gmt output/set_to_genes.json
 
-head set_to_genes.json
+head output/set_to_genes.json
 ```
 
 5. Run standard GSEA
