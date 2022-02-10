@@ -87,8 +87,12 @@ git clone https://github.com/KwatMDPhD/GSEA.jl &&
 
 cd GSEA.jl &&
 
-julia --project --eval "using Pkg; Pkg.instantiate()" &&
+julia --project --eval "using Pkg; Pkg.instantiate()"
+```
 
+### Build a personal binary
+
+```bash
 julia --project deps/build.jl
 ```
 
@@ -98,6 +102,12 @@ If not already, add this `bin` to the path by adding :point_down: to the profile
 
 ```bash
 PATH=~/.julia/bin:$PATH
+```
+
+### Build a transferable binary
+
+```bash
+julia --project deps/build.jl app tarball
 ```
 
 Start a new bashell to load the updated profile.
