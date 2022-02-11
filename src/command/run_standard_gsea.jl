@@ -75,8 +75,6 @@ Run standard GSEA
 
         fl_se_st = make_set_by_statistic(se_en, pv_, ad_, output_directory)
 
-        println("Plotting")
-
     elseif pe == "set"
 
         fl_se_st = run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, output_directory)
@@ -86,5 +84,15 @@ Run standard GSEA
         error("permutation is not label or set.")
 
     end
+
+    plot_mountain(
+        fl_se_st,
+        ke_ar["number_of_extreme_gene_sets_to_plot"],
+        ke_ar["gene_sets_to_plot"],
+        sc_fe_sa,
+        se_fe_,
+        sy_ar,
+        output_directory,
+    )
 
 end

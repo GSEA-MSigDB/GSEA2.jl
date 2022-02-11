@@ -38,15 +38,7 @@ function run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
 
     end
 
-    fl_se_st = make_set_by_statistic(se_en, pv_, ad_, ou)
-
-    println("Plotting")
-
-    for ro in eachrow(fl_se_st)
-
-        println(ro[1])
-
-    end
+    make_set_by_statistic(se_en, pv_, ad_, ou)
 
 end
 
@@ -71,7 +63,7 @@ Run pre-rank GSEA
 
     fe_sc = table_read(gene_by_sample_tsv)
 
-    run_pre_rank_gsea(
+    fl_se_st = run_pre_rank_gsea(
         ke_ar,
         select_set(
             dict_read(set_to_genes_json),
@@ -81,6 +73,16 @@ Run pre-rank GSEA
         fe_sc[!, 1],
         fe_sc[!, 2],
         ke_ar["number_of_permutations"],
+        output_directory,
+    )
+
+    plot_mountain(
+        fl_se_st,
+        ke_ar["number_of_extreme_gene_sets_to_plot"],
+        ke_ar["gene_sets_to_plot"],
+        sc_fe_sa,
+        se_fe_,
+        sy_ar,
         output_directory,
     )
 

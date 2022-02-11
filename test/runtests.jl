@@ -2,7 +2,7 @@ TE = joinpath(tempdir(), "GSEA.test")
 
 if isdir(TE)
 
-    rm(TE; recursive = true)
+    rm(TE, recursive = true)
 
     println("Removed ", TE, ".")
 
@@ -81,7 +81,7 @@ OnePiece.io.table.read(joinpath(ou, GSEA.OU))
 
 if isdir(TE)
 
-    rm(TE; recursive = true)
+    rm(TE, recursive = true)
 
     println("Removed ", TE, ".")
 

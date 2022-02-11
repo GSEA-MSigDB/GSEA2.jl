@@ -23,8 +23,21 @@ Run single-sample GSEA
         ke_ar["maximum_gene_set_size"],
     )
 
-    en_se_sa = score_set(table_read(gene_by_sample_tsv), se_fe_; make_keyword_argument(ke_ar)...)
+    sy_ar = make_keyword_argument(ke_ar)
+
+    sc_fe_sa = table_read(gene_by_sample_tsv)
+
+    en_se_sa = score_set(sc_fe_sa, se_fe_; sy_ar...)
 
     table_write(joinpath(output_directory, OU), en_se_sa)
+
+    plot_mountain(
+        en_se_sa,
+        ke_ar["number_of_extreme_gene_sets_to_plot"],
+        ke_ar["gene_sets_to_plot"],
+        sc_fe_sa,
+        se_fe_,
+        sy_ar,
+    )
 
 end
