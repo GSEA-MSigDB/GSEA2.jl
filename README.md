@@ -129,7 +129,7 @@ Add `build/gsea/bin` to the path.
 Start a new bash just in case.
 
 ```bash
-gsea -h
+gsea --help
 ```
 
 :tada:
