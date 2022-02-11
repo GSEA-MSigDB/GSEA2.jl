@@ -8,41 +8,41 @@ The :sparkles: **new** :sparkles: Gene Set Enrichment Analysis :dna:
 
 ## Use `gsea` command-line interface
 
-### Run single-sample GSEA
+#### Run single-sample GSEA
 
 ```bash
 gsea si
 ```
 
-### Run pre-rank GSEA
+#### Run pre-rank GSEA
 
 ```bash
 gsea pr
 ```
 
-### Run standard GSEA
+#### Run standard GSEA
 
 ```bash
 gsea st
 ```
 
-### Convert `.gct` and `.cls` to `.tsv`s
+#### Convert `.gct` and `.cls` to `.tsv`s
 
 ```bash
 gsea convert-gct-and-cls bad.gct output/
 ```
 
-### Convert `.gmt` to `.json`
+#### Convert `.gmt` to `.json`
 
 ```bash
 gsea convert-gmt bad.gmt good.json
 ```
 
-Settings are just [`.json` files](test/data/setting).
+#### Settings are just a [`.json` file](gsea_setting.json).
 
-## Run test
+## Try with an example data
 
-1. Go to the test directory
+#### 1. Go to the directory with the example
 
 ```bash
 cd test/data/sarcopenia
@@ -50,7 +50,7 @@ cd test/data/sarcopenia
 ls -l
 ```
 
-2. Make output directory
+#### 2. Make a directory for saving outputs
 
 ```bash
 rm -rf output
@@ -58,7 +58,7 @@ rm -rf output
 mkdir output
 ```
 
-3. Convert `.gct` and `.cls` into `.tsv`
+#### 3. Convert `.gct` and `.cls` into `.tsv`
 
 ```bash
 gsea convert-gct-and-cls gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcopenia.vs.normal_counts_collapsed_to_symbols.gct sarcopenia_binary.cls output
@@ -66,7 +66,7 @@ gsea convert-gct-and-cls gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcope
 ls -l output
 ```
 
-4. Convert `.gmt` into `.json`
+#### 4. Convert `.gmt` into `.json`
 
 ```bash
 gsea convert-gmt c2.cp.wikipathways.v7.4.symbols.gmt output/set_to_genes.json
@@ -76,7 +76,7 @@ ls -l output
 head output/set_to_genes.json
 ```
 
-5. Run standard GSEA
+#### 5. Run standard GSEA
 
 ```bash
 gsea run-standard-gsea ../../../gsea_setting.json output/set_to_genes.json output/target_by_sample.tsv output/gene_by_sample.tsv output
@@ -88,7 +88,25 @@ head output/set_by_statistic.tsv
 
 ## Install
 
-### 1. Download
+1. Download a release and decompress it.
+
+2. Add `build/gsea/bin` to the path.
+
+3. Test installation
+
+Start a new bash just in case.
+
+```bash
+gsea --help
+```
+
+:tada:
+
+If there is no release matching desired machine or if installation fails, try building.
+
+## Build
+
+#### 1. Download this repository
 
 ```bash
 git clone https://github.com/KwatMDPhD/GSEA.jl &&
@@ -98,9 +116,15 @@ cd GSEA.jl &&
 julia --project --eval "using Pkg; Pkg.instantiate()"
 ```
 
-### 2. Build a personal or transferable binary
+#### 2. Test before building
 
-#### Personal binary
+```bash
+julia --project --eval "using Pkg; Pkg.test()"
+```
+
+#### 3. Build a personal or transferable binary
+
+###### Build a personal one
 
 ```bash
 julia --project deps/build.jl
@@ -114,7 +138,7 @@ If not already, add this `bin` to the path by adding :point_down: to the profile
 PATH=~/.julia/bin:$PATH
 ```
 
-#### Transferable binary
+###### Build a transferable one
 
 ```bash
 julia --project deps/build.jl app tarball
@@ -124,7 +148,7 @@ julia --project deps/build.jl app tarball
 
 Add `build/gsea/bin` to the path.
 
-### 3. Test installation
+#### 4. Test build
 
 Start a new bash just in case.
 
