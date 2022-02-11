@@ -13,6 +13,8 @@ using OnePiece.io.gct: read as gct_read
 using OnePiece.io.gmt: read as gmt_read
 using OnePiece.io.table: read as table_read, write as table_write
 
+OU = "set_by_statistic.tsv"
+
 include("support/select_set.jl")
 
 include("support/get_p_value_and_adjust.jl")

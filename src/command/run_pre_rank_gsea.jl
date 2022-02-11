@@ -42,6 +42,12 @@ function run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
 
     println("Plotting")
 
+    for ro in eachrow(fl_se_st)
+
+        println(ro[1])
+
+    end
+
 end
 
 """
@@ -54,15 +60,24 @@ Run pre-rank GSEA
   - `gene_by_sample_tsv`:
   - `output_directory`:
 """
-@cast function run_pre_rank_gsea(setting_json, set_to_genes_json, gene_by_sample_tsv, output_directory)
+@cast function run_pre_rank_gsea(
+    setting_json,
+    set_to_genes_json,
+    gene_by_sample_tsv,
+    output_directory,
+)
 
     ke_ar = dict_read(setting_json)
+
+    se_fe_ = dict_read(set_to_genes_json)
+
+    se_fe_ = select_set(se_fe_, pop!(ke_ar, "mi"), pop!(ke_ar, "ma"))
 
     fe_sc = table_read(gene_by_sample_tsv)
 
     run_pre_rank_gsea(
         ke_ar,
-        select_set(dict_read(set_to_genes_json), pop!(ke_ar, "mi"), pop!(ke_ar, "ma")),
+        se_fe_,
         fe_sc[!, 1],
         fe_sc[!, 2],
         pop!(ke_ar, "n_pe"),

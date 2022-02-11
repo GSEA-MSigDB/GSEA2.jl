@@ -9,7 +9,13 @@ Run standard GSEA
   - `gene_by_sample_tsv`:
   - `output_directory`:
 """
-@cast function run_standard_gsea(setting_json, set_to_genes_json, target_by_sample_tsv, gene_by_sample_tsv, output_directory)
+@cast function run_standard_gsea(
+    setting_json,
+    set_to_genes_json,
+    target_by_sample_tsv,
+    gene_by_sample_tsv,
+    output_directory,
+)
 
     ke_ar = dict_read(setting_json)
 
@@ -25,7 +31,9 @@ Run standard GSEA
         "signal_to_noise_ratio",
     )
 
-    se_fe_ = select_set(dict_read(set_to_genes_json), pop!(ke_ar, "mi"), pop!(ke_ar, "ma"))
+    se_fe_ = dict_read(set_to_genes_json)
+
+    se_fe_ = select_set(se_fe_, pop!(ke_ar, "mi"), pop!(ke_ar, "ma"))
 
     pe = pop!(ke_ar, "pe")
 

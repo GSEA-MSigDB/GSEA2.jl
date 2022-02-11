@@ -18,45 +18,70 @@ using GSEA
 
 da = joinpath(@__DIR__, "data")
 
-se = joinpath(da, "h.all.v7.1.symbols.gmt")
+readdir(da)
+
+js = joinpath(TE, "set_to_genes.json")
 
 ;
 
-GSEA.select_set(OnePiece.io.gmt.read(se), 33, 36)
+GSEA.convert_gmt(joinpath(da, "h.all.v7.1.symbols.gmt"), js)
 
-GSEA.read_set(se, Dict("mi" => 33, "ma" => 36))
+se_fe_ = OnePiece.extension.dict.read(js)
 
-ou = joinpath(TE, "single_sample_gsea.tsv")
+di = joinpath(da, "sarcopenia")
+
+GSEA.convert_gct_and_cls(
+    joinpath(
+        di,
+        "gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcopenia.vs.normal_counts_collapsed_to_symbols.gct",
+    ),
+    joinpath(di, "sarcopenia_binary.cls"),
+    TE,
+)
+
+OnePiece.io.table.read(joinpath(TE, "target_by_sample.tsv"))
+
+OnePiece.io.table.read(joinpath(TE, "gene_by_sample.tsv"))
+
+GSEA.select_set(OnePiece.extension.dict.read(js), 33, 36)
+
+ou = joinpath(TE, "single_sample_gsea")
+
+mkpath(ou)
 
 GSEA.run_single_sample_gsea(
     joinpath(da, "setting", "single_sample_gsea.json"),
-    se,
+    js,
     joinpath(da, "nmf_k9_w.tsv"),
     ou,
 )
 
-readdir(TE)
+readdir(ou)
+
+OnePiece.io.table.read(joinpath(ou, GSEA.OU))
 
 ou = joinpath(TE, "pre_rank_gsea")
 
-mkdir(ou)
+mkpath(ou)
 
 GSEA.run_pre_rank_gsea(
     joinpath(da, "setting", "pre_rank_gsea.json"),
-    se,
+    js,
     joinpath(da, "gene_score.tsv"),
     ou,
 )
 
 readdir(ou)
 
+OnePiece.io.table.read(joinpath(ou, GSEA.OU))
+
 ou = joinpath(TE, "standard_gsea")
 
-mkdir(ou)
+mkpath(ou)
 
 GSEA.run_standard_gsea(
     joinpath(da, "setting", "standard_gsea.json"),
-    se,
+    js,
     joinpath(da, "sample_value.tsv"),
     joinpath(da, "nmf_k9_w.tsv"),
     ou,
@@ -64,26 +89,7 @@ GSEA.run_standard_gsea(
 
 readdir(ou)
 
-di = joinpath(da, "sarcopenia")
-
-gc = joinpath(
-    di,
-    "gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcopenia.vs.normal_counts_collapsed_to_symbols.gct",
-)
-
-cl = joinpath(di, "sarcopenia_binary.cls")
-
-GSEA.convert_gct_and_cls(gc, cl, TE)
-
-readdir(di)
-
-gm = joinpath(di, "c2.cp.wikipathways.v7.4.symbols.gmt")
-
-js = joinpath(TE, "set_to_genes.json")
-
-GSEA.convert_gmt(gm, js)
-
-readdir(di)
+OnePiece.io.table.read(joinpath(ou, GSEA.OU))
 
 if isdir(TE)
 
