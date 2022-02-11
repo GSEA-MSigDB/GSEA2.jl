@@ -47,7 +47,7 @@ Settings are just [`.json` files](test/data/setting).
 ```bash
 cd test/data/sarcopenia
 
-ls
+ls -l
 ```
 
 2. Make output directory
@@ -63,7 +63,7 @@ mkdir output
 ```bash
 gsea convert-gct-and-cls gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcopenia.vs.normal_counts_collapsed_to_symbols.gct sarcopenia_binary.cls output
 
-ls score.*
+ls -l output
 ```
 
 4. Convert `.gmt` into `.json`
@@ -71,13 +71,17 @@ ls score.*
 ```bash
 gsea convert-gmt c2.cp.wikipathways.v7.4.symbols.gmt output/set_to_genes.json
 
+ls -l output
+
 head output/set_to_genes.json
 ```
 
 5. Run standard GSEA
 
 ```bash
-gsea run-standard-gsea ../setting/standard_gsea.json output/set_to_genes.json output/score.target_by_sample.tsv output/score.gene_by_sample.tsv output
+gsea run-standard-gsea ../../../gsea_setting.json output/set_to_genes.json output/target_by_sample.tsv output/gene_by_sample.tsv output
+
+ls -l output
 
 head output/set_by_statistic.tsv
 ```
