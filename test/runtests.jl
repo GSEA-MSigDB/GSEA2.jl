@@ -1,6 +1,16 @@
 TE = joinpath(tempdir(), "GSEA.test")
 
-mkpath(TE)
+if isdir(TE)
+
+    rm(TE; recursive = true)
+
+    println("Removed ", TE, ".")
+
+end
+
+mkdir(TE)
+
+println("Made ", TE, ".")
 
 using OnePiece
 
@@ -63,16 +73,22 @@ gc = joinpath(
 
 cl = joinpath(di, "sarcopenia_binary.cls")
 
-GSEA.convert_gct_and_cls(gc, cl, di)
+GSEA.convert_gct_and_cls(gc, cl, TE)
 
 readdir(di)
 
 gm = joinpath(di, "c2.cp.wikipathways.v7.4.symbols.gmt")
 
-js = joinpath(di, "set_to_genes.json")
+js = joinpath(TE, "set_to_genes.json")
 
 GSEA.convert_gmt(gm, js)
 
 readdir(di)
 
-rm(TE; recursive = true)
+if isdir(TE)
+
+    rm(TE; recursive = true)
+
+    println("Removed ", TE, ".")
+
+end
