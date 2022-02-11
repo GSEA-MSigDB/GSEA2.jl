@@ -6,7 +6,8 @@ using Random
 using StatsBase
 
 using OnePiece.extension.dict: read as dict_read, summarize, symbolize_key, write as dict_write
-using OnePiece.extension.string: clean
+using OnePiece.extension.path: clean
+using OnePiece.extension.vector: sort_like
 using OnePiece.feature_by_sample: compare_with_target
 using OnePiece.feature_set_enrichment: score_set
 using OnePiece.informatics.significance: adjust_p_value, get_p_value

@@ -6,5 +6,7 @@
   "number_of_jobs": 1,
   "permutation": "label",
   "random_seed": 20150214,
-  "number_of_permutations": 10
+  "number_of_permutations": 10,
+  "number_of_extreme_gene_sets_to_plot": 7,
+  "gene_sets_to_plot": []
 }

@@ -1,3 +1,9 @@
+function make_tsv(ou, fe)
+
+    joinpath(ou, string("score.", fe, "_by_sample.tsv"))
+
+end
+
 """
 Convert `.gct` and `.cls` to `.tsv`s
 
@@ -11,14 +17,14 @@ Convert `.gct` and `.cls` to `.tsv`s
 
     sc_ge_sa = gct_read(gct)
 
-    table_write(joinpath(output_directory, "gene_by_sample.tsv"), sc_ge_sa)
+    table_write(make_tsv(output_directory, "gene"), sc_ge_sa)
 
     sa_ = names(sc_ge_sa)[2:end]
 
     ta_ = parse.(Float64, split(readlines(cls)[3], "\t"))
 
     table_write(
-        joinpath(output_directory, "target_by_sample.tsv"),
+        make_tsv(output_directory, "target"),
         DataFrame(Dict(sa => ta for (sa, ta) in zip(sa_, ta_))),
     )
 

@@ -10,6 +10,8 @@ function make_set_by_statistic(se_en, pv_, ad_, ou)
         "Enrichment",
     )
 
+    mkpath(ou)
+
     table_write(joinpath(ou, OU), fl_se_st)
 
     fl_se_st

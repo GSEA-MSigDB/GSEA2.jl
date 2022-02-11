@@ -1,6 +1,4 @@
-function run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
-
-    sy_ar = make_keyword_argument(ke_ar)
+function run_pre_rank_gsea(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, se_, ou)
 
     se_en = score_set(fe_, sc_, se_fe_; sy_ar...)
 
@@ -10,16 +8,16 @@ function run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
 
         se_si = Dict(se => length(fe_) for (se, fe_) in se_fe_)
 
-        se_ra_ = []
+        _se_ra = []
 
-        Random.seed!(ke_ar["random_seed"])
+        Random.seed!(ra)
 
         for id in 1:n_pe
 
             println("  ", id, "/", n_pe)
 
             push!(
-                se_ra_,
+                _se_ra,
                 score_set(
                     fe_,
                     sc_,
@@ -30,7 +28,7 @@ function run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
 
         end
 
-        pv_, ad_ = get_p_value_and_adjust(se_en, se_ra_)
+        pv_, ad_ = get_p_value_and_adjust(se_en, _se_ra)
 
     else
 
@@ -38,7 +36,11 @@ function run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
 
     end
 
-    make_set_by_statistic(se_en, pv_, ad_, ou)
+    fl_se_st = make_set_by_statistic(se_en, pv_, ad_, ou)
+
+    plot_mountain(fl_se_st, n_ex, se_, fe_, sc_, se_fe_, sy_ar, ou)
+
+    fl_se_st
 
 end
 
@@ -61,28 +63,31 @@ Run pre-rank GSEA
 
     ke_ar = dict_read(setting_json)
 
-    fe_sc = table_read(gene_by_sample_tsv)
+    sc_fe_sa = table_read(gene_by_sample_tsv)
 
-    fl_se_st = run_pre_rank_gsea(
-        ke_ar,
-        select_set(
-            dict_read(set_to_genes_json),
-            ke_ar["minimum_gene_set_size"],
-            ke_ar["maximum_gene_set_size"],
-        ),
-        fe_sc[!, 1],
-        fe_sc[!, 2],
-        ke_ar["number_of_permutations"],
-        output_directory,
+    fe_ = sc_fe_sa[!, 1]
+
+    sc_ = sc_fe_sa[!, 2]
+
+    sc_, fe_ = sort_like([sc_, fe_])
+
+    se_fe_ = select_set(
+        dict_read(set_to_genes_json),
+        ke_ar["minimum_gene_set_size"],
+        ke_ar["maximum_gene_set_size"],
     )
 
-    plot_mountain(
-        fl_se_st,
-        ke_ar["number_of_extreme_gene_sets_to_plot"],
-        ke_ar["gene_sets_to_plot"],
-        sc_fe_sa,
+    sy_ar = make_keyword_argument(ke_ar)
+
+    run_pre_rank_gsea(
+        fe_,
+        sc_,
         se_fe_,
         sy_ar,
+        ke_ar["random_seed"],
+        ke_ar["number_of_permutations"],
+        ke_ar["number_of_extreme_gene_sets_to_plot"],
+        ke_ar["gene_sets_to_plot"],
         output_directory,
     )
 

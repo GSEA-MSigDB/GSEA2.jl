@@ -39,9 +39,9 @@ GSEA.convert_gct_and_cls(
     TE,
 )
 
-OnePiece.io.table.read(joinpath(TE, "target_by_sample.tsv"))
+OnePiece.io.table.read(joinpath(TE, "score.target_by_sample.tsv"))
 
-OnePiece.io.table.read(joinpath(TE, "gene_by_sample.tsv"))
+OnePiece.io.table.read(joinpath(TE, "score.gene_by_sample.tsv"))
 
 GSEA.select_set(OnePiece.extension.dict.read(js), 33, 36)
 
@@ -57,7 +57,7 @@ GSEA.run_single_sample_gsea(se, js, joinpath(da, "nmf_k9_w.tsv"), ou)
 
 readdir(ou)
 
-OnePiece.io.table.read(joinpath(ou, GSEA.OU))
+OnePiece.io.table.read(joinpath(ou, "enrichment.set_by_sample.tsv"))
 
 ou = joinpath(TE, "pre_rank_gsea")
 
