@@ -49,24 +49,24 @@ Run pre-rank GSEA
 
 # Arguments
 
-  - `js`:
-  - `se`:
-  - `ts`:
-  - `ou`: output directory
+  - `setting_json`:
+  - `set_to_genes_json`:
+  - `gene_by_sample_tsv`:
+  - `output_directory`:
 """
-@cast function run_pre_rank_gsea(js, se, ts, ou)
+@cast function run_pre_rank_gsea(setting_json, set_to_genes_json, gene_by_sample_tsv, output_directory)
 
-    ke_ar = dict_read(js)
+    ke_ar = dict_read(setting_json)
 
-    fe_sc = table_read(ts)
+    fe_sc = table_read(gene_by_sample_tsv)
 
     run_pre_rank_gsea(
         ke_ar,
-        read_set(se, ke_ar),
+        select_set(dict_read(set_to_genes_json), pop!(ke_ar, "mi"), pop!(ke_ar, "ma")),
         fe_sc[!, 1],
         fe_sc[!, 2],
         pop!(ke_ar, "n_pe"),
-        ou,
+        output_directory,
     )
 
 end

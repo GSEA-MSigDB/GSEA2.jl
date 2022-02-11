@@ -2,8 +2,8 @@ function make_set_by_statistic(se_en, pv_, ad_, ou)
 
     fl_se_st = sort(
         DataFrame(
-            "Set" => collect(keys(se_en)),
-            "Enrichment" => collect(values(se_en)),
+            "Set" => keys(se_en),
+            "Enrichment" => values(se_en),
             "P-Value" => pv_,
             "Q-Value" => ad_,
         ),

@@ -3,19 +3,19 @@ Run standard GSEA
 
 # Arguments
 
-  - `js`:
-  - `se`:
-  - `tst`:
-  - `tsd`:
-  - `ou`: output directory
+  - `setting_json`:
+  - `set_to_genes_json`:
+  - `target_by_sample_tsv`:
+  - `gene_by_sample_tsv`:
+  - `output_directory`:
 """
-@cast function run_standard_gsea(js, se, tst, tsd, ou)
+@cast function run_standard_gsea(setting_json, set_to_genes_json, target_by_sample_tsv, gene_by_sample_tsv, output_directory)
 
-    ke_ar = dict_read(js)
+    ke_ar = dict_read(setting_json)
 
-    nu_ta_sa = table_read(tst)
+    nu_ta_sa = table_read(target_by_sample_tsv)
 
-    sc_fe_sa = table_read(tsd)
+    sc_fe_sa = table_read(gene_by_sample_tsv)
 
     fe_ = string.(sc_fe_sa[:, 1])
 
@@ -25,15 +25,15 @@ Run standard GSEA
         "signal_to_noise_ratio",
     )
 
-    se_fe_ = read_set(se, ke_ar)
+    se_fe_ = select_set(dict_read(set_to_genes_json), pop!(ke_ar, "mi"), pop!(ke_ar, "ma"))
 
     pe = pop!(ke_ar, "pe")
+
+    n_pe = pop!(ke_ar, "n_pe")
 
     if pe == "label"
 
         println("Permuting labels to compute significance")
-
-        n_pe = pop!(ke_ar, "n_pe")
 
         ke_ar = symbolize_key(ke_ar)
 
@@ -63,19 +63,17 @@ Run standard GSEA
 
         end
 
-        fl_se_st = make_set_by_statistic(se_en, pv_, ad_, ou)
+        fl_se_st = make_set_by_statistic(se_en, pv_, ad_, output_directory)
 
         println("Plotting")
 
     elseif pe == "set"
 
-        n_pe = pop!(ke_ar, "n_pe")
-
-        run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
+        fl_se_st = run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, output_directory)
 
     else
 
-        error(pe)
+        error("pe is not label or set.")
 
     end
 

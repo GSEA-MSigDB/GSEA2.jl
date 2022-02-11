@@ -1,6 +1,6 @@
 function get_p_value_and_adjust(se_en, se_ra_)
 
-    pv_ = Vector{Float64}()
+    pv_ = []
 
     for (se, en) in se_en
 

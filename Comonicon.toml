@@ -1,5 +1,8 @@
 name = "gsea"
 
+[command]
+width=500
+
 [sysimg]
 filter_stdlibs=false
 incremental=false
