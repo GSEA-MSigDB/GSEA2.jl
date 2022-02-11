@@ -9,7 +9,7 @@ function plot_mountain(en_se_sa, n_ex, se_, sc_fe_sa, se_fe_, sy_ar, ou)
             sc_fe_sa[!, 2],
             se_fe_[se];
             title_text = se,
-            ou = joinpath(ou, OnePiece.extension.string.clean(se)),
+            ou = clean,
             sy_ar...,
         )
 
