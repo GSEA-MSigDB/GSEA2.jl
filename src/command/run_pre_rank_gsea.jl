@@ -1,8 +1,8 @@
 function run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
 
-    ke_ar = symbolize_key(ke_ar)
+    sy_ar = make_keyword_argument(ke_ar)
 
-    se_en = score_set(fe_, sc_, se_fe_; ke_ar...)
+    se_en = score_set(fe_, sc_, se_fe_; sy_ar...)
 
     if 0 < n_pe
 
@@ -12,7 +12,7 @@ function run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
 
         se_ra_ = []
 
-        seed!(ke_ar["random_seed"])
+        Random.seed!(ke_ar["random_seed"])
 
         for id in 1:n_pe
 
@@ -24,7 +24,7 @@ function run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
                     fe_,
                     sc_,
                     Dict(se => sample(fe_, si; replace = false) for (se, si) in se_si);
-                    ke_ar...,
+                    sy_ar...,
                 ),
             )
 

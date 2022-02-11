@@ -1,8 +1,7 @@
 name = "gsea"
 
 [command]
-static=false
-width=131
+width=269
 
 [sysimg]
 filter_stdlibs=false

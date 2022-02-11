@@ -31,13 +31,13 @@ Run standard GSEA
         "signal_to_noise_ratio",
     )
 
-    se_fe_ =
-        select_set(
-            dict_read(set_to_genes_json),
-            ke_ar["minimum_gene_set_size"],
-            ke_ar["maximum_gene_set_size"],
-        ),
-        pe = ke_ar["permutation"]
+    se_fe_ = select_set(
+        dict_read(set_to_genes_json),
+        ke_ar["minimum_gene_set_size"],
+        ke_ar["maximum_gene_set_size"],
+    )
+
+    pe = ke_ar["permutation"]
 
     n_pe = ke_ar["number_of_permutations"]
 
@@ -45,9 +45,9 @@ Run standard GSEA
 
         println("Permuting labels to compute significance")
 
-        ke_ar = symbolize_key(ke_ar)
+        sy_ar = make_keyword_argument(ke_ar)
 
-        se_en = score_set(fe_, sc_, se_fe_; ke_ar...)
+        se_en = score_set(fe_, sc_, se_fe_; sy_ar...)
 
         if 0 < n_pe
 
@@ -55,20 +55,17 @@ Run standard GSEA
 
             _se_ra = []
 
-            seed!(ke_ar["random_seed"])
+            Random.seed!(ke_ar["random_seed"])
 
             for it in 1:n_pe
 
                 println("  ", it, "/", n_pe)
 
-                push!(
-                    _se_ra,
-                    score_set(fe_, shuffle!(sh_), se_fe_; make_keyword_argument(ke_ar)...),
-                )
+                push!(_se_ra, score_set(fe_, shuffle!(sh_), se_fe_; sy_ar...))
 
             end
 
-            pv_, ad_ = get_p_value_and_adjust(se_en, se_ra_)
+            pv_, ad_ = get_p_value_and_adjust(se_en, _se_ra)
 
         else
 

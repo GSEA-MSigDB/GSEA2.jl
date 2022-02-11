@@ -45,16 +45,15 @@ OnePiece.io.table.read(joinpath(TE, "gene_by_sample.tsv"))
 
 GSEA.select_set(OnePiece.extension.dict.read(js), 33, 36)
 
+se = joinpath(dirname(@__DIR__), "gsea_setting.json")
+
+OnePiece.extension.dict.read(se)
+
 ou = joinpath(TE, "single_sample_gsea")
 
 mkpath(ou)
 
-GSEA.run_single_sample_gsea(
-    joinpath(da, "setting", "single_sample_gsea.json"),
-    js,
-    joinpath(da, "nmf_k9_w.tsv"),
-    ou,
-)
+GSEA.run_single_sample_gsea(se, js, joinpath(da, "nmf_k9_w.tsv"), ou)
 
 readdir(ou)
 
@@ -64,12 +63,7 @@ ou = joinpath(TE, "pre_rank_gsea")
 
 mkpath(ou)
 
-GSEA.run_pre_rank_gsea(
-    joinpath(da, "setting", "pre_rank_gsea.json"),
-    js,
-    joinpath(da, "gene_score.tsv"),
-    ou,
-)
+GSEA.run_pre_rank_gsea(se, js, joinpath(da, "gene_score.tsv"), ou)
 
 readdir(ou)
 
@@ -79,13 +73,7 @@ ou = joinpath(TE, "standard_gsea")
 
 mkpath(ou)
 
-GSEA.run_standard_gsea(
-    joinpath(da, "setting", "standard_gsea.json"),
-    js,
-    joinpath(da, "sample_value.tsv"),
-    joinpath(da, "nmf_k9_w.tsv"),
-    ou,
-)
+GSEA.run_standard_gsea(se, js, joinpath(da, "sample_value.tsv"), joinpath(da, "nmf_k9_w.tsv"), ou)
 
 readdir(ou)
 

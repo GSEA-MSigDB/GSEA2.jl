@@ -9,7 +9,9 @@ Convert `.gct` and `.cls` to `.tsv`s
 """
 @cast function convert_gct_and_cls(gct, cls, output_directory)
 
-    table_write(joinpath(output_directory, "gene_by_sample.tsv"), gct_read(gct))
+    sc_ge_sa = gct_read(gct)
+
+    table_write(joinpath(output_directory, "gene_by_sample.tsv"), sc_ge_sa)
 
     sa_ = names(sc_ge_sa)[2:end]
 
