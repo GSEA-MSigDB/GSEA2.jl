@@ -14,9 +14,7 @@ function get_p_value_and_adjust(se_en, se_ra_)
 
         end
 
-        ra_ = [se_ra[se] for se_ra in se_ra_]
-
-        push!(pv_, get_p_value(en, ra_, si))
+        push!(pv_, get_p_value(en, [se_ra[se] for se_ra in se_ra_], si))
 
     end
 

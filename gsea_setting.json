@@ -1,0 +1,10 @@
+{
+  "minimum_gene_set_size": 5,
+  "maximum_gene_set_size": 500,
+  "algorithm": "ks",
+  "weight": 1.0,
+  "number_of_jobs": 1,
+  "permutation": "label",
+  "random_seed": 20150214,
+  "number_of_permutations": 10
+}

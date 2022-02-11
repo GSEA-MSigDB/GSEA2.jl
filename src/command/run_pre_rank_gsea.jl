@@ -12,7 +12,7 @@ function run_pre_rank_gsea(ke_ar, se_fe_, fe_, sc_, n_pe, ou)
 
         se_ra_ = []
 
-        # TODO: set random generator
+        seed!(ke_ar["random_seed"])
 
         for id in 1:n_pe
 
@@ -69,18 +69,18 @@ Run pre-rank GSEA
 
     ke_ar = dict_read(setting_json)
 
-    se_fe_ = dict_read(set_to_genes_json)
-
-    se_fe_ = select_set(se_fe_, pop!(ke_ar, "mi"), pop!(ke_ar, "ma"))
-
     fe_sc = table_read(gene_by_sample_tsv)
 
     run_pre_rank_gsea(
         ke_ar,
-        se_fe_,
+        select_set(
+            dict_read(set_to_genes_json),
+            ke_ar["minimum_gene_set_size"],
+            ke_ar["maximum_gene_set_size"],
+        ),
         fe_sc[!, 1],
         fe_sc[!, 2],
-        pop!(ke_ar, "n_pe"),
+        ke_ar["number_of_permutations"],
         output_directory,
     )
 

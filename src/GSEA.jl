@@ -17,6 +17,8 @@ OU = "set_by_statistic.tsv"
 
 include("support/select_set.jl")
 
+include("support/make_keyword_argument.jl")
+
 include("support/get_p_value_and_adjust.jl")
 
 include("support/make_set_by_statistic.jl")

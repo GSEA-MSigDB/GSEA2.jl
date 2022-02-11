@@ -8,8 +8,6 @@ Convert `.gmt` to `.json`
 """
 @cast function convert_gmt(gmt, set_to_genes_json)
 
-    se_ge_ = gmt_read(gmt)
-
-    dict_write(set_to_genes_json, se_ge_)
+    dict_write(set_to_genes_json, gmt_read(gmt))
 
 end
