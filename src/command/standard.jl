@@ -3,21 +3,21 @@ Run standard GSEA
 
 # Arguments
 
-  - `setting_json`:
+  - `settings_json`:
   - `set_to_genes_json`:
   - `target_by_sample_tsv`:
   - `gene_by_sample_tsv`:
   - `output_directory`:
 """
-@cast function run_standard_gsea(
-    setting_json,
+@cast function standard(
+    settings_json,
     set_to_genes_json,
     target_by_sample_tsv,
     gene_by_sample_tsv,
     output_directory,
 )
 
-    ke_ar = dict_read(setting_json)
+    ke_ar = dict_read(settings_json)
 
     sc_ta_sa = table_read(target_by_sample_tsv)
 
@@ -61,17 +61,11 @@ Run standard GSEA
 
             Random.seed!(ra)
 
-            pr = round(n_pe / 10)
+            for id in ProgressBar(1:n_pe)
 
-            for id in 1:n_pe
+                se_ra = score_set(fe_, shuffle!(sh_), se_fe_; sy_ar...)
 
-                if convert(Bool, id % pr)
-
-                    println("  ", id, "/", n_pe)
-
-                end
-
-                push!(ra__, collect(values(score_set(fe_, shuffle!(sh_), se_fe_; sy_ar...))))
+                push!(ra__, collect(values(se_ra)))
 
             end
 
@@ -94,7 +88,7 @@ Run standard GSEA
 
     elseif pe == "set"
 
-        run_pre_rank_gsea(fe_, sc_, se_fe_, sy_ar, ra, n_pe, output_directory)
+        pre_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, output_directory)
 
     else
 

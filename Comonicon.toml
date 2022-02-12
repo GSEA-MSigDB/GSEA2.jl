@@ -1,6 +1,10 @@
 name = "gsea"
 
+[install]
+completion=true
+
 [command]
+static=false
 width=269
 
 [sysimg]

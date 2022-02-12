@@ -442,6 +442,12 @@ version = "1.3.1"
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
+[[deps.ProgressBars]]
+deps = ["Printf"]
+git-tree-sha1 = "938525cc66a4058f6ed75b84acd13a00fbecea11"
+uuid = "49802e3a-d2f1-5c88-81d8-b72133a6f568"
+version = "1.4.0"
+
 [[deps.QuadGK]]
 deps = ["DataStructures", "LinearAlgebra"]
 git-tree-sha1 = "78aadffb3efd2155af139781b8a8df1ef279ea39"

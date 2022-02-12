@@ -11,22 +11,22 @@ The :sparkles: **new** :sparkles: Gene Set Enrichment Analysis :dna:
 #### Run single-sample GSEA
 
 ```bash
-gsea run-single-sample-gsea
+gsea single-sample
 ```
 
 #### Run pre-rank GSEA
 
 ```bash
-gsea run-pre-rank-gsea
+gsea pre-rank
 ```
 
 #### Run standard GSEA
 
 ```bash
-gsea run-standard-gsea
+gsea standard
 ```
 
-#### Settings are just a [`.json` file](gsea_setting.json).
+#### Settings are just a [`.json` file](settings.json).
 
 ## Try with an example data
 
@@ -49,7 +49,7 @@ mkdir output
 #### 3. Run standard GSEA
 
 ```bash
-gsea run-standard-gsea ../../gsea_setting.json set_to_genes.json target_by_sample.tsv gene_by_sample.tsv output
+gsea standard ../../settings.json set_to_genes.json target_by_sample.tsv gene_by_sample.tsv output
 
 ls -l output
 

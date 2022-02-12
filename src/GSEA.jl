@@ -2,6 +2,7 @@ module GSEA
 
 using Comonicon
 using DataFrames: DataFrame, names
+using ProgressBars
 using Random
 using StatsBase
 
@@ -21,11 +22,11 @@ include("support/make_set_by_statistic.jl")
 
 include("support/plot_mountain.jl")
 
-include("command/run_single_sample_gsea.jl")
+include("command/single_sample.jl")
 
-include("command/run_pre_rank_gsea.jl")
+include("command/pre_rank.jl")
 
-include("command/run_standard_gsea.jl")
+include("command/standard.jl")
 
 """
 Gene Set Enrichment Analysis

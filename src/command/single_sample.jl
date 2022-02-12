@@ -3,19 +3,19 @@ Run single-sample GSEA
 
 # Arguments
 
-  - `setting_json`:
+  - `settings_json`:
   - `set_to_genes_json`:
   - `gene_by_sample_tsv`:
   - `output_directory`:
 """
-@cast function run_single_sample_gsea(
-    setting_json,
+@cast function single_sample(
+    settings_json,
     set_to_genes_json,
     gene_by_sample_tsv,
     output_directory,
 )
 
-    ke_ar = dict_read(setting_json)
+    ke_ar = dict_read(settings_json)
 
     en_se_sa = score_set(
         table_read(gene_by_sample_tsv),
