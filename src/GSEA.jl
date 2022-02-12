@@ -11,11 +11,7 @@ using OnePiece.extension.vector: sort_like
 using OnePiece.feature_by_sample: compare_with_target
 using OnePiece.feature_set_enrichment: score_set
 using OnePiece.informatics.significance: adjust_p_value, get_p_value
-using OnePiece.io.gct: read as gct_read
-using OnePiece.io.gmt: read as gmt_read
 using OnePiece.io.table: read as table_read, write as table_write
-
-OU = "set_by_statistic.tsv"
 
 include("support/select_set.jl")
 
@@ -26,10 +22,6 @@ include("support/get_p_value_and_adjust.jl")
 include("support/make_set_by_statistic.jl")
 
 include("support/plot_mountain.jl")
-
-include("command/convert_gct_and_cls.jl")
-
-include("command/convert_gmt.jl")
 
 include("command/run_single_sample_gsea.jl")
 

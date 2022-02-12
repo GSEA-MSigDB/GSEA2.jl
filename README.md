@@ -11,31 +11,19 @@ The :sparkles: **new** :sparkles: Gene Set Enrichment Analysis :dna:
 #### Run single-sample GSEA
 
 ```bash
-gsea si
+gsea run-single-sample-gsea
 ```
 
 #### Run pre-rank GSEA
 
 ```bash
-gsea pr
+gsea run-pre-rank-gsea
 ```
 
 #### Run standard GSEA
 
 ```bash
-gsea st
-```
-
-#### Convert `.gct` and `.cls` to `.tsv`s
-
-```bash
-gsea convert-gct-and-cls bad.gct output/
-```
-
-#### Convert `.gmt` to `.json`
-
-```bash
-gsea convert-gmt bad.gmt good.json
+gsea run-standard-gsea
 ```
 
 #### Settings are just a [`.json` file](gsea_setting.json).
@@ -45,7 +33,7 @@ gsea convert-gmt bad.gmt good.json
 #### 1. Go to the directory with the example
 
 ```bash
-cd test/data/sarcopenia
+cd test/sarcopenia
 
 ls -l
 ```
@@ -58,28 +46,10 @@ rm -rf output
 mkdir output
 ```
 
-#### 3. Convert `.gct` and `.cls` into `.tsv`
+#### 3. Run standard GSEA
 
 ```bash
-gsea convert-gct-and-cls gse111016_allsamplescounts_htseqcov1_sss_forgeo.sarcopenia.vs.normal_counts_collapsed_to_symbols.gct sarcopenia_binary.cls output
-
-ls -l output
-```
-
-#### 4. Convert `.gmt` into `.json`
-
-```bash
-gsea convert-gmt c2.cp.wikipathways.v7.4.symbols.gmt output/set_to_genes.json
-
-ls -l output
-
-head output/set_to_genes.json
-```
-
-#### 5. Run standard GSEA
-
-```bash
-gsea run-standard-gsea ../../../gsea_setting.json output/set_to_genes.json output/target_by_sample.tsv output/gene_by_sample.tsv output
+gsea run-standard-gsea ../../gsea_setting.json set_to_genes.json target_by_sample.tsv gene_by_sample.tsv output
 
 ls -l output
 
@@ -88,13 +58,11 @@ head output/set_by_statistic.tsv
 
 ## Install
 
-1. Download a release and decompress it.
+1. Download the latest [release](https://github.com/KwatMDPhD/GSEA.jl/releases/latest) and decompress it.
 
-2. Add `build/gsea/bin` to the path.
+2. Add `gsea/bin` to the path.
 
 3. Test installation
-
-Start a new bash just in case.
 
 ```bash
 gsea --help
@@ -102,9 +70,9 @@ gsea --help
 
 :tada:
 
-If there is no release matching desired machine or if installation fails, try building.
-
 ## Build
+
+If there is no release matching desired machine or if installation fails, try building.
 
 #### 1. Download this repository
 
@@ -149,8 +117,6 @@ julia --project deps/build.jl app tarball
 Add `build/gsea/bin` to the path.
 
 #### 4. Test build
-
-Start a new bash just in case.
 
 ```bash
 gsea --help

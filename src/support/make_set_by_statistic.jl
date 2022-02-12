@@ -1,3 +1,5 @@
+OU = "set_by_statistic.tsv"
+
 function make_set_by_statistic(se_en, pv_, ad_, ou)
 
     fl_se_st = sort(
