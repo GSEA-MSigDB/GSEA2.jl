@@ -49,35 +49,35 @@ Run standard GSEA
 
     if pe == "label"
 
-        println("Permuting labels to compute significance")
-
         se_en = score_set(fe_, sc_, se_fe_; sy_ar...)
+
+        ra__ = []
 
         if 0 < n_pe
 
-            sh_ = copy(sc_)
+            println("Permuting labels to compute significance")
 
-            _se_ra = []
+            sh_ = copy(sc_)
 
             Random.seed!(ra)
 
-            for it in 1:n_pe
+            pr = round(n_pe / 10)
 
-                println("  ", it, "/", n_pe)
+            for id in 1:n_pe
 
-                push!(_se_ra, score_set(fe_, shuffle!(sh_), se_fe_; sy_ar...))
+                if convert(Bool, id % pr)
+
+                    println("  ", id, "/", n_pe)
+
+                end
+
+                push!(ra__, collect(values(score_set(fe_, shuffle!(sh_), se_fe_; sy_ar...))))
 
             end
 
-            pv_, ad_ = get_p_value_and_adjust(se_en, _se_ra)
-
-        else
-
-            pv_ = ad_ = fill(NaN, length(se_en))
-
         end
 
-        fl_se_st = make_set_by_statistic(se_en, pv_, ad_, output_directory)
+        fl_se_st = make_set_by_statistic(se_en, ra__, output_directory)
 
         plot_mountain(
             fl_se_st,

@@ -2,41 +2,45 @@ function run_pre_rank_gsea(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, se_, ou)
 
     se_en = score_set(fe_, sc_, se_fe_; sy_ar...)
 
+    ra__ = []
+
     if 0 < n_pe
 
         println("Permuting sets to compute significance")
 
         se_si = Dict(se => length(fe_) for (se, fe_) in se_fe_)
 
-        _se_ra = []
-
         Random.seed!(ra)
+
+        pr = round(n_pe / 10)
 
         for id in 1:n_pe
 
-            println("  ", id, "/", n_pe)
+            if convert(Bool, id % pr)
+
+                println("  ", id, "/", n_pe)
+
+            end
 
             push!(
-                _se_ra,
-                score_set(
-                    fe_,
-                    sc_,
-                    Dict(se => sample(fe_, si; replace = false) for (se, si) in se_si);
-                    sy_ar...,
+                ra__,
+                collect(
+                    values(
+                        score_set(
+                            fe_,
+                            sc_,
+                            Dict(se => sample(fe_, si; replace = false) for (se, si) in se_si);
+                            sy_ar...,
+                        ),
+                    ),
                 ),
             )
 
         end
 
-        pv_, ad_ = get_p_value_and_adjust(se_en, _se_ra)
-
-    else
-
-        pv_ = ad_ = fill(NaN, length(se_en))
-
     end
 
-    fl_se_st = make_set_by_statistic(se_en, pv_, ad_, ou)
+    fl_se_st = make_set_by_statistic(se_en, ra__, ou)
 
     plot_mountain(fl_se_st, n_ex, se_, fe_, sc_, se_fe_, sy_ar, ou)
 

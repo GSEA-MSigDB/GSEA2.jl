@@ -7,6 +7,6 @@
   "permutation": "label",
   "random_seed": 20150214,
   "number_of_permutations": 10,
-  "number_of_extreme_gene_sets_to_plot": 7,
+  "number_of_extreme_gene_sets_to_plot": 0,
   "gene_sets_to_plot": []
 }

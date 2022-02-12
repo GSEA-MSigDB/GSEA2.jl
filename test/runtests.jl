@@ -46,7 +46,7 @@ GSEA.run_pre_rank_gsea(se, js, joinpath(da, "gene_by_statistic.tsv"), ou)
 
 readdir(ou)
 
-OnePiece.io.table.read(joinpath(ou, GSEA.OU))
+sort(OnePiece.io.table.read(joinpath(ou, "set_by_statistic.tsv")), "P-Value")
 
 ou = joinpath(TE, "standard_gsea")
 
@@ -62,7 +62,7 @@ GSEA.run_standard_gsea(
 
 readdir(ou)
 
-OnePiece.io.table.read(joinpath(ou, GSEA.OU))
+OnePiece.io.table.read(joinpath(ou, "set_by_statistic.tsv"))
 
 if isdir(TE)
 
