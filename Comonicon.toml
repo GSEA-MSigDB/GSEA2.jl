@@ -4,7 +4,7 @@ name = "gsea"
 completion=true
 
 [command]
-static=false
+static=true
 width=269
 
 [sysimg]
