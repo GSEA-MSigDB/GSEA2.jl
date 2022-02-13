@@ -5,10 +5,10 @@ completion=true
 
 [command]
 static=true
-width=269
+width=182
 
 [sysimg]
-filter_stdlibs=false
+filter_stdlibs=true
 incremental=false
 
 [sysimg.precompile]

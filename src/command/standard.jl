@@ -25,13 +25,16 @@ Run standard GSEA
 
     fe_ = string.(sc_fe_sa[:, 1])
 
-    sc_ = compare_with_target(
-        BitVector(sc_ta_sa[1, :]),
-        Matrix(sc_fe_sa[:, 2:end]),
-        "signal_to_noise_ratio",
-    )
+    sc_fe_sa = sc_fe_sa[:, names(sc_ta_sa)]
+
+    sc_ = compare_with_target(BitVector(sc_ta_sa[1, :]), Matrix(sc_fe_sa), "signal_to_noise_ratio")
 
     sc_, fe_ = sort_like([sc_, fe_])
+
+    table_write(
+        joinpath(output_directory, "gene_by_statistic.tsv"),
+        DataFrame("Gene" => fe_, "Score" => sc_),
+    )
 
     se_fe_ = select_set(
         dict_read(set_to_genes_json),
