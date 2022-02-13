@@ -24,6 +24,8 @@ js = joinpath(da, "set_to_genes.json")
 
 GSEA.select_set(OnePiece.extension.dict.read(js), 33, 36)
 
+GSEA.select_set(OnePiece.extension.dict.read(js), 1, 5656, in_ = ["VCAN", "SHH", "XIST"])
+
 se = joinpath(dirname(@__DIR__), "settings.json")
 
 OnePiece.extension.dict.read(se)

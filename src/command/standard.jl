@@ -31,7 +31,9 @@ Run standard GSEA
 
     ma = Matrix(sc_fe_sa)
 
-    sc_, fe_ = sort_like([compare_with_target(bi_, ma, ke_ar["metric"]), fe_])
+    me = ke_ar["metric"]
+
+    sc_, fe_ = sort_like([compare_with_target(bi_, ma, me), fe_])
 
     mkpath(output_directory)
 
@@ -54,7 +56,11 @@ Run standard GSEA
 
     n_pe = ke_ar["number_of_permutations"]
 
-    if pe == "label"
+    n_ex = ke_ar["number_of_extreme_gene_sets_to_plot"]
+
+    se_ = ke_ar["gene_sets_to_plot"]
+
+    if pe == "sample"
 
         se_en = score_set(fe_, sc_, se_fe_; sy_ar...)
 
@@ -62,14 +68,13 @@ Run standard GSEA
 
         if 0 < n_pe
 
-            println("Permuting labels to compute significance")
+            println("Permuting ", pe, "s to compute significance")
 
             Random.seed!(ra)
 
             for id in ProgressBar(1:n_pe)
 
-                scr_, fer_ =
-                    sort_like([compare_with_target(shuffle!(bi_), ma, ke_ar["metric"]), fe_])
+                scr_, fer_ = sort_like([compare_with_target(shuffle!(bi_), ma, me), fe_])
 
                 se_ra = score_set(fer_, scr_, se_fe_; sy_ar...)
 
@@ -81,26 +86,19 @@ Run standard GSEA
 
         fl_se_st = make_set_by_statistic(se_en, ra__, output_directory)
 
-        plot_mountain(
-            fl_se_st,
-            ke_ar["number_of_extreme_gene_sets_to_plot"],
-            ke_ar["gene_sets_to_plot"],
-            fe_,
-            sc_,
-            se_fe_,
-            sy_ar,
-            output_directory,
-        )
+        println(sum(fl_se_st[!, "P-value"]))
+
+        plot_mountain(fl_se_st, n_ex, se_, fe_, sc_, se_fe_, sy_ar, output_directory)
 
         fl_se_st
 
     elseif pe == "set"
 
-        pre_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, output_directory)
+        pre_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, se_, output_directory)
 
     else
 
-        error("permutation is not label or set.")
+        error("`permutation` is invalid.")
 
     end
 
