@@ -10,12 +10,32 @@ function make_set_by_statistic(se_en, ra__, ou)
 
     else
 
-        pv_, ad_ = get_p_value_and_adjust(en_, vcat(ra__...))
+        ra_ = vcat(ra__...)
+
+        enn_ = en_ .< 0
+
+        ran_ = ra_ .< 0
+
+        enp_ = .!enn_
+
+        rap_ = .!ran_
+
+        pvn_, adn_ = get_p_value_and_adjust(en_[enn_], ra_[ran_], "<")
+
+        pvp_, adp_ = get_p_value_and_adjust(en_[enp_], ra_[rap_], ">")
+
+        se_ = vcat(se_[enn_], se_[enp_])
+
+        en_ = vcat(en_[enn_], en_[enp_])
+
+        pv_ = vcat(pvn_, pvp_)
+
+        ad_ = vcat(adn_, adp_)
 
     end
 
     fl_se_st = sort(
-        DataFrame("Set" => se_, "Enrichment" => en_, "P-Value" => pv_, "Q-Value" => ad_),
+        DataFrame("Set" => se_, "Enrichment" => en_, "P-value" => pv_, "Q-value" => ad_),
         "Enrichment",
     )
 

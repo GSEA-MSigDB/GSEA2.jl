@@ -27,6 +27,8 @@ Run single-sample GSEA
         make_keyword_argument(ke_ar)...,
     )
 
+    mkpath(output_directory)
+
     table_write(joinpath(output_directory, "enrichment.set_by_sample.tsv"), en_se_sa)
 
 end

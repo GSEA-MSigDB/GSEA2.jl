@@ -27,9 +27,13 @@ Run standard GSEA
 
     sc_fe_sa = sc_fe_sa[:, names(sc_ta_sa)]
 
-    sc_ = compare_with_target(BitVector(sc_ta_sa[1, :]), Matrix(sc_fe_sa), "signal_to_noise_ratio")
+    bi_ = BitVector(sc_ta_sa[1, :])
 
-    sc_, fe_ = sort_like([sc_, fe_])
+    ma = Matrix(sc_fe_sa)
+
+    sc_, fe_ = sort_like([compare_with_target(bi_, ma, ke_ar["metric"]), fe_])
+
+    mkpath(output_directory)
 
     table_write(
         joinpath(output_directory, "gene_by_statistic.tsv"),
@@ -60,13 +64,14 @@ Run standard GSEA
 
             println("Permuting labels to compute significance")
 
-            sh_ = copy(sc_)
-
             Random.seed!(ra)
 
             for id in ProgressBar(1:n_pe)
 
-                se_ra = score_set(fe_, shuffle!(sh_), se_fe_; sy_ar...)
+                scr_, fer_ =
+                    sort_like([compare_with_target(shuffle!(bi_), ma, ke_ar["metric"]), fe_])
+
+                se_ra = score_set(fer_, scr_, se_fe_; sy_ar...)
 
                 push!(ra__, collect(values(se_ra)))
 

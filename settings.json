@@ -1,4 +1,5 @@
 {
+  "metric": "signal_to_noise_ratio",
   "minimum_gene_set_size": 5,
   "maximum_gene_set_size": 500,
   "weight": 1.0,
@@ -7,6 +8,6 @@
   "permutation": "label",
   "random_seed": 20150214,
   "number_of_permutations": 1000,
-  "number_of_extreme_gene_sets_to_plot": 3,
+  "number_of_extreme_gene_sets_to_plot": 0,
   "gene_sets_to_plot": []
 }
