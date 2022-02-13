@@ -4,7 +4,6 @@ name = "gsea"
 completion=true
 
 [command]
-static=true
 width=182
 
 [sysimg]
@@ -15,7 +14,7 @@ incremental=false
 execution_file = ["test/runtests.jl"]
 
 [application]
-filter_stdlibs=false
+filter_stdlibs=true
 incremental=false
 
 [application.precompile]
