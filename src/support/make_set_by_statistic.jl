@@ -54,7 +54,7 @@ function make_set_by_statistic(se_en, se_ra_, ou)
 
     mkpath(ou)
 
-    table_write(joinpath(ou, "set_by_statistic.tsv"), fl_se_st)
+    table_write(joinpath(ou, "score.set_by_statistic.tsv"), fl_se_st)
 
     fl_se_st
 

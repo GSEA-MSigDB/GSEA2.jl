@@ -38,8 +38,8 @@ Run standard GSEA
     mkpath(output_directory)
 
     table_write(
-        joinpath(output_directory, "gene_by_statistic.tsv"),
-        DataFrame("Gene" => fe_, "Score" => sc_),
+        joinpath(output_directory, "score.gene_by_metric.tsv"),
+        DataFrame("Gene" => fe_, me => sc_),
     )
 
     se_fe_ = select_set(
