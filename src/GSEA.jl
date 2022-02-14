@@ -11,7 +11,7 @@ using OnePiece.extension.path: clean
 using OnePiece.extension.vector: sort_like
 using OnePiece.feature_by_sample: compare_with_target
 using OnePiece.feature_set_enrichment: score_set
-using OnePiece.informatics.significance: get_p_value_and_adjust
+using OnePiece.informatics.significance: adjust_p_value, get_p_value
 using OnePiece.io.table: read as table_read, write as table_write
 
 include("support/select_set.jl")

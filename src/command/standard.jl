@@ -44,6 +44,8 @@ Run standard GSEA
 
     se_fe_ = select_set(
         dict_read(set_to_genes_json),
+        ke_ar["remove_gene_set_genes"],
+        fe_,
         ke_ar["minimum_gene_set_size"],
         ke_ar["maximum_gene_set_size"],
     )
@@ -64,7 +66,7 @@ Run standard GSEA
 
         se_en = score_set(fe_, sc_, se_fe_; sy_ar...)
 
-        ra__ = []
+        _se_ra = []
 
         if 0 < n_pe
 
@@ -78,15 +80,13 @@ Run standard GSEA
 
                 se_ra = score_set(fer_, scr_, se_fe_; sy_ar...)
 
-                push!(ra__, collect(values(se_ra)))
+                push!(_se_ra, se_ra)
 
             end
 
         end
 
-        fl_se_st = make_set_by_statistic(se_en, ra__, output_directory)
-
-        println(sum(fl_se_st[!, "P-value"]))
+        fl_se_st = make_set_by_statistic(se_en, _se_ra, output_directory)
 
         plot_mountain(fl_se_st, n_ex, se_, fe_, sc_, se_fe_, sy_ar, output_directory)
 

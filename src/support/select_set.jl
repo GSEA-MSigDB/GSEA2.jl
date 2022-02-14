@@ -1,12 +1,12 @@
-function select_set(se_fe_, mi, ma; in_ = [])
+function select_set(se_fe_, re, in_, mi, ma)
 
     println("Before selecting set:")
 
     summarize(se_fe_, n_pr = 0)
 
-    if !isempty(in_)
+    if re
 
-        println("Intersecting")
+        println("Removing gene-set genes")
 
         se_fe_ = Dict(se => intersect(fe_, in_) for (se, fe_) in se_fe_)
 

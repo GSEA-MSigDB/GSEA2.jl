@@ -4,7 +4,7 @@ name = "gsea"
 completion=true
 
 [command]
-width=182
+width=1820
 
 [sysimg]
 filter_stdlibs=true

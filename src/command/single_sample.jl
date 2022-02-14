@@ -17,10 +17,14 @@ Run single-sample GSEA
 
     ke_ar = dict_read(settings_json)
 
+    sc_fe_sa = table_read(gene_by_sample_tsv)
+
     en_se_sa = score_set(
-        table_read(gene_by_sample_tsv),
-        select_set(
+        sc_fe_sa,
+        se_fe_ = select_set(
             dict_read(set_to_genes_json),
+            ke_ar["remove_gene_set_genes"],
+            sc_fe_sa[!, 1],
             ke_ar["minimum_gene_set_size"],
             ke_ar["maximum_gene_set_size"],
         );

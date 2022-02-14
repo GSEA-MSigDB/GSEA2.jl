@@ -1,41 +1,54 @@
-function make_set_by_statistic(se_en, ra__, ou)
+function make_set_by_statistic(se_en, se_ra_, ou)
 
-    se_ = collect(keys(se_en))
+    if isempty(se_ra_)
 
-    en_ = collect(values(se_en))
-
-    if isempty(ra__)
-
-        pv_ = ad_ = fill(NaN, length(se_))
+        pv_ = ad_ = fill(NaN, length(se_en))
 
     else
 
-        ra_ = vcat(ra__...)
+        pv_ = []
 
-        enn_ = en_ .< 0
+        for (se, en) in se_en
 
-        ran_ = ra_ .< 0
+            if en < 0
 
-        enp_ = .!enn_
+                si = "<"
 
-        rap_ = .!ran_
+            else
 
-        pvn_, adn_ = get_p_value_and_adjust(en_[enn_], ra_[ran_], "<")
+                si = ">"
 
-        pvp_, adp_ = get_p_value_and_adjust(en_[enp_], ra_[rap_], ">")
+            end
 
-        se_ = vcat(se_[enn_], se_[enp_])
+            ra_ = []
 
-        en_ = vcat(en_[enn_], en_[enp_])
+            for se_ra in se_ra_
 
-        pv_ = vcat(pvn_, pvp_)
+                ra = se_ra[se]
 
-        ad_ = vcat(adn_, adp_)
+                if sign(en) == sign(ra)
+
+                    push!(ra_, ra)
+
+                end
+
+            end
+
+            push!(pv_, get_p_value(en, ra_, si))
+
+        end
+
+        ad_ = adjust_p_value(pv_)
 
     end
 
     fl_se_st = sort(
-        DataFrame("Set" => se_, "Enrichment" => en_, "P-value" => pv_, "Q-value" => ad_),
+        DataFrame(
+            "Set" => collect(keys(se_en)),
+            "Enrichment" => collect(values(se_en)),
+            "P-value" => pv_,
+            "Q-value" => ad_,
+        ),
         "Enrichment",
     )
 

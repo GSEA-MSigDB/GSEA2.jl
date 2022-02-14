@@ -2,7 +2,7 @@ function pre_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, se_, ou)
 
     se_en = score_set(fe_, sc_, se_fe_; sy_ar...)
 
-    ra__ = []
+    _se_ra = []
 
     if 0 < n_pe
 
@@ -21,15 +21,16 @@ function pre_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, se_, ou)
                 sy_ar...,
             )
 
-            push!(ra__, collect(values(se_ra)))
+            push!(_se_ra, se_ra)
 
         end
 
     end
 
-    fl_se_st = make_set_by_statistic(se_en, ra__, ou)
+    fl_se_st = make_set_by_statistic(se_en, _se_ra, ou)
 
     plot_mountain(fl_se_st, n_ex, se_, fe_, sc_, se_fe_, sy_ar, ou)
+
     fl_se_st
 
 end
@@ -58,6 +59,8 @@ Run pre-rank GSEA
 
     se_fe_ = select_set(
         dict_read(set_to_genes_json),
+        ke_ar["remove_gene_set_genes"],
+        fe_,
         ke_ar["minimum_gene_set_size"],
         ke_ar["maximum_gene_set_size"],
     )
