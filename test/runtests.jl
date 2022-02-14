@@ -22,9 +22,15 @@ readdir(da)
 
 js = joinpath(da, "set_to_genes.json")
 
-GSEA.select_set(OnePiece.extension.dict.read(js), 33, 36)
+se_ge_ = OnePiece.extension.dict.read(js)
 
-GSEA.select_set(OnePiece.extension.dict.read(js), 1, 5656, in_ = ["VCAN", "SHH", "XIST"])
+in_ = ["VCAN", "SHH", "XIST"]
+
+;
+
+GSEA.select_set(se_ge_, false, in_, 33, 36)
+
+GSEA.select_set(se_ge_, true, in_, 1, 5656)
 
 se = joinpath(dirname(@__DIR__), "settings.json")
 

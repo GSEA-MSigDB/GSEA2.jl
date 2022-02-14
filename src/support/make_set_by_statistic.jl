@@ -10,16 +10,6 @@ function make_set_by_statistic(se_en, se_ra_, ou)
 
         for (se, en) in se_en
 
-            if en < 0
-
-                si = "<"
-
-            else
-
-                si = ">"
-
-            end
-
             ra_ = []
 
             for se_ra in se_ra_
@@ -31,6 +21,16 @@ function make_set_by_statistic(se_en, se_ra_, ou)
                     push!(ra_, ra)
 
                 end
+
+            end
+
+            if en < 0
+
+                si = "<"
+
+            else
+
+                si = ">"
 
             end
 

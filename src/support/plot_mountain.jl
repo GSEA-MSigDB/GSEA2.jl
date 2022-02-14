@@ -15,7 +15,7 @@ function plot_mountain(fl_se_st, n_ex, se_, fe_, sc_, se_fe_, sy_ar, ou)
             sc_,
             se_fe_[se];
             title_text = se,
-            ou = joinpath(di, string(clean(se), ".html")),
+            ou = joinpath(di, string(clean(se, pr = false), ".html")),
             sy_ar...,
         )
 

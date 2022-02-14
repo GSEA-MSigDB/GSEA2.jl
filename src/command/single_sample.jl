@@ -21,7 +21,7 @@ Run single-sample GSEA
 
     en_se_sa = score_set(
         sc_fe_sa,
-        se_fe_ = select_set(
+        select_set(
             dict_read(set_to_genes_json),
             ke_ar["remove_gene_set_genes"],
             sc_fe_sa[!, 1],
