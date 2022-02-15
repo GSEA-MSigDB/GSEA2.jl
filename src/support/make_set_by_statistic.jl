@@ -2,13 +2,17 @@ function make_set_by_statistic(se_en, se_ra_, ou)
 
     if isempty(se_ra_)
 
-        pv_ = ad_ = fill(NaN, length(se_en))
+        no_ = pv_ = ad_ = fill(NaN, length(se_en))
 
     else
+
+        no_ = []
 
         pv_ = []
 
         for (se, en) in se_en
+
+            si = sign(en)
 
             ra_ = []
 
@@ -16,7 +20,7 @@ function make_set_by_statistic(se_en, se_ra_, ou)
 
                 ra = se_ra[se]
 
-                if sign(en) == sign(ra)
+                if sign(ra) == si
 
                     push!(ra_, ra)
 
@@ -24,21 +28,13 @@ function make_set_by_statistic(se_en, se_ra_, ou)
 
             end
 
-            if en < 0
+            push!(no_, en / abs(mean(ra_)))
 
-                si = "<"
-
-            else
-
-                si = ">"
-
-            end
-
-            push!(pv_, get_p_value(en, ra_, si))
+            push!(pv_, OnePiece.informatics.significance.get_p_value(en, ra_, si))
 
         end
 
-        ad_ = adjust_p_value(pv_)
+        ad_ = OnePiece.informatics.significance.adjust_p_value(pv_)
 
     end
 
@@ -46,15 +42,16 @@ function make_set_by_statistic(se_en, se_ra_, ou)
         DataFrame(
             "Set" => collect(keys(se_en)),
             "Enrichment" => collect(values(se_en)),
+            "Normalized enrichment" => no_,
             "P-value" => pv_,
             "Q-value" => ad_,
         ),
-        "Enrichment",
+        2,
     )
 
     mkpath(ou)
 
-    table_write(joinpath(ou, "score.set_by_statistic.tsv"), fl_se_st)
+    OnePiece.io.table.table_write(joinpath(ou, "score.set_by_statistic.tsv"), fl_se_st)
 
     fl_se_st
 

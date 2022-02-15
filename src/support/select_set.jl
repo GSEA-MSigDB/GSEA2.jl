@@ -1,23 +1,33 @@
-function select_set(se_fe_, re, in_, mi, ma)
+function filter_gene!(se_fe_, re, in_, mi, ma)
 
-    println("Before selecting set:")
+    println("Before filtering set-to-genes:")
 
-    summarize(se_fe_, n_pr = 0)
+    OnePiece.extension.dict.summarize(se_fe_, n_pr = 0)
 
     if re
 
-        println("Removing gene-set genes")
+        println("Removing set genes not found in gene-by-sample genes")
 
-        se_fe_ = Dict(se => intersect(fe_, in_) for (se, fe_) in se_fe_)
+        for (se, fe_) in se_fe_
+
+            se_fe_[se] = intersect(fe_, in_)
+
+        end
 
     end
 
-    se_fe_ = Dict(se => fe_ for (se, fe_) in se_fe_ if mi <= length(fe_) <= ma)
+    for (se, fe_) in se_fe_
+
+        if !(mi <= length(fe_) <= ma)
+
+            pop!(se_fe_, se)
+
+        end
+
+    end
 
     println("After:")
 
-    summarize(se_fe_, n_pr = 0)
-
-    se_fe_
+    OnePiece.extension.dict.summarize(se_fe_, n_pr = 0)
 
 end

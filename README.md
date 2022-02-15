@@ -26,8 +26,6 @@ gsea pre-rank
 gsea standard
 ```
 
-#### Settings are just a [`.json` file](settings.json).
-
 ## Try with an example data
 
 #### 1. Go to the directory with the example
@@ -56,6 +54,21 @@ ls -l output
 head output/set_by_statistic.tsv
 ```
 
+## Settings are just a [`.json` file](settings.json)
+
+#### `metric`
+#### `remove_gene_set_genes`
+#### `minimum_gene_set_size`
+#### `maximum_gene_set_size`
+#### `weight`
+#### `algorithm`
+#### `number_of_jobs`
+#### `permutation`
+#### `random_seed`
+#### `number_of_permutations`
+#### `number_of_extreme_gene_sets_to_plot`
+#### `gene_sets_to_plot`
+
 ## Install
 
 1. Download the latest [release](https://github.com/KwatMDPhD/GSEA.jl/releases/latest) and decompress it.
@@ -77,8 +90,12 @@ If there is no release matching desired machine or if installation fails, try bu
 #### 1. Download this repository
 
 ```bash
-git clone https://github.com/KwatMDPhD/GSEA.jl &&
+git clone https://github.com/KwatMDPhD/GSEA.jl
+```
 
+#### 2. Download dependencies
+
+```bash
 cd GSEA.jl &&
 
 julia --project --eval "using Pkg; Pkg.instantiate()"
@@ -90,23 +107,7 @@ julia --project --eval "using Pkg; Pkg.instantiate()"
 julia --project --eval "using Pkg; Pkg.test()"
 ```
 
-#### 3. Build a personal or transferable binary
-
-###### Build a personal one
-
-```bash
-julia --project deps/build.jl
-```
-
-:point_up: installs `gsea` into `~/.julia/bin`.
-
-If not already, add this `bin` to the path by adding :point_down: to the profile (`~/.zbashrc`, `~/.babashrc`, ...)
-
-```bash
-PATH=~/.julia/bin:$PATH
-```
-
-###### Build a transferable one
+#### 3. Build
 
 ```bash
 julia --project deps/build.jl app tarball

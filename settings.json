@@ -1,6 +1,6 @@
 {
   "metric": "signal_to_noise_ratio",
-  "remove_gene_set_genes": true,
+  "remove_gene_set_genes": false,
   "minimum_gene_set_size": 15,
   "maximum_gene_set_size": 500,
   "weight": 1.0,
