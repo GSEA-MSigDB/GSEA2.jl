@@ -1,8 +1,6 @@
-function pre_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, se_, ou)
+function pre_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
-    se_en = score_set(fe_, sc_, se_fe_; sy_ar...)
-
-    _se_ra = []
+    se_en = OnePiece.feature_set_enrichment.score_set(fe_, sc_, se_fe_; sy_ar...)
 
     if 0 < n_pe
 
@@ -12,24 +10,24 @@ function pre_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, se_, ou)
 
         Random.seed!(ra)
 
-        for id in ProgressBar(1:n_pe)
-
-            se_ra = score_set(
+        se_ra__ = [
+            OnePiece.feature_set_enrichment.score_set(
                 fe_,
                 sc_,
                 Dict(se => sample(fe_, si; replace = false) for (se, si) in se_si);
                 sy_ar...,
-            )
+            ) for id in ProgressBar(1:n_pe)
+        ]
 
-            push!(_se_ra, se_ra)
+    else
 
-        end
+        se_ra__ = []
 
     end
 
-    fl_se_st = make_set_by_statistic(se_en, _se_ra, ou)
+    fl_se_st = make_set_x_statistic(se_en, se_ra__, ou)
 
-    plot_mountain(fl_se_st, n_ex, se_, fe_, sc_, se_fe_, sy_ar, ou)
+    plot_mountain(fl_se_st, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
 
     fl_se_st
 
@@ -41,37 +39,37 @@ Run pre-rank GSEA
 # Arguments
 
   - `settings_json`:
-  - `set_to_genes_json`:
-  - `gene_by_sample_tsv`:
+  - `set_genes_json`:
+  - `gene_x_metric_tsv`:
   - `output_directory`:
 """
-@cast function pre_rank(settings_json, set_to_genes_json, gene_by_sample_tsv, output_directory)
+@cast function pre_rank(settings_json, set_genes_json, gene_x_metric_tsv, output_directory)
 
-    ke_ar = dict_read(settings_json)
+    ke_ar = OnePiece.extension.dict.read(settings_json)
 
-    sc_fe_sa = table_read(gene_by_sample_tsv)
+    sc_fe_sa = OnePiece.io.table.read(gene_x_metric_tsv)
 
     fe_ = sc_fe_sa[!, 1]
 
     sc_ = sc_fe_sa[!, 2]
 
-    sc_, fe_ = sort_like([sc_, fe_])
+    sc_, fe_ = OnePiece.extension.vector.sort_like([sc_, fe_])
 
-    se_fe_ = select_set(
-        dict_read(set_to_genes_json),
+    se_fe_ = OnePiece.extension.dict.read(set_genes_json)
+
+    filter!(
+        se_fe_,
         ke_ar["remove_gene_set_genes"],
         fe_,
         ke_ar["minimum_gene_set_size"],
         ke_ar["maximum_gene_set_size"],
     )
 
-    sy_ar = make_keyword_argument(ke_ar)
-
     pre_rank(
         fe_,
         sc_,
         se_fe_,
-        sy_ar,
+        make_keyword_argument(ke_ar),
         ke_ar["random_seed"],
         ke_ar["number_of_permutations"],
         ke_ar["number_of_extreme_gene_sets_to_plot"],

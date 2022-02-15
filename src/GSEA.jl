@@ -1,12 +1,18 @@
 module GSEA
 
-using Comonicon, DataFrames, OnePiece, ProgressBars, Random, Statistics
+using Comonicon
+using DataFrames
+using OnePiece
+using ProgressBars
+using Random
+using Statistics
+using StatsBase
 
-include("support/select_set.jl")
+include("support/filter.jl")
 
 include("support/make_keyword_argument.jl")
 
-include("support/make_set_by_statistic.jl")
+include("support/make_set_x_statistic.jl")
 
 include("support/plot_mountain.jl")
 

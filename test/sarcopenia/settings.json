@@ -1,14 +1,14 @@
 {
   "metric": "signal_to_noise_ratio",
-  "remove_gene_set_genes": false,
+  "remove_gene_set_genes": true,
   "minimum_gene_set_size": 15,
   "maximum_gene_set_size": 500,
   "weight": 1.0,
   "algorithm": "ks",
   "number_of_jobs": 1,
-  "permutation": "sample",
+  "permutation": "set",
   "random_seed": 20150603,
   "number_of_permutations": 100,
-  "number_of_extreme_gene_sets_to_plot": 8,
+  "number_of_extreme_gene_sets_to_plot": 1,
   "gene_sets_to_plot": []
 }

@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------------------------- #
-TE = joinpath(tempdir(), "GSEA.test")
+TE = joinpath(tempdir(), "Sarcopenia.test")
 
 if isdir(TE)
 
@@ -14,14 +14,9 @@ mkdir(TE)
 println("Made $TE.")
 
 # ----------------------------------------------------------------------------------------------- #
-using GSEA, OnePiece
+using GSEA
 
-# ----------------------------------------------------------------------------------------------- #
-se = joinpath(dirname(@__DIR__), "settings.json")
-
-ke_ar = OnePiece.extension.dict.read(se)
-
-println(ke_ar)
+using OnePiece
 
 # ----------------------------------------------------------------------------------------------- #
 da = joinpath(@__DIR__, "sarcopenia")
@@ -29,13 +24,30 @@ da = joinpath(@__DIR__, "sarcopenia")
 # ----------------------------------------------------------------------------------------------- #
 println("-"^99)
 
+println("settings.json")
+
+println("-"^99)
+
+se = joinpath(da, "settings.json")
+
+ke_ar = OnePiece.extension.dict.read(se)
+
+println(ke_ar)
+
+# ----------------------------------------------------------------------------------------------- #
+println("-"^99)
+
+println("GSEA standard")
+
+println("-"^99)
+
 in = joinpath(da, "input")
 
 GSEA.standard(
     se,
-    joinpath(in, "set_to_genes.json"),
-    joinpath(in, "int.target_by_sample.tsv"),
-    joinpath(in, "float.gene_by_sample.tsv"),
+    joinpath(in, "set_genes.json"),
+    joinpath(in, "number.target_x_sample.tsv"),
+    joinpath(in, "score.gene_x_sample.tsv"),
     TE,
 )
 
@@ -44,18 +56,25 @@ GSEA.standard(
 be = "$(ke_ar["permutation"])_$(ke_ar["number_of_permutations"])"
 
 # ----------------------------------------------------------------------------------------------- #
-function read_old(id)
+println("-"^99)
+
+println("Set-x-Statistic")
+
+println("-"^99)
+
+# ----------------------------------------------------------------------------------------------- #
+function re(id)
 
     OnePiece.io.table.read(joinpath(da, be, "gsea_report_for_$id.tsv"))
 
 end
 
 # ----------------------------------------------------------------------------------------------- #
-ol_se_st = vcat((read_old(id) for id in [0, 1])...)
+ol_se_st = vcat((re(id) for id in [0, 1])...)
 
 println(size(ol_se_st))
 
-va_se_st = OnePiece.io.table.read(joinpath(TE, "score.set_by_statistic.tsv"))
+va_se_st = OnePiece.io.table.read(joinpath(TE, "float.set_x_statistic.tsv"))
 
 println(size(va_se_st))
 
@@ -69,23 +88,38 @@ println("-"^99)
 
 va_se_st = va_se_st[indexin(se_, va_se_st[!, 1]), :]
 
-for (nao, nan) in [["ES", "Enrichment"], ["NOM p-val", "P-value"], ["FDR q-val", "Q-value"]]
+for (nao, nan) in [
+    ["ES", "Enrichment"],
+    ["NES", "Normalized enrichment"],
+    ["NOM p-val", "P-value"],
+    ["FDR q-val", "Q-value"],
+]
 
-    display(
-        OnePiece.figure.plot_x_y(
-            [ol_se_st[!, nao]],
-            [va_se_st[!, nan]],
-            text_ = [se_],
-            mode_ = ["markers"],
-            la = Dict(
-                "title" => be,
-                "xaxis" => Dict("title" => Dict("text" => nao)),
-                "yaxis" => Dict("title" => Dict("text" => nan)),
-            ),
+    ou = joinpath(TE, "$(OnePiece.extension.path.clean(nao)).html")
+
+    OnePiece.figure.plot_x_y(
+        [ol_se_st[!, nao]],
+        [va_se_st[!, nan]],
+        text_ = [se_],
+        mode_ = ["markers"],
+        la = Dict(
+            "title" => be,
+            "xaxis" => Dict("title" => Dict("text" => nao)),
+            "yaxis" => Dict("title" => Dict("text" => nan)),
         ),
+        ou = ou,
     )
 
+    println(ou)
+
 end
+
+# ----------------------------------------------------------------------------------------------- #
+println("-"^99)
+
+println("Gene-x-Metric")
+
+println("-"^99)
 
 # ----------------------------------------------------------------------------------------------- #
 ol_ge_st = OnePiece.io.table.read(joinpath(da, be, "ranked_gene_list_0_versus_1.tsv"))[
@@ -93,7 +127,7 @@ ol_ge_st = OnePiece.io.table.read(joinpath(da, be, "ranked_gene_list_0_versus_1.
     ["NAME", "SCORE"],
 ]
 
-sc_ge_st = OnePiece.io.table.read(joinpath(TE, "score.gene_by_metric.tsv"))
+sc_ge_st = OnePiece.io.table.read(joinpath(TE, "score.gene_x_metric.tsv"))
 
 # ----------------------------------------------------------------------------------------------- #
 function ro(re)
@@ -103,8 +137,6 @@ function ro(re)
 end
 
 # ----------------------------------------------------------------------------------------------- #
-println("-"^99)
-
 fe_sc = Dict(fe => ro(sc) for (fe, sc) in eachrow(sc_ge_st))
 
 println("Gene\tOld\tNew")

@@ -1,4 +1,4 @@
-function make_set_by_statistic(se_en, se_ra_, ou)
+function make_set_x_statistic(se_en, se_ra_, ou)
 
     if isempty(se_ra_)
 
@@ -51,7 +51,7 @@ function make_set_by_statistic(se_en, se_ra_, ou)
 
     mkpath(ou)
 
-    OnePiece.io.table.table_write(joinpath(ou, "score.set_by_statistic.tsv"), fl_se_st)
+    OnePiece.io.table.write(joinpath(ou, "float.set_x_statistic.tsv"), fl_se_st)
 
     fl_se_st
 

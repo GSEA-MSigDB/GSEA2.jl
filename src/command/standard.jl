@@ -1,27 +1,38 @@
+function compare_and_sort(bi_, ma, me, fe_)
+
+    reverse(
+        OnePiece.extension.vector.sort_like([
+            OnePiece.feature_x_sample.compare_with_target(bi_, ma, me),
+            fe_,
+        ]),
+    )
+
+end
+
 """
 Run standard GSEA
 
 # Arguments
 
   - `settings_json`:
-  - `set_to_genes_json`:
-  - `target_by_sample_tsv`:
-  - `gene_by_sample_tsv`:
+  - `set_genes_json`:
+  - `target_x_sample_tsv`:
+  - `gene_x_sample_tsv`:
   - `output_directory`:
 """
 @cast function standard(
     settings_json,
-    set_to_genes_json,
-    target_by_sample_tsv,
-    gene_by_sample_tsv,
+    set_genes_json,
+    target_x_sample_tsv,
+    gene_x_sample_tsv,
     output_directory,
 )
 
-    ke_ar = dict_read(settings_json)
+    ke_ar = OnePiece.extension.dict.read(settings_json)
 
-    sc_ta_sa = table_read(target_by_sample_tsv)
+    sc_ta_sa = OnePiece.io.table.read(target_x_sample_tsv)
 
-    sc_fe_sa = table_read(gene_by_sample_tsv)
+    sc_fe_sa = OnePiece.io.table.read(gene_x_sample_tsv)
 
     fe_ = string.(sc_fe_sa[:, 1])
 
@@ -33,17 +44,19 @@ Run standard GSEA
 
     me = ke_ar["metric"]
 
-    sc_, fe_ = sort_like([compare_with_target(bi_, ma, me), fe_])
+    fe_, sc_ = compare_and_sort(bi_, ma, me, fe_)
 
     mkpath(output_directory)
 
-    table_write(
-        joinpath(output_directory, "score.gene_by_metric.tsv"),
+    OnePiece.io.table.write(
+        joinpath(output_directory, "score.gene_x_metric.tsv"),
         DataFrame("Gene" => fe_, me => sc_),
     )
 
-    se_fe_ = select_set(
-        dict_read(set_to_genes_json),
+    se_fe_ = OnePiece.extension.dict.read(set_genes_json)
+
+    filter!(
+        se_fe_,
         ke_ar["remove_gene_set_genes"],
         fe_,
         ke_ar["minimum_gene_set_size"],
@@ -64,29 +77,30 @@ Run standard GSEA
 
     if pe == "sample"
 
-        se_en = score_set(fe_, sc_, se_fe_; sy_ar...)
+        se_en = OnePiece.feature_set_enrichment.score_set(fe_, sc_, se_fe_; sy_ar...)
 
-        _se_ra = []
 
         if 0 < n_pe
 
-            println("Permuting ", pe, "s to compute significance")
+            println("Permuting $(pe)s to compute significance")
 
             Random.seed!(ra)
 
-            for id in ProgressBar(1:n_pe)
+            se_ra__ = [
+                OnePiece.feature_set_enrichment.score_set(
+                    compare_and_sort(shuffle!(bi_), ma, me, fe_)...,
+                    se_fe_;
+                    sy_ar...,
+                ) for id in ProgressBar(1:n_pe)
+            ]
 
-                scr_, fer_ = sort_like([compare_with_target(shuffle!(bi_), ma, me), fe_])
+        else
 
-                se_ra = score_set(fer_, scr_, se_fe_; sy_ar...)
-
-                push!(_se_ra, se_ra)
-
-            end
+            se_ra__ = []
 
         end
 
-        fl_se_st = make_set_by_statistic(se_en, _se_ra, output_directory)
+        fl_se_st = make_set_x_statistic(se_en, se_ra__, output_directory)
 
         plot_mountain(fl_se_st, n_ex, se_, fe_, sc_, se_fe_, sy_ar, output_directory)
 

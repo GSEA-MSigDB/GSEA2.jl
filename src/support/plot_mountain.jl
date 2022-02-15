@@ -1,6 +1,6 @@
-function plot_mountain(sc_se_st, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
+function plot_mountain(fl_se_st, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
 
-    se_ = sc_se_st[!, 1]
+    se_ = fl_se_st[!, 1]
 
     di = joinpath(ou, "plot")
 

@@ -1,6 +1,6 @@
-function filter_gene!(se_fe_, re, in_, mi, ma)
+function filter!(se_fe_, re, in_, mi, ma)
 
-    println("Before filtering set-to-genes:")
+    println("Before filtering set-to-genes")
 
     OnePiece.extension.dict.summarize(se_fe_, n_pr = 0)
 
@@ -26,7 +26,7 @@ function filter_gene!(se_fe_, re, in_, mi, ma)
 
     end
 
-    println("After:")
+    println("After")
 
     OnePiece.extension.dict.summarize(se_fe_, n_pr = 0)
 
