@@ -63,19 +63,6 @@ println(OnePiece.dict.read(se))
 sc = joinpath(da, "score.gene_x_sample.tsv")
 
 # ----------------------------------------------------------------------------------------------- #
-function print_extreme(da; n_ex = 3)
-
-    println("First $n_ex")
-
-    println(first(da, n_ex))
-
-    println("Last $n_ex")
-
-    println(last(da, n_ex))
-
-end
-
-# ----------------------------------------------------------------------------------------------- #
 println("-"^99)
 
 println("single_sample")
