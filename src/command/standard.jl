@@ -1,10 +1,10 @@
 function compare_and_sort(bi_, ma, me, fe_)
 
     reverse(
-        OnePiece.extension.vector.sort_like([
+        OnePiece.extension.vector.sort_like(
             OnePiece.feature_x_sample.compare_with_target(bi_, ma, me),
             fe_,
-        ]),
+        ),
     )
 
 end
