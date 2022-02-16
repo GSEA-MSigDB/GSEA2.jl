@@ -109,7 +109,7 @@ Run standard GSEA
 
     else
 
-        error("`permutation` is invalid.")
+        error("`permutation` is not `sample` or `set`.")
 
     end
 

@@ -8,7 +8,7 @@ using Random
 using Statistics
 using StatsBase
 
-include("support/filter.jl")
+include("support/filter!.jl")
 
 include("support/make_keyword_argument.jl")
 
