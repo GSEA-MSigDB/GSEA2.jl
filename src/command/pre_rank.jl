@@ -45,17 +45,17 @@ Run pre-rank GSEA
 """
 @cast function pre_rank(settings_json, set_genes_json, gene_x_metric_tsv, output_directory)
 
-    ke_ar = OnePiece.extension.dict.read(settings_json)
+    ke_ar = OnePiece.dict.read(settings_json)
 
-    sc_fe_sa = OnePiece.io.table.read(gene_x_metric_tsv)
+    sc_fe_sa = OnePiece.table.read(gene_x_metric_tsv)
 
     fe_ = sc_fe_sa[!, 1]
 
     sc_ = sc_fe_sa[!, 2]
 
-    sc_, fe_ = OnePiece.extension.vector.sort_like(sc_, fe_)
+    sc_, fe_ = OnePiece.vector.sort_like(sc_, fe_)
 
-    se_fe_ = OnePiece.extension.dict.read(set_genes_json)
+    se_fe_ = OnePiece.dict.read(set_genes_json)
 
     filter!(
         se_fe_,

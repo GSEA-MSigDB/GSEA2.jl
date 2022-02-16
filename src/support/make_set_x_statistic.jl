@@ -30,11 +30,11 @@ function make_set_x_statistic(se_en, se_ra_, ou)
 
             push!(no_, en / abs(mean(ra_)))
 
-            push!(pv_, OnePiece.informatics.significance.get_p_value(en, ra_, si))
+            push!(pv_, OnePiece.significance.get_p_value(en, ra_, si))
 
         end
 
-        ad_ = OnePiece.informatics.significance.adjust_p_value(pv_)
+        ad_ = OnePiece.significance.adjust_p_value(pv_)
 
     end
 
@@ -51,7 +51,7 @@ function make_set_x_statistic(se_en, se_ra_, ou)
 
     mkpath(ou)
 
-    OnePiece.io.table.write(joinpath(ou, "float.set_x_statistic.tsv"), fl_se_st)
+    OnePiece.table.write(joinpath(ou, "float.set_x_statistic.tsv"), fl_se_st)
 
     fl_se_st
 

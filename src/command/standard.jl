@@ -1,10 +1,7 @@
 function compare_and_sort(bi_, ma, me, fe_)
 
     reverse(
-        OnePiece.extension.vector.sort_like(
-            OnePiece.feature_x_sample.compare_with_target(bi_, ma, me),
-            fe_,
-        ),
+        OnePiece.vector.sort_like(OnePiece.feature_x_sample.compare_with_target(bi_, ma, me), fe_),
     )
 
 end
@@ -28,11 +25,11 @@ Run standard GSEA
     output_directory,
 )
 
-    ke_ar = OnePiece.extension.dict.read(settings_json)
+    ke_ar = OnePiece.dict.read(settings_json)
 
-    sc_ta_sa = OnePiece.io.table.read(target_x_sample_tsv)
+    sc_ta_sa = OnePiece.table.read(target_x_sample_tsv)
 
-    sc_fe_sa = OnePiece.io.table.read(gene_x_sample_tsv)
+    sc_fe_sa = OnePiece.table.read(gene_x_sample_tsv)
 
     fe_ = string.(sc_fe_sa[:, 1])
 
@@ -48,12 +45,12 @@ Run standard GSEA
 
     mkpath(output_directory)
 
-    OnePiece.io.table.write(
+    OnePiece.table.write(
         joinpath(output_directory, "score.gene_x_metric.tsv"),
         DataFrame("Gene" => fe_, me => sc_),
     )
 
-    se_fe_ = OnePiece.extension.dict.read(set_genes_json)
+    se_fe_ = OnePiece.dict.read(set_genes_json)
 
     filter!(
         se_fe_,

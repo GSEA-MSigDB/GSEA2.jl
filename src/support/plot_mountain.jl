@@ -15,7 +15,7 @@ function plot_mountain(fl_se_st, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
             sc_,
             se_fe_[se];
             title_text = se,
-            ou = joinpath(di, "$(OnePiece.extension.path.clean(se, pr = false)).html"),
+            ou = joinpath(di, "$(OnePiece.path.clean(se, pr = false)).html"),
             sy_ar...,
         )
 

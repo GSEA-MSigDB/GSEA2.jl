@@ -30,7 +30,7 @@ println("filter!")
 
 println("-"^99)
 
-se_fe_ = OnePiece.extension.dict.read(st)
+se_fe_ = OnePiece.dict.read(st)
 
 co = copy(se_fe_)
 
@@ -57,7 +57,7 @@ println("-"^99)
 
 se = joinpath(dirname(@__DIR__), "settings.json")
 
-println(OnePiece.extension.dict.read(se))
+println(OnePiece.dict.read(se))
 
 # ----------------------------------------------------------------------------------------------- #
 sc = joinpath(da, "score.gene_x_sample.tsv")
@@ -88,7 +88,7 @@ GSEA.single_sample(se, st, sc, ou)
 
 println(readdir(ou))
 
-en_se_sa = OnePiece.io.table.read(joinpath(ou, "enrichment.set_x_sample.tsv"))
+en_se_sa = OnePiece.table.read(joinpath(ou, "enrichment.set_x_sample.tsv"))
 
 println(size(en_se_sa))
 
@@ -99,7 +99,7 @@ function print_output(ou)
 
     println(readdir(ou))
 
-    fl_se_st = OnePiece.io.table.read(joinpath(ou, "float.set_x_statistic.tsv"))
+    fl_se_st = OnePiece.table.read(joinpath(ou, "float.set_x_statistic.tsv"))
 
     println(size(fl_se_st))
 
@@ -134,7 +134,7 @@ ou = joinpath(TE, "standard_gsea")
 
 GSEA.standard(se, st, joinpath(da, "number.target_x_sample.tsv"), sc, ou)
 
-sc_se_sa = OnePiece.io.table.read(joinpath(ou, me))
+sc_se_sa = OnePiece.table.read(joinpath(ou, me))
 
 println(size(sc_se_sa))
 

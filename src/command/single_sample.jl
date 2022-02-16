@@ -10,11 +10,11 @@ Run single-sample GSEA
 """
 @cast function single_sample(settings_json, set_genes_json, gene_x_sample_tsv, output_directory)
 
-    ke_ar = OnePiece.extension.dict.read(settings_json)
+    ke_ar = OnePiece.dict.read(settings_json)
 
-    sc_fe_sa = OnePiece.io.table.read(gene_x_sample_tsv)
+    sc_fe_sa = OnePiece.table.read(gene_x_sample_tsv)
 
-    se_fe_ = OnePiece.extension.dict.read(set_genes_json)
+    se_fe_ = OnePiece.dict.read(set_genes_json)
 
     filter!(
         se_fe_,
@@ -32,6 +32,6 @@ Run single-sample GSEA
 
     mkpath(output_directory)
 
-    OnePiece.io.table.write(joinpath(output_directory, "enrichment.set_x_sample.tsv"), en_se_sa)
+    OnePiece.table.write(joinpath(output_directory, "enrichment.set_x_sample.tsv"), en_se_sa)
 
 end

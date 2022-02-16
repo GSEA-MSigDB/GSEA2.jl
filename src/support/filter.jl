@@ -2,7 +2,7 @@ function filter!(se_fe_, re, in_, mi, ma)
 
     println("Before filtering set-to-genes")
 
-    OnePiece.extension.dict.summarize(se_fe_, n_pr = 0)
+    OnePiece.dict.summarize(se_fe_, n_pr = 0)
 
     if re
 
@@ -28,6 +28,6 @@ function filter!(se_fe_, re, in_, mi, ma)
 
     println("After")
 
-    OnePiece.extension.dict.summarize(se_fe_, n_pr = 0)
+    OnePiece.dict.summarize(se_fe_, n_pr = 0)
 
 end

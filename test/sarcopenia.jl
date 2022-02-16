@@ -30,7 +30,7 @@ println("-"^99)
 
 se = joinpath(da, "settings.json")
 
-ke_ar = OnePiece.extension.dict.read(se)
+ke_ar = OnePiece.dict.read(se)
 
 println(ke_ar)
 
@@ -65,7 +65,7 @@ println("-"^99)
 # ----------------------------------------------------------------------------------------------- #
 function re(id)
 
-    OnePiece.io.table.read(joinpath(da, be, "gsea_report_for_$id.tsv"))
+    OnePiece.table.read(joinpath(da, be, "gsea_report_for_$id.tsv"))
 
 end
 
@@ -74,7 +74,7 @@ ol_se_st = vcat((re(id) for id in [0, 1])...)
 
 println(size(ol_se_st))
 
-va_se_st = OnePiece.io.table.read(joinpath(TE, "float.set_x_statistic.tsv"))
+va_se_st = OnePiece.table.read(joinpath(TE, "float.set_x_statistic.tsv"))
 
 println(size(va_se_st))
 
@@ -95,7 +95,7 @@ for (nao, nan) in [
     ["FDR q-val", "Q-value"],
 ]
 
-    ou = joinpath(TE, "$(OnePiece.extension.path.clean(nao)).html")
+    ou = joinpath(TE, "$(OnePiece.path.clean(nao)).html")
 
     OnePiece.figure.plot_x_y(
         [ol_se_st[!, nao]],
@@ -122,12 +122,10 @@ println("Gene-x-Metric")
 println("-"^99)
 
 # ----------------------------------------------------------------------------------------------- #
-ol_ge_st = OnePiece.io.table.read(joinpath(da, be, "ranked_gene_list_0_versus_1.tsv"))[
-    !,
-    ["NAME", "SCORE"],
-]
+ol_ge_st =
+    OnePiece.table.read(joinpath(da, be, "ranked_gene_list_0_versus_1.tsv"))[!, ["NAME", "SCORE"]]
 
-sc_ge_st = OnePiece.io.table.read(joinpath(TE, "score.gene_x_metric.tsv"))
+sc_ge_st = OnePiece.table.read(joinpath(TE, "score.gene_x_metric.tsv"))
 
 # ----------------------------------------------------------------------------------------------- #
 function ro(re)
