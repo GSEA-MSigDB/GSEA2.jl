@@ -14,7 +14,7 @@ function pre_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, ou)
             OnePiece.feature_set_enrichment.score_set(
                 fe_,
                 sc_,
-                Dict(se => sample(fe_, si; replace = false) for (se, si) in se_si);
+                Dict(se => sample(fe_, si, replace = false) for (se, si) in se_si);
                 sy_ar...,
             ) for id in ProgressBar(1:n_pe)
         ]

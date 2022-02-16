@@ -79,7 +79,7 @@ en_se_sa = OnePiece.table.read(joinpath(ou, "enrichment.set_x_sample.tsv"))
 
 println(size(en_se_sa))
 
-print_extreme(en_se_sa)
+OnePiece.dataframe.view(en_se_sa)
 
 # ----------------------------------------------------------------------------------------------- #
 function print_output(ou)
@@ -88,9 +88,7 @@ function print_output(ou)
 
     fl_se_st = OnePiece.table.read(joinpath(ou, "float.set_x_statistic.tsv"))
 
-    println(size(fl_se_st))
-
-    print_extreme(fl_se_st)
+    OnePiece.dataframe.view(fl_se_st)
 
 end
 
@@ -123,9 +121,7 @@ GSEA.standard(se, st, joinpath(da, "number.target_x_sample.tsv"), sc, ou)
 
 sc_se_sa = OnePiece.table.read(joinpath(ou, me))
 
-println(size(sc_se_sa))
-
-print_extreme(sc_se_sa)
+OnePiece.dataframe.view(sc_se_sa)
 
 print_output(ou)
 
