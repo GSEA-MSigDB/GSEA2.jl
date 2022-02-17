@@ -47,11 +47,11 @@ mkdir output
 #### 3. Run standard GSEA
 
 ```
-gsea standard ../../settings.json set_to_genes.json target_by_sample.tsv gene_by_sample.tsv output
+gsea standard settings.json set_genes.json number.target_x_sample.tsv score.gene_x_sample.tsv output
 
 ls -l output
 
-head output/set_by_statistic.tsv
+head output/float.set_x_statistic.tsv
 ```
 
 ## Settings are just a [`.json` file](settings.json)

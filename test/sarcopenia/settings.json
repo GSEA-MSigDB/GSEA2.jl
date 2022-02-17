@@ -6,7 +6,7 @@
   "weight": 1.0,
   "algorithm": "ks",
   "number_of_jobs": 1,
-  "permutation": "set",
+  "permutation": "sample",
   "random_seed": 20150603,
   "number_of_permutations": 100,
   "number_of_extreme_gene_sets_to_plot": 1,
