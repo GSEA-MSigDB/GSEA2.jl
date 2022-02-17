@@ -56,29 +56,7 @@ head output/float.set_x_statistic.tsv
 
 ## Settings are just a [`.json` file](settings.json)
 
-#### `metric`
-
-#### `remove_gene_set_genes`
-
-#### `minimum_gene_set_size`
-
-#### `maximum_gene_set_size`
-
-#### `weight`
-
-#### `algorithm`
-
-#### `number_of_jobs`
-
-#### `permutation`
-
-#### `random_seed`
-
-#### `number_of_permutations`
-
-#### `number_of_extreme_gene_sets_to_plot`
-
-#### `gene_sets_to_plot`
+(`settings.json` descriptions are coming soon...)
 
 ## Install
 
