@@ -41,16 +41,13 @@ println("GSEA standard")
 
 println("-"^99)
 
-in = joinpath(da, "input")
-
 GSEA.standard(
     se,
-    joinpath(in, "set_genes.json"),
-    joinpath(in, "number.target_x_sample.tsv"),
-    joinpath(in, "score.gene_x_sample.tsv"),
+    joinpath(da, "set_genes.json"),
+    joinpath(da, "number.target_x_sample.tsv"),
+    joinpath(da, "score.gene_x_sample.tsv"),
     TE,
 )
-
 
 # ----------------------------------------------------------------------------------------------- #
 be = "$(ke_ar["permutation"])_$(ke_ar["number_of_permutations"])"
@@ -92,25 +89,23 @@ for (nao, nan) in [
     ["ES", "Enrichment"],
     ["NES", "Normalized enrichment"],
     ["NOM p-val", "P-value"],
-    ["FDR q-val", "Q-value"],
+    #["FDR q-val", "Q-value"],
 ]
 
-    ou = joinpath(TE, "$(OnePiece.path.clean(nao)).html")
-
-    OnePiece.figure.plot_x_y(
-        [ol_se_st[!, nao]],
-        [va_se_st[!, nan]],
-        text_ = [se_],
-        mode_ = ["markers"],
-        la = Dict(
-            "title" => be,
-            "xaxis" => Dict("title" => Dict("text" => nao)),
-            "yaxis" => Dict("title" => Dict("text" => nan)),
+    display(
+        OnePiece.figure.plot_x_y(
+            [ol_se_st[!, nao]],
+            [va_se_st[!, nan]],
+            text_ = [se_],
+            mode_ = ["markers"],
+            la = Dict(
+                "title" => be,
+                "xaxis" => Dict("title" => Dict("text" => nao)),
+                "yaxis" => Dict("title" => Dict("text" => nan)),
+            ),
+            ou = joinpath(TE, "$(OnePiece.path.clean(nao)).html"),
         ),
-        ou = ou,
     )
-
-    println(ou)
 
 end
 
