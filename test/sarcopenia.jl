@@ -92,7 +92,7 @@ for (nao, nan) in [
     #["FDR q-val", "Q-value"],
 ]
 
-    display(
+    OnePiece.figure.view(
         OnePiece.figure.plot_x_y(
             [ol_se_st[!, nao]],
             [va_se_st[!, nan]],
