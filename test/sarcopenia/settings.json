@@ -9,6 +9,6 @@
   "permutation": "sample",
   "random_seed": 20150603,
   "number_of_permutations": 100,
-  "number_of_extreme_gene_sets_to_plot": 1,
+  "number_of_extreme_gene_sets_to_plot": 3,
   "gene_sets_to_plot": []
 }
