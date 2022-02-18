@@ -125,7 +125,7 @@ sc_ge_st = OnePiece.table.read(joinpath(TE, "score.gene_x_metric.tsv"))
 # ----------------------------------------------------------------------------------------------- #
 function ro(re)
 
-    round(re; digits = 4)
+    round(re, digits = 4)
 
 end
 
