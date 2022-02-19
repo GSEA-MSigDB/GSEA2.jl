@@ -10,19 +10,19 @@ The :sparkles: **new** :sparkles: Gene Set Enrichment Analysis :dna:
 
 #### Run single-sample GSEA
 
-```
+```bash
 gsea single-sample
 ```
 
 #### Run pre-rank GSEA
 
-```
+```bash
 gsea pre-rank
 ```
 
 #### Run standard GSEA
 
-```
+```bash
 gsea standard
 ```
 
@@ -30,7 +30,7 @@ gsea standard
 
 #### 1. Go to the directory with the example
 
-```
+```bash
 cd test/sarcopenia
 
 ls -l
@@ -38,7 +38,7 @@ ls -l
 
 #### 2. Make a directory for saving outputs
 
-```
+```bash
 rm -rf output
 
 mkdir output
@@ -46,7 +46,7 @@ mkdir output
 
 #### 3. Run standard GSEA
 
-```
+```bash
 gsea standard settings.json set_genes.json number.target_x_sample.tsv score.gene_x_sample.tsv output
 
 ls -l output
@@ -66,7 +66,7 @@ head output/float.set_x_statistic.tsv
 
 3. Test installation
 
-```
+```bash
 gsea --help
 ```
 
@@ -78,13 +78,13 @@ If there is no release matching desired machine or if installation fails, try bu
 
 #### 1. Download this repository
 
-```
+```bash
 git clone https://github.com/KwatMDPhD/GSEA.jl
 ```
 
 #### 2. Download dependencies
 
-```
+```bash
 cd GSEA.jl &&
 
 julia --project --eval "using Pkg; Pkg.instantiate()"
@@ -92,13 +92,13 @@ julia --project --eval "using Pkg; Pkg.instantiate()"
 
 #### 2. Test before building
 
-```
+```bash
 julia --project --eval "using Pkg; Pkg.test()"
 ```
 
 #### 3. Build
 
-```
+```bash
 julia --project deps/build.jl app tarball
 ```
 
@@ -108,7 +108,7 @@ Add `build/gsea/bin` to the path.
 
 #### 4. Test build
 
-```
+```bash
 gsea --help
 ```
 
