@@ -66,6 +66,8 @@ head output/float.set_x_statistic.tsv
 
 3. Test installation
 
+We plan to sign `gsea` in the near future. Meanwhile, enable 3rd-party apps on your macOS.
+
 ```bash
 gsea --help
 ```
