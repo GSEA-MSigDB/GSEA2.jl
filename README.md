@@ -26,7 +26,7 @@ gsea pre-rank
 gsea standard
 ```
 
-## Try with an example data
+## Try with an sarcopenia example data
 
 #### 1. Go to the directory with the example
 
