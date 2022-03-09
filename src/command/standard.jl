@@ -31,6 +31,8 @@ Run standard GSEA
 
     sc_fe_sa = OnePiece.table.read(gene_x_sample_x_score_tsv)
 
+    error_feature_x_(sc_fe_sa)
+
     fe_ = string.(sc_fe_sa[:, 1])
 
     sc_fe_sa = sc_fe_sa[:, names(sc_ta_sa)]

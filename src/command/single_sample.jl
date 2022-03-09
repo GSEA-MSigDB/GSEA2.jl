@@ -19,6 +19,8 @@ Run single-sample GSEA
 
     sc_fe_sa = OnePiece.table.read(gene_x_sample_x_score_tsv)
 
+    error_feature_score(sc_fe_sa)
+
     se_fe_ = OnePiece.dict.read(set_genes_json)
 
     filter!(

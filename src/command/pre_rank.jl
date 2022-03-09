@@ -53,6 +53,8 @@ Run pre-rank GSEA
 
     sc_ = sc_fe_sa[!, 2]
 
+    error_feature_score(fe_, sc_)
+
     sc_, fe_ = OnePiece.vector.sort_like(sc_, fe_)
 
     se_fe_ = OnePiece.dict.read(set_genes_json)
