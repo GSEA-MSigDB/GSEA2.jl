@@ -2,7 +2,7 @@ function error_feature_score(fe_, sc_)
 
     if length(fe_) != length(unique(fe_))
 
-        error("Some genes are duplicated.")
+        error("Genes have duplicates.")
 
     end
 
