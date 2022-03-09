@@ -56,7 +56,7 @@ println("-"^99)
 
 println(
     GSEA.make_keyword_argument(
-        Dict("weight" => 2.0, "algorithm" => "Jensen-Shannon divergence", "number_of_jobs" => 8),
+        Dict("power" => 2.0, "algorithm" => "Jensen-Shannon divergence", "number_of_jobs" => 8),
     ),
 )
 

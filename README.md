@@ -47,16 +47,62 @@ mkdir output
 #### 3. Run standard GSEA
 
 ```bash
-gsea standard settings.json set_genes.json number.target_x_sample.tsv score.gene_x_sample.tsv output
+gsea standard setting.json set_genes.json target_x_sample_x_number.tsv gene_x_sample_x_score.tsv output
 
 ls -l output
 
-head output/float.set_x_statistic.tsv
+head output/set_x_statistic_x_number.tsv
 ```
 
-## Settings are just a [`.json` file](settings.json)
+## Settings are just a [`.json` file](setting.json)
 
-(`settings.json` descriptions are coming soon...)
+#### `metric` to rank genes (for `standard`)
+
+`signal_to_noise_ratio` | `difference_of_median` | `pearson_correlation` | `information_coefficient` | `cosine_distance`
+
+#### `remove_gene_set_genes` that are not in the gene-x-sample-x-score genes
+
+`false` | `true`
+
+#### `minimum_gene_set_size` that removes sets smaller than this
+
+Integer
+
+#### `maximum_gene_set_size` that removes sets bigger than this
+
+Integer
+
+#### `power` to raise the gene scores
+
+Number
+
+#### `algorithm` for computing enrichment
+
+`kolmogorov_smirnov` | `jensen_shannon`
+
+#### `number_of_jobs`
+
+Integer
+
+#### `permutation` to compute significance
+
+`sample` (for `standard`) | `set` (for `standard` and `pre-rank`)
+
+#### `random_seed` from which to generate randomness
+
+Integer
+
+#### `number_of_permutations`
+
+Integer
+
+#### `number_of_extreme_gene_sets_to_plot`
+
+Integer
+
+#### `gene_sets_to_plot` no matter what (for `standard` and `pre-rank`)
+
+List of string gene-set names
 
 ## Install
 
