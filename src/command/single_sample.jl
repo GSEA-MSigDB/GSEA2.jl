@@ -3,16 +3,21 @@ Run single-sample GSEA
 
 # Arguments
 
-  - `settings_json`:
+  - `setting_json`:
   - `set_genes_json`:
-  - `gene_x_sample_tsv`:
+  - `gene_x_sample_x_score_tsv`:
   - `output_directory`:
 """
-@cast function single_sample(settings_json, set_genes_json, gene_x_sample_tsv, output_directory)
+@cast function single_sample(
+    setting_json,
+    set_genes_json,
+    gene_x_sample_x_score_tsv,
+    output_directory,
+)
 
-    ke_ar = OnePiece.dict.read(settings_json)
+    ke_ar = OnePiece.dict.read(setting_json)
 
-    sc_fe_sa = OnePiece.table.read(gene_x_sample_tsv)
+    sc_fe_sa = OnePiece.table.read(gene_x_sample_x_score_tsv)
 
     se_fe_ = OnePiece.dict.read(set_genes_json)
 
@@ -32,6 +37,6 @@ Run single-sample GSEA
 
     mkpath(output_directory)
 
-    OnePiece.table.write(joinpath(output_directory, "enrichment.set_x_sample.tsv"), en_se_sa)
+    OnePiece.table.write(joinpath(output_directory, "set_x_sample_x_enrichment.tsv"), en_se_sa)
 
 end

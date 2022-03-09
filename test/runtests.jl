@@ -15,7 +15,6 @@ println("Made $TE.")
 
 # ----------------------------------------------------------------------------------------------- #
 using GSEA
-
 using OnePiece
 
 # ----------------------------------------------------------------------------------------------- #
@@ -51,16 +50,29 @@ println(co)
 # ----------------------------------------------------------------------------------------------- #
 println("-"^99)
 
+println("make_keyword_argument")
+
+println("-"^99)
+
+println(
+    GSEA.make_keyword_argument(
+        Dict("weight" => 2.0, "algorithm" => "Jensen-Shannon divergence", "number_of_jobs" => 8),
+    ),
+)
+
+# ----------------------------------------------------------------------------------------------- #
+println("-"^99)
+
 println("GSEA")
 
 println("-"^99)
 
-se = joinpath(dirname(@__DIR__), "settings.json")
+se = joinpath(dirname(@__DIR__), "setting.json")
 
 println(OnePiece.dict.read(se))
 
 # ----------------------------------------------------------------------------------------------- #
-sc = joinpath(da, "score.gene_x_sample.tsv")
+sc = joinpath(da, "gene_x_sample_x_score.tsv")
 
 # ----------------------------------------------------------------------------------------------- #
 println("-"^99)
@@ -75,7 +87,7 @@ GSEA.single_sample(se, st, sc, ou)
 
 println(readdir(ou))
 
-en_se_sa = OnePiece.table.read(joinpath(ou, "enrichment.set_x_sample.tsv"))
+en_se_sa = OnePiece.table.read(joinpath(ou, "set_x_sample_x_enrichment.tsv"))
 
 println(size(en_se_sa))
 
@@ -86,14 +98,14 @@ function print_output(ou)
 
     println(readdir(ou))
 
-    fl_se_st = OnePiece.table.read(joinpath(ou, "float.set_x_statistic.tsv"))
+    fl_se_st = OnePiece.table.read(joinpath(ou, "set_x_statistic_x_number.tsv"))
 
     OnePiece.dataframe.view(fl_se_st)
 
 end
 
 # ----------------------------------------------------------------------------------------------- #
-me = "score.gene_x_metric.tsv"
+me = "gene_x_metric_x_score.tsv"
 
 # ----------------------------------------------------------------------------------------------- #
 println("-"^99)
@@ -117,7 +129,7 @@ println("-"^99)
 
 ou = joinpath(TE, "standard_gsea")
 
-GSEA.standard(se, st, joinpath(da, "number.target_x_sample.tsv"), sc, ou)
+GSEA.standard(se, st, joinpath(da, "target_x_sample_x_number.tsv"), sc, ou)
 
 sc_se_sa = OnePiece.table.read(joinpath(ou, me))
 

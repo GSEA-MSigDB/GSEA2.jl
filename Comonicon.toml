@@ -3,9 +3,6 @@ name = "gsea"
 [install]
 completion=true
 
-[command]
-width=177
-
 [sysimg]
 filter_stdlibs=true
 incremental=false

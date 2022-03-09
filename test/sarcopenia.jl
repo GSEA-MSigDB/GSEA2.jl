@@ -24,11 +24,11 @@ da = joinpath(@__DIR__, "sarcopenia")
 # ----------------------------------------------------------------------------------------------- #
 println("-"^99)
 
-println("settings.json")
+println("setting.json")
 
 println("-"^99)
 
-se = joinpath(da, "settings.json")
+se = joinpath(da, "setting.json")
 
 ke_ar = OnePiece.dict.read(se)
 
@@ -44,8 +44,8 @@ println("-"^99)
 GSEA.standard(
     se,
     joinpath(da, "set_genes.json"),
-    joinpath(da, "number.target_x_sample.tsv"),
-    joinpath(da, "score.gene_x_sample.tsv"),
+    joinpath(da, "target_x_sample_x_number.tsv"),
+    joinpath(da, "gene_x_sample_x_score.tsv"),
     TE,
 )
 
@@ -71,7 +71,7 @@ ol_se_st = vcat((re(id) for id in [0, 1])...)
 
 println(size(ol_se_st))
 
-va_se_st = OnePiece.table.read(joinpath(TE, "float.set_x_statistic.tsv"))
+va_se_st = OnePiece.table.read(joinpath(TE, "set_x_statistic_x_number.tsv"))
 
 println(size(va_se_st))
 
@@ -87,9 +87,8 @@ va_se_st = va_se_st[indexin(se_, va_se_st[!, 1]), :]
 
 for (nao, nan) in [
     ["ES", "Enrichment"],
-    ["NES", "Normalized enrichment"],
-    ["NOM p-val", "P-value"],
-    #["FDR q-val", "Q-value"],
+    ["NES", "Gene-set-size-normalized enrichment"],
+    ["NOM p-val", "Local pvalue"],
 ]
 
     OnePiece.figure.view(
@@ -120,7 +119,7 @@ println("-"^99)
 ol_ge_st =
     OnePiece.table.read(joinpath(da, be, "ranked_gene_list_0_versus_1.tsv"))[!, ["NAME", "SCORE"]]
 
-sc_ge_st = OnePiece.table.read(joinpath(TE, "score.gene_x_metric.tsv"))
+sc_ge_st = OnePiece.table.read(joinpath(TE, "gene_x_metric_x_score.tsv"))
 
 # ----------------------------------------------------------------------------------------------- #
 function ro(re)

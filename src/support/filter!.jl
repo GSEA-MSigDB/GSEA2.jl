@@ -6,7 +6,7 @@ function filter!(se_fe_, re, in_, mi, ma)
 
     if re
 
-        println("Removing set genes not found in gene-by-sample genes")
+        println("Removing set genes not found in gene-x-sample genes")
 
         for (se, fe_) in se_fe_
 

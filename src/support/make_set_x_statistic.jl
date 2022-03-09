@@ -1,14 +1,18 @@
-function make_set_x_statistic(se_en, se_ra_, ou)
+function make_set_x_statistic(se_en, _se_ra, ou)
 
-    if isempty(se_ra_)
+    se_ = collect(keys(se_en))
 
-        no_ = pv_ = ad_ = fill(NaN, length(se_en))
+    en_ = collect(values(se_en))
+
+    if isempty(_se_ra)
+
+        no_ = lo_ = loa_ = gl_ = gla_ = fill(NaN, length(se_en))
 
     else
 
         no_ = []
 
-        pv_ = []
+        lo_ = []
 
         for (se, en) in se_en
 
@@ -16,7 +20,7 @@ function make_set_x_statistic(se_en, se_ra_, ou)
 
             ra_ = []
 
-            for se_ra in se_ra_
+            for se_ra in _se_ra
 
                 ra = se_ra[se]
 
@@ -30,29 +34,34 @@ function make_set_x_statistic(se_en, se_ra_, ou)
 
             push!(no_, en / abs(mean(ra_)))
 
-            push!(pv_, OnePiece.significance.get_p_value(en, ra_, si))
+            push!(lo_, OnePiece.significance.get_p_value(en, ra_, si))
 
         end
 
-        ad_ = OnePiece.significance.adjust_p_value(pv_)
+        loa_ = OnePiece.significance.adjust_p_value(lo_)
+
+        gl_, gla_ =
+            OnePiece.significance.get_p_value_and_adjust(en_, vcat(collect.(values.(_se_ra))...))
 
     end
 
-    fl_se_st = sort(
+    se_x_st = sort(
         DataFrame(
-            "Set" => collect(keys(se_en)),
-            "Enrichment" => collect(values(se_en)),
-            "Normalized enrichment" => no_,
-            "P-value" => pv_,
-            "Q-value" => ad_,
+            "Set" => se_,
+            "Enrichment" => en_,
+            "Gene-set-size-normalized enrichment" => no_,
+            "Local pvalue" => lo_,
+            "Adjusted local pvalue" => loa_,
+            "Global pvalue" => gl_,
+            "Adjusted global pvalue" => gla_,
         ),
-        2,
+        "Enrichment",
     )
 
     mkpath(ou)
 
-    OnePiece.table.write(joinpath(ou, "float.set_x_statistic.tsv"), fl_se_st)
+    OnePiece.table.write(joinpath(ou, "set_x_statistic_x_number.tsv"), se_x_st)
 
-    fl_se_st
+    se_x_st
 
 end

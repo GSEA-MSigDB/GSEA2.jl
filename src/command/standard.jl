@@ -11,25 +11,25 @@ Run standard GSEA
 
 # Arguments
 
-  - `settings_json`:
+  - `setting_json`:
   - `set_genes_json`:
-  - `target_x_sample_tsv`:
-  - `gene_x_sample_tsv`:
+  - `target_x_sample_x_number_tsv`:
+  - `gene_x_sample_x_score_tsv`:
   - `output_directory`:
 """
 @cast function standard(
-    settings_json,
+    setting_json,
     set_genes_json,
-    target_x_sample_tsv,
-    gene_x_sample_tsv,
+    target_x_sample_x_number_tsv,
+    gene_x_sample_x_score_tsv,
     output_directory,
 )
 
-    ke_ar = OnePiece.dict.read(settings_json)
+    ke_ar = OnePiece.dict.read(setting_json)
 
-    sc_ta_sa = OnePiece.table.read(target_x_sample_tsv)
+    sc_ta_sa = OnePiece.table.read(target_x_sample_x_number_tsv)
 
-    sc_fe_sa = OnePiece.table.read(gene_x_sample_tsv)
+    sc_fe_sa = OnePiece.table.read(gene_x_sample_x_score_tsv)
 
     fe_ = string.(sc_fe_sa[:, 1])
 
@@ -46,7 +46,7 @@ Run standard GSEA
     mkpath(output_directory)
 
     OnePiece.table.write(
-        joinpath(output_directory, "score.gene_x_metric.tsv"),
+        joinpath(output_directory, "gene_x_metric_x_score.tsv"),
         DataFrame("Gene" => fe_, me => sc_),
     )
 
