@@ -31,7 +31,7 @@ Run standard GSEA
 
     sc_fe_sa = OnePiece.table.read(gene_x_sample_x_score_tsv)
 
-    error_feature_x_(sc_fe_sa)
+    error_feature_score(sc_fe_sa)
 
     fe_ = string.(sc_fe_sa[:, 1])
 
@@ -54,7 +54,7 @@ Run standard GSEA
 
     se_fe_ = OnePiece.dict.read(set_genes_json)
 
-    filter!(
+    filter_set!(
         se_fe_,
         ke_ar["remove_gene_set_genes"],
         fe_,
@@ -99,7 +99,7 @@ Run standard GSEA
 
         end
 
-        fl_se_st = make_set_x_statistic(se_en, se_ra__, output_directory)
+        fl_se_st = compute_statistic(se_en, se_ra__, output_directory)
 
         plot_mountain(fl_se_st, n_ex, se_, fe_, sc_, se_fe_, sy_ar, output_directory)
 

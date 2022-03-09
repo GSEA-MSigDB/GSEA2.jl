@@ -25,7 +25,7 @@ st = joinpath(da, "set_genes.json")
 # ----------------------------------------------------------------------------------------------- #
 println("-"^99)
 
-println("filter!")
+println("filter_set!")
 
 println("-"^99)
 
@@ -33,7 +33,7 @@ se_fe_ = OnePiece.dict.read(st)
 
 co = copy(se_fe_)
 
-GSEA.filter!(co, false, [], 33, 36)
+GSEA.filter_set!(co, false, [], 33, 36)
 
 println(keys(co))
 
@@ -41,7 +41,7 @@ println(keys(co))
 
 co = copy(se_fe_)
 
-GSEA.filter!(co, true, ["SHH", "XIST"], 1, 5656)
+GSEA.filter_set!(co, true, ["SHH", "XIST"], 1, 5656)
 
 println(co)
 

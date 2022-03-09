@@ -25,7 +25,7 @@ function pre_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
     end
 
-    fl_se_st = make_set_x_statistic(se_en, se_ra__, ou)
+    fl_se_st = compute_statistic(se_en, se_ra__, ou)
 
     plot_mountain(fl_se_st, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
 
@@ -59,7 +59,7 @@ Run pre-rank GSEA
 
     se_fe_ = OnePiece.dict.read(set_genes_json)
 
-    filter!(
+    filter_set!(
         se_fe_,
         ke_ar["remove_gene_set_genes"],
         fe_,

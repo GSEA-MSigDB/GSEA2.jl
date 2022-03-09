@@ -1,4 +1,4 @@
-function filter!(se_fe_, re, in_, mi, ma)
+function filter_set!(se_fe_, re, in_, mi, ma)
 
     println("Before filtering set-to-genes")
 

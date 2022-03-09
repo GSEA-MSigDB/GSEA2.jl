@@ -23,7 +23,7 @@ Run single-sample GSEA
 
     se_fe_ = OnePiece.dict.read(set_genes_json)
 
-    filter!(
+    filter_set!(
         se_fe_,
         ke_ar["remove_gene_set_genes"],
         sc_fe_sa[!, 1],

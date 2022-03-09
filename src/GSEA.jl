@@ -10,11 +10,11 @@ using StatsBase
 
 include("support/error_feature_score.jl")
 
-include("support/filter!.jl")
+include("support/filter_set!.jl")
 
 include("support/make_keyword_argument.jl")
 
-include("support/make_set_x_statistic.jl")
+include("support/compute_statistic.jl")
 
 include("support/plot_mountain.jl")
 
