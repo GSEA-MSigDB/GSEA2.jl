@@ -72,7 +72,7 @@ head output/set_x_statistic_x_number.tsv
 
   Integer
 
-- `power` to raise the gene scores
+- `exponent` to raise the gene scores
 
   Number
 
