@@ -26,7 +26,7 @@ gsea pre-rank
 gsea standard
 ```
 
-## Try with an sarcopenia example data
+## Try with an example data
 
 #### 1. Go to the directory with the example
 
@@ -56,53 +56,53 @@ head output/set_x_statistic_x_number.tsv
 
 ## Settings are just a [`.json` file](setting.json)
 
-#### `metric` to rank genes (for `standard`)
+- `metric` for ranking genes (for `standard`)
 
-`signal_to_noise_ratio` | `difference_of_median` | `pearson_correlation` | `information_coefficient` | `cosine_distance`
+  `signal_to_noise_ratio` | `difference_of_median` | `pearson_correlation` | `information_coefficient` | `cosine_distance`
 
-#### `remove_gene_set_genes` that are not in the gene-x-sample-x-score genes
+- `remove_gene_set_genes` that are not in the gene-x-sample-x-score genes
 
-`false` | `true`
+  `false` | `true`
 
-#### `minimum_gene_set_size` that removes sets smaller than this
+- `minimum_gene_set_size` that removes sets smaller than this
 
-Integer
+  Integer
 
-#### `maximum_gene_set_size` that removes sets bigger than this
+- `maximum_gene_set_size` that removes sets bigger than this
 
-Integer
+  Integer
 
-#### `power` to raise the gene scores
+- `power` to raise the gene scores
 
-Number
+  Number
 
-#### `algorithm` for computing enrichment
+- `algorithm` for computing enrichment
 
-`kolmogorov_smirnov` | `jensen_shannon`
+  `kolmogorov_smirnov` | `jensen_shannon`
 
-#### `number_of_jobs`
+- `number_of_jobs`
 
-Integer
+  Integer
 
-#### `permutation` to compute significance
+- `permutation` for computing significance
 
-`sample` (for `standard`) | `set` (for `standard` and `pre-rank`)
+  `sample` (for `standard`) | `set` (for `standard` and `pre-rank`)
 
-#### `random_seed` from which to generate randomness
+- `random_seed` from which to generate randomness for reproducibility (for `standard` and `pre-rank`)
 
-Integer
+  Integer
 
-#### `number_of_permutations`
+- `number_of_permutations` (for `standard` and `pre-rank`)
 
-Integer
+  Integer
 
-#### `number_of_extreme_gene_sets_to_plot`
+- `number_of_extreme_gene_sets_to_plot` (for `standard` and `pre-rank`)
 
-Integer
+  Integer
 
-#### `gene_sets_to_plot` no matter what (for `standard` and `pre-rank`)
+- `gene_sets_to_plot` no matter what (for `standard` and `pre-rank`)
 
-List of string gene-set names
+  List of string gene-set names
 
 ## Install
 
