@@ -3,7 +3,7 @@
   "remove_gene_set_genes": true,
   "minimum_gene_set_size": 15,
   "maximum_gene_set_size": 500,
-  "power": 1.0,
+  "exponent": 1.0,
   "algorithm": "kolmogorov_smirnov",
   "number_of_jobs": 1,
   "permutation": "sample",
