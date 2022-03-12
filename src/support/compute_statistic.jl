@@ -1,17 +1,17 @@
-function compute_statistic(se_en, _se_ra, ou)
+function compute_statistic(se_en, se_ra__, ou)
 
     se_ = collect(keys(se_en))
 
     en_ = collect(values(se_en))
 
-    if isempty(_se_ra)
+    if isempty(se_ra__)
 
         gl_ = gla_ = fill(NaN, length(se_))
 
     else
 
         gl_, gla_ =
-            OnePiece.significance.get_p_value_and_adjust(en_, vcat(collect.(values.(_se_ra))...))
+            OnePiece.significance.get_p_value_and_adjust(en_, vcat(collect.(values.(se_ra__))...))
 
     end
 

@@ -12,22 +12,22 @@ Run data-rank (single-sample) GSEA
 
     ke_ar = OnePiece.dict.read(setting_json)
 
-    ge_x_sa_x_sc = OnePiece.table.read(gene_x_sample_x_score_tsv)
+    fe_x_sa_x_sc = OnePiece.table.read(gene_x_sample_x_score_tsv)
 
-    error_feature_score(ge_x_sa_x_sc)
+    error_feature_score(fe_x_sa_x_sc)
 
     se_fe_ = OnePiece.dict.read(set_genes_json)
 
     filter_set!(
         se_fe_,
         ke_ar["remove_gene_set_genes"],
-        ge_x_sa_x_sc[!, 1],
+        fe_x_sa_x_sc[!, 1],
         ke_ar["minimum_gene_set_size"],
         ke_ar["maximum_gene_set_size"],
     )
 
     se_x_sa_x_en = OnePiece.feature_set_enrichment.score_set(
-        ge_x_sa_x_sc,
+        fe_x_sa_x_sc,
         se_fe_;
         make_keyword_argument(ke_ar)...,
     )

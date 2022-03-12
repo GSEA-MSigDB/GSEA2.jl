@@ -1,8 +1,6 @@
 function compare_and_sort(bi_, ma, me, fe_)
 
-    reverse(
-        OnePiece.vector.sort_like(OnePiece.feature_x_sample.compare_with_target(bi_, ma, me), fe_),
-    )
+    OnePiece.vector.sort_like(OnePiece.feature_x_sample.compare_with_target(bi_, ma, me), fe_)
 
 end
 
@@ -27,23 +25,23 @@ Run metric-rank (standard) GSEA
 
     ke_ar = OnePiece.dict.read(setting_json)
 
-    sc_ta_sa = OnePiece.table.read(target_x_sample_x_number_tsv)
+    ta_x_sa_x_nu = OnePiece.table.read(target_x_sample_x_number_tsv)
 
-    sc_fe_sa = OnePiece.table.read(gene_x_sample_x_score_tsv)
+    fe_x_sa_x_sc = OnePiece.table.read(gene_x_sample_x_score_tsv)
 
-    error_feature_score(sc_fe_sa)
+    error_feature_score(fe_x_sa_x_sc)
 
-    fe_ = string.(sc_fe_sa[:, 1])
+    fe_ = string.(fe_x_sa_x_sc[:, 1])
 
-    sc_fe_sa = sc_fe_sa[:, names(sc_ta_sa)]
+    fe_x_sa_x_sc = fe_x_sa_x_sc[:, names(ta_x_sa_x_nu)]
 
-    bi_ = BitVector(sc_ta_sa[1, :])
+    bi_ = BitVector(ta_x_sa_x_nu[1, :])
 
-    ma = Matrix(sc_fe_sa)
+    ma = Matrix(fe_x_sa_x_sc)
 
     me = ke_ar["metric"]
 
-    fe_, sc_ = compare_and_sort(bi_, ma, me, fe_)
+    sc_, fe_ = compare_and_sort(bi_, ma, me, fe_)
 
     mkpath(output_directory)
 
@@ -72,12 +70,11 @@ Run metric-rank (standard) GSEA
 
     n_ex = ke_ar["number_of_extreme_gene_sets_to_plot"]
 
-    se_ = ke_ar["gene_sets_to_plot"]
+    pl_ = ke_ar["gene_sets_to_plot"]
 
     if pe == "sample"
 
         se_en = OnePiece.feature_set_enrichment.score_set(fe_, sc_, se_fe_; sy_ar...)
-
 
         if 0 < n_pe
 
@@ -85,12 +82,11 @@ Run metric-rank (standard) GSEA
 
             Random.seed!(ra)
 
+            scr_, fer_ = compare_and_sort(shuffle!(bi_), ma, me, fe_)
+
             se_ra__ = [
-                OnePiece.feature_set_enrichment.score_set(
-                    compare_and_sort(shuffle!(bi_), ma, me, fe_)...,
-                    se_fe_;
-                    sy_ar...,
-                ) for id in ProgressBar(1:n_pe)
+                OnePiece.feature_set_enrichment.score_set(fer_, scr_, se_fe_; sy_ar...) for
+                _ in ProgressBar(1:n_pe)
             ]
 
         else
@@ -99,15 +95,15 @@ Run metric-rank (standard) GSEA
 
         end
 
-        fl_se_st = compute_statistic(se_en, se_ra__, output_directory)
+        se_x_st_x_nu = compute_statistic(se_en, se_ra__, output_directory)
 
-        plot_mountain(fl_se_st, n_ex, se_, fe_, sc_, se_fe_, sy_ar, output_directory)
+        plot_mountain(se_x_st_x_nu, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, output_directory)
 
-        fl_se_st
+        se_x_st_x_nu
 
     elseif pe == "set"
 
-        user_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, se_, output_directory)
+        user_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, output_directory)
 
     else
 

@@ -16,7 +16,7 @@ function user_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, ou)
                 sc_,
                 Dict(se => sample(fe_, si, replace = false) for (se, si) in se_si);
                 sy_ar...,
-            ) for id in ProgressBar(1:n_pe)
+            ) for _ in ProgressBar(1:n_pe)
         ]
 
     else
@@ -25,11 +25,11 @@ function user_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
     end
 
-    fl_se_st = compute_statistic(se_en, se_ra__, ou)
+    se_x_st_x_nu = compute_statistic(se_en, se_ra__, ou)
 
-    plot_mountain(fl_se_st, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
+    plot_mountain(se_x_st_x_nu, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
 
-    fl_se_st
+    se_x_st_x_nu
 
 end
 
@@ -47,11 +47,11 @@ Run user-rank (pre-rank) GSEA
 
     ke_ar = OnePiece.dict.read(setting_json)
 
-    sc_fe_sa = OnePiece.table.read(gene_x_metric_x_score_tsv)
+    fe_x_me_x_sc = OnePiece.table.read(gene_x_metric_x_score_tsv)
 
-    fe_ = sc_fe_sa[!, 1]
+    fe_ = fe_x_me_x_sc[!, 1]
 
-    sc_ = sc_fe_sa[!, 2]
+    sc_ = fe_x_me_x_sc[!, 2]
 
     error_feature_score(fe_, sc_)
 
