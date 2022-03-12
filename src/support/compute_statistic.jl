@@ -6,52 +6,19 @@ function compute_statistic(se_en, _se_ra, ou)
 
     if isempty(_se_ra)
 
-        no_ = lo_ = loa_ = gl_ = gla_ = fill(NaN, length(se_en))
+        gl_ = gla_ = fill(NaN, length(se_))
 
     else
-
-        no_ = []
-
-        lo_ = []
-
-        for (se, en) in se_en
-
-            si = sign(en)
-
-            ra_ = []
-
-            for se_ra in _se_ra
-
-                ra = se_ra[se]
-
-                if sign(ra) == si
-
-                    push!(ra_, ra)
-
-                end
-
-            end
-
-            push!(no_, en / abs(mean(ra_)))
-
-            push!(lo_, OnePiece.significance.get_p_value(en, ra_, si))
-
-        end
-
-        loa_ = OnePiece.significance.adjust_p_value(lo_)
 
         gl_, gla_ =
             OnePiece.significance.get_p_value_and_adjust(en_, vcat(collect.(values.(_se_ra))...))
 
     end
 
-    se_x_st = sort(
+    se_x_st_x_nu = sort(
         DataFrame(
             "Set" => se_,
             "Enrichment" => en_,
-            "Gene-set-size-normalized enrichment" => no_,
-            "Local pvalue" => lo_,
-            "Adjusted local pvalue" => loa_,
             "Global pvalue" => gl_,
             "Adjusted global pvalue" => gla_,
         ),
@@ -60,8 +27,8 @@ function compute_statistic(se_en, _se_ra, ou)
 
     mkpath(ou)
 
-    OnePiece.table.write(joinpath(ou, "set_x_statistic_x_number.tsv"), se_x_st)
+    OnePiece.table.write(joinpath(ou, "set_x_statistic_x_number.tsv"), se_x_st_x_nu)
 
-    se_x_st
+    se_x_st_x_nu
 
 end
