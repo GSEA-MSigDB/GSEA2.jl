@@ -1,6 +1,6 @@
 function filter_set!(se_fe_, re, in_, mi, ma)
 
-    println("Before filtering set-to-genes")
+    println("Before filtering sets")
 
     OnePiece.dict.summarize(se_fe_, n_pr = 0)
 
@@ -15,6 +15,8 @@ function filter_set!(se_fe_, re, in_, mi, ma)
         end
 
     end
+
+    println("Keeping sets: $mi <= size <= $ma")
 
     for (se, fe_) in se_fe_
 
