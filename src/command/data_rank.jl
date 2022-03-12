@@ -1,5 +1,5 @@
 """
-Run single-sample GSEA
+Run data-rank (single-sample) GSEA
 
 # Arguments
 
@@ -8,12 +8,7 @@ Run single-sample GSEA
   - `gene_x_sample_x_score_tsv`:
   - `output_directory`:
 """
-@cast function single_sample(
-    setting_json,
-    set_genes_json,
-    gene_x_sample_x_score_tsv,
-    output_directory,
-)
+@cast function data_rank(setting_json, set_genes_json, gene_x_sample_x_score_tsv, output_directory)
 
     ke_ar = OnePiece.dict.read(setting_json)
 

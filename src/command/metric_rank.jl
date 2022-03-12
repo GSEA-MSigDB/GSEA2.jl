@@ -7,7 +7,7 @@ function compare_and_sort(bi_, ma, me, fe_)
 end
 
 """
-Run standard GSEA
+Run metric-rank (standard) GSEA
 
 # Arguments
 
@@ -17,7 +17,7 @@ Run standard GSEA
   - `gene_x_sample_x_score_tsv`:
   - `output_directory`:
 """
-@cast function standard(
+@cast function metric_rank(
     setting_json,
     set_genes_json,
     target_x_sample_x_number_tsv,
@@ -107,7 +107,7 @@ Run standard GSEA
 
     elseif pe == "set"
 
-        pre_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, se_, output_directory)
+        user_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, se_, output_directory)
 
     else
 

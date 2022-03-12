@@ -1,4 +1,4 @@
-function pre_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, ou)
+function user_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
     se_en = OnePiece.feature_set_enrichment.score_set(fe_, sc_, se_fe_; sy_ar...)
 
@@ -34,7 +34,7 @@ function pre_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, ou)
 end
 
 """
-Run pre-rank GSEA
+Run user-rank (pre-rank) GSEA
 
 # Arguments
 
@@ -43,7 +43,7 @@ Run pre-rank GSEA
   - `gene_x_metric_x_score_tsv`:
   - `output_directory`:
 """
-@cast function pre_rank(setting_json, set_genes_json, gene_x_metric_x_score_tsv, output_directory)
+@cast function user_rank(setting_json, set_genes_json, gene_x_metric_x_score_tsv, output_directory)
 
     ke_ar = OnePiece.dict.read(setting_json)
 
@@ -67,7 +67,7 @@ Run pre-rank GSEA
         ke_ar["maximum_gene_set_size"],
     )
 
-    pre_rank(
+    user_rank(
         fe_,
         sc_,
         se_fe_,

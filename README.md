@@ -11,19 +11,19 @@ The :sparkles: **new** :sparkles: Gene Set Enrichment Analysis :dna:
 #### Run single-sample GSEA
 
 ```bash
-gsea single-sample
+gsea data-rank
 ```
 
 #### Run pre-rank GSEA
 
 ```bash
-gsea pre-rank
+gsea user-rank
 ```
 
 #### Run standard GSEA
 
 ```bash
-gsea standard
+gsea metric-rank
 ```
 
 ## Try with an example data
@@ -47,7 +47,7 @@ mkdir output
 #### 3. Run standard GSEA
 
 ```bash
-gsea standard setting.json set_genes.json target_x_sample_x_number.tsv gene_x_sample_x_score.tsv output
+gsea metric-rank setting.json set_genes.json target_x_sample_x_number.tsv gene_x_sample_x_score.tsv output
 
 ls -l output
 
@@ -56,7 +56,7 @@ head output/set_x_statistic_x_number.tsv
 
 ## Settings are just a [`.json` file](setting.json)
 
-- `metric` for ranking genes (for `standard`)
+- `metric` for ranking genes (for `metric-rank`)
 
   `signal_to_noise_ratio` | `difference_of_median` | `pearson_correlation` | `information_coefficient` | `cosine_distance`
 
@@ -86,21 +86,21 @@ head output/set_x_statistic_x_number.tsv
 
 - `permutation` for computing significance
 
-  `sample` (for `standard`) | `set` (for `standard` and `pre-rank`)
+  `sample` (for `metric-rank`) | `set` (for `metric-rank` and `user-rank`)
 
-- `random_seed` from which to generate randomness for reproducibility (for `standard` and `pre-rank`)
-
-  Integer
-
-- `number_of_permutations` (for `standard` and `pre-rank`)
+- `random_seed` from which to generate randomness for computing significance (for `metric-rank` and `user-rank`)
 
   Integer
 
-- `number_of_extreme_gene_sets_to_plot` (for `standard` and `pre-rank`)
+- `number_of_permutations` (for `metric-rank` and `user-rank`)
 
   Integer
 
-- `gene_sets_to_plot` no matter what (for `standard` and `pre-rank`)
+- `number_of_extreme_gene_sets_to_plot` (for `metric-rank` and `user-rank`)
+
+  Integer
+
+- `gene_sets_to_plot` no matter what (for `metric-rank` and `user-rank`)
 
   List of string gene-set names
 
