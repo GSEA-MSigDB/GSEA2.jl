@@ -159,10 +159,4 @@ println("Missed $n_mi/$n_fe scores ($(ro(mi * 100))%).")
 @assert mi < 0.001
 
 # ----------------------------------------------------------------------------------------------- #
-if isdir(TE)
-
-    rm(TE, recursive = true)
-
-    #println("Removed $TE.")
-
-end
+println("Done.")

@@ -147,3 +147,4 @@ print_output(ou)
 run(`julia --project $(joinpath(@__DIR__, "sarcopenia.jl"))`)
 
 # ----------------------------------------------------------------------------------------------- #
+println("Done.")
