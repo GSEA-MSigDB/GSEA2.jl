@@ -75,15 +75,17 @@ println(OnePiece.dict.read(se))
 sc = joinpath(da, "gene_x_sample_x_score.tsv")
 
 # ----------------------------------------------------------------------------------------------- #
-println("-"^99)
-
-println("single_sample")
+su = "data_rank"
 
 println("-"^99)
 
-ou = joinpath(TE, "single_sample_gsea")
+println(su)
 
-GSEA.single_sample(se, st, sc, ou)
+println("-"^99)
+
+ou = joinpath(TE, su)
+
+GSEA.data_rank(se, st, sc, ou)
 
 println(readdir(ou))
 
@@ -108,28 +110,32 @@ end
 me = "gene_x_metric_x_score.tsv"
 
 # ----------------------------------------------------------------------------------------------- #
-println("-"^99)
-
-println("pre_rank")
+su = "user_rank"
 
 println("-"^99)
 
-ou = joinpath(TE, "pre_rank_gsea")
+println(su)
 
-GSEA.pre_rank(se, st, joinpath(da, me), ou)
+println("-"^99)
+
+ou = joinpath(TE, su)
+
+GSEA.user_rank(se, st, joinpath(da, me), ou)
 
 print_output(ou)
 
 # ----------------------------------------------------------------------------------------------- #
-println("-"^99)
-
-println("standard")
+su = "metric_rank"
 
 println("-"^99)
 
-ou = joinpath(TE, "standard_gsea")
+println(su)
 
-GSEA.standard(se, st, joinpath(da, "target_x_sample_x_number.tsv"), sc, ou)
+println("-"^99)
+
+ou = joinpath(TE, su)
+
+GSEA.metric_rank(se, st, joinpath(da, "target_x_sample_x_number.tsv"), sc, ou)
 
 sc_se_sa = OnePiece.table.read(joinpath(ou, me))
 
@@ -141,10 +147,3 @@ print_output(ou)
 run(`julia --project $(joinpath(@__DIR__, "sarcopenia.jl"))`)
 
 # ----------------------------------------------------------------------------------------------- #
-if isdir(TE)
-
-    rm(TE, recursive = true)
-
-    println("Removed $TE.")
-
-end

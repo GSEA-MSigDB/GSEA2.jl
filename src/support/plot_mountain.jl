@@ -13,7 +13,7 @@ function plot_mountain(se_x_st_x_nu, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
         OnePiece.feature_set_enrichment.score_set(
             fe_,
             sc_,
-            se_fe_[se],
+            se_fe_[se];
             title_text = se,
             ou = joinpath(di, "$(OnePiece.path.clean(se, pr = false)).html"),
             sy_ar...,

@@ -37,11 +37,11 @@ println(ke_ar)
 # ----------------------------------------------------------------------------------------------- #
 println("-"^99)
 
-println("GSEA standard")
+println("GSEA metric_rank")
 
 println("-"^99)
 
-GSEA.standard(
+GSEA.metric_rank(
     se,
     joinpath(da, "set_genes.json"),
     joinpath(da, "target_x_sample_x_number.tsv"),
@@ -87,8 +87,9 @@ va_se_st = va_se_st[indexin(se_, va_se_st[!, 1]), :]
 
 for (nao, nan) in [
     ["ES", "Enrichment"],
-    ["NES", "Gene-set-size-normalized enrichment"],
-    ["NOM p-val", "Local pvalue"],
+    ["NES", "Enrichment"],
+    ["NOM p-val", "Global pvalue"],
+    ["FDR q-val", "Adjusted global pvalue"],
 ]
 
     OnePiece.figure.view(
@@ -162,6 +163,6 @@ if isdir(TE)
 
     rm(TE, recursive = true)
 
-    println("Removed $TE.")
+    #println("Removed $TE.")
 
 end
