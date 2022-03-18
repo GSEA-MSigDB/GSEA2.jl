@@ -4,14 +4,23 @@ function compute_statistic(se_en, se_ra__, ou)
 
     en_ = collect(values(se_en))
 
+    mkpath(ou)
+
     if isempty(se_ra__)
 
         gl_ = gla_ = fill(NaN, length(se_))
 
     else
 
-        gl_, gla_ =
-            OnePiece.significance.get_p_value_and_adjust(en_, vcat(collect.(values.(se_ra__))...))
+        ra__ = collect.(values.(se_ra__))
+
+        gl_, gla_ = OnePiece.significance.get_p_value_and_adjust(en_, vcat(ra__...))
+
+        se_x_ra_x_en = DataFrame("Set" => se_)
+
+        insertcols!(se_x_ra_x_en, (string(id) => ra_ for (id, ra_) in enumerate(ra__))...)
+
+        OnePiece.table.write(joinpath(ou, "set_x_random_x_enrichment.tsv"), se_x_ra_x_en)
 
     end
 
@@ -24,8 +33,6 @@ function compute_statistic(se_en, se_ra__, ou)
         ),
         "Enrichment",
     )
-
-    mkpath(ou)
 
     OnePiece.table.write(joinpath(ou, "set_x_statistic_x_number.tsv"), se_x_st_x_nu)
 
