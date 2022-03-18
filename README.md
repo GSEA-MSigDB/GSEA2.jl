@@ -51,7 +51,9 @@ gsea metric-rank setting.json set_genes.json target_x_sample_x_number.tsv gene_x
 
 ls -l output
 
-head output/set_x_statistic_x_number.tsv
+head -2 output/*.tsv
+
+open output/plot/*.html
 ```
 
 ## Settings are just a [`.json` file](setting.json)
