@@ -1,6 +1,8 @@
 function compare_and_sort(bi_, ma, me, fe_)
 
-    OnePiece.vector.sort_like(OnePiece.feature_x_sample.compare_with_target(bi_, ma, me), fe_)
+    reverse!(
+        OnePiece.vector.sort_like(OnePiece.feature_x_sample.compare_with_target(bi_, ma, me), fe_),
+    )
 
 end
 
@@ -41,7 +43,7 @@ Run metric-rank (standard) GSEA
 
     me = ke_ar["metric"]
 
-    sc_, fe_ = compare_and_sort(bi_, ma, me, fe_)
+    fe_, sc_ = compare_and_sort(bi_, ma, me, fe_)
 
     mkpath(output_directory)
 
@@ -82,11 +84,12 @@ Run metric-rank (standard) GSEA
 
             Random.seed!(ra)
 
-            scr_, fer_ = compare_and_sort(shuffle!(bi_), ma, me, fe_)
-
             se_ra__ = [
-                OnePiece.feature_set_enrichment.score_set(fer_, scr_, se_fe_; sy_ar...) for
-                _ in ProgressBar(1:n_pe)
+                OnePiece.feature_set_enrichment.score_set(
+                    compare_and_sort(shuffle!(bi_), ma, me, fe_)...,
+                    se_fe_;
+                    sy_ar...,
+                ) for _ in ProgressBar(1:n_pe)
             ]
 
         else

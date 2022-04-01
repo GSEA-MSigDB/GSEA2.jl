@@ -89,20 +89,24 @@ GSEA.data_rank(se, st, sc, ou)
 
 println(readdir(ou))
 
-en_se_sa = OnePiece.table.read(joinpath(ou, "set_x_sample_x_enrichment.tsv"))
+se_x_sa_x_en = OnePiece.table.read(joinpath(ou, "set_x_sample_x_enrichment.tsv"))
 
-println(size(en_se_sa))
+println(size(se_x_sa_x_en))
 
-OnePiece.dataframe.view(en_se_sa)
+OnePiece.dataframe.view(se_x_sa_x_en)
 
 # ----------------------------------------------------------------------------------------------- #
 function print_output(ou)
 
     println(readdir(ou))
 
-    fl_se_st = OnePiece.table.read(joinpath(ou, "set_x_statistic_x_number.tsv"))
+    se_x_st = OnePiece.table.read(joinpath(ou, "set_x_statistic_x_number.tsv"))
 
-    OnePiece.dataframe.view(fl_se_st)
+    OnePiece.dataframe.view(se_x_st)
+
+    se_x_ra_x_en = OnePiece.table.read(joinpath(ou, "set_x_random_x_enrichment.tsv"))
+
+    OnePiece.dataframe.view(se_x_ra_x_en)
 
 end
 
@@ -137,9 +141,9 @@ ou = joinpath(TE, su)
 
 GSEA.metric_rank(se, st, joinpath(da, "target_x_sample_x_number.tsv"), sc, ou)
 
-sc_se_sa = OnePiece.table.read(joinpath(ou, me))
+fe_x_me_x_sc = OnePiece.table.read(joinpath(ou, me))
 
-OnePiece.dataframe.view(sc_se_sa)
+OnePiece.dataframe.view(fe_x_me_x_sc)
 
 print_output(ou)
 
