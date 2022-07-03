@@ -31,7 +31,7 @@ gsea metric-rank
 #### 1. Go to the directory with the example
 
 ```bash
-cd test/sarcopenia
+cd example.sarcopenia
 
 ls -l
 ```
