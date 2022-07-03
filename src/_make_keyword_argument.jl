@@ -1,4 +1,4 @@
-function make_keyword_argument(ke_ar)
+function _make_keyword_argument(ke_ar)
 
     Dict(
         Symbol(kes) => ke_ar[ke] for

@@ -25,9 +25,9 @@ function user_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
     end
 
-    se_x_st_x_nu = compute_statistic(se_en, se_ra__, ou)
+    se_x_st_x_nu = _compute_statistic(se_en, se_ra__, ou)
 
-    plot_mountain(se_x_st_x_nu, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
+    _plot_mountain(se_x_st_x_nu, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
 
     se_x_st_x_nu
 
@@ -53,13 +53,13 @@ Run user-rank (pre-rank) GSEA
 
     sc_ = fe_x_me_x_sc[!, 2]
 
-    error_feature_score(fe_, sc_)
+    _error_feature_score(fe_, sc_)
 
     sc_, fe_ = OnePiece.vector.sort_like(sc_, fe_)
 
     se_fe_ = OnePiece.dict.read(set_genes_json)
 
-    filter_set!(
+    _filter_set!(
         se_fe_,
         ke_ar["remove_gene_set_genes"],
         fe_,
@@ -71,7 +71,7 @@ Run user-rank (pre-rank) GSEA
         fe_,
         sc_,
         se_fe_,
-        make_keyword_argument(ke_ar),
+        _make_keyword_argument(ke_ar),
         ke_ar["random_seed"],
         ke_ar["number_of_permutations"],
         ke_ar["number_of_extreme_gene_sets_to_plot"],

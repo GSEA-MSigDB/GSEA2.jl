@@ -1,4 +1,4 @@
-function compute_statistic(se_en, se_ra__, ou)
+function _compute_statistic(se_en, se_ra__, ou)
 
     se_ = collect(keys(se_en))
 

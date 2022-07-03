@@ -60,7 +60,7 @@ open output/plot/*.html
 
 - `metric` for ranking genes (for `metric-rank`)
 
-  `signal_to_noise_ratio` | `difference_of_median` | `pearson_correlation` | `information_coefficient` | `cosine_distance`
+  `signal_to_noise_ratio` | `mean_difference` | `median_difference` | `pearson_correlation` | `cosine_distance` | `information_coefficient`
 
 - `remove_gene_set_genes` that are not in the gene-x-sample-x-score genes
 
@@ -169,7 +169,3 @@ gsea --help
 ## :wave: :cowboy_hat_face: Howdy
 
 To report a bug, request a feature, or leave a comment, just [submit an issue](https://github.com/KwatMDPhD/GSEA.jl/issues/new/choose).
-
----
-
-_Powered by https://github.com/KwatMDPhD/PkgRepository.jl_

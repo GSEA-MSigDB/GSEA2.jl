@@ -1,4 +1,4 @@
-function compare_and_sort(bi_, ma, me, fe_)
+function _compare_and_sort(bi_, ma, me, fe_)
 
     reverse!(
         OnePiece.vector.sort_like(OnePiece.feature_x_sample.compare_with_target(bi_, ma, me), fe_),
@@ -31,7 +31,7 @@ Run metric-rank (standard) GSEA
 
     fe_x_sa_x_sc = OnePiece.table.read(gene_x_sample_x_score_tsv)
 
-    error_feature_score(fe_x_sa_x_sc)
+    _error_feature_score(fe_x_sa_x_sc)
 
     fe_ = string.(fe_x_sa_x_sc[:, 1])
 
@@ -43,7 +43,7 @@ Run metric-rank (standard) GSEA
 
     me = ke_ar["metric"]
 
-    fe_, sc_ = compare_and_sort(bi_, ma, me, fe_)
+    fe_, sc_ = _compare_and_sort(bi_, ma, me, fe_)
 
     mkpath(output_directory)
 
@@ -54,7 +54,7 @@ Run metric-rank (standard) GSEA
 
     se_fe_ = OnePiece.dict.read(set_genes_json)
 
-    filter_set!(
+    _filter_set!(
         se_fe_,
         ke_ar["remove_gene_set_genes"],
         fe_,
@@ -62,7 +62,7 @@ Run metric-rank (standard) GSEA
         ke_ar["maximum_gene_set_size"],
     )
 
-    sy_ar = make_keyword_argument(ke_ar)
+    sy_ar = _make_keyword_argument(ke_ar)
 
     pe = ke_ar["permutation"]
 
@@ -86,7 +86,7 @@ Run metric-rank (standard) GSEA
 
             se_ra__ = [
                 OnePiece.feature_set_enrichment.score_set(
-                    compare_and_sort(shuffle!(bi_), ma, me, fe_)...,
+                    _compare_and_sort(shuffle!(bi_), ma, me, fe_)...,
                     se_fe_;
                     sy_ar...,
                 ) for _ in ProgressBar(1:n_pe)
@@ -98,9 +98,9 @@ Run metric-rank (standard) GSEA
 
         end
 
-        se_x_st_x_nu = compute_statistic(se_en, se_ra__, output_directory)
+        se_x_st_x_nu = _compute_statistic(se_en, se_ra__, output_directory)
 
-        plot_mountain(se_x_st_x_nu, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, output_directory)
+        _plot_mountain(se_x_st_x_nu, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, output_directory)
 
         se_x_st_x_nu
 

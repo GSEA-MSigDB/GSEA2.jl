@@ -1,4 +1,4 @@
-function plot_mountain(se_x_st_x_nu, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
+function _plot_mountain(se_x_st_x_nu, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
 
     se_ = se_x_st_x_nu[!, 1]
 

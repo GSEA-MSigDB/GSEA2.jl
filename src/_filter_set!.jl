@@ -1,8 +1,8 @@
-function filter_set!(se_fe_, re, in_, mi, ma)
+function _filter_set!(se_fe_, re, in_, mi, ma)
 
     println("Before filtering sets")
 
-    OnePiece.dict.summarize(se_fe_, n_pr = 0)
+    OnePiece.dict.print(se_fe_, n_pa = 0)
 
     if re
 
@@ -30,6 +30,6 @@ function filter_set!(se_fe_, re, in_, mi, ma)
 
     println("After")
 
-    OnePiece.dict.summarize(se_fe_, n_pr = 0)
+    OnePiece.dict.print(se_fe_, n_pa = 0)
 
 end
