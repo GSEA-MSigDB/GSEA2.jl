@@ -138,13 +138,13 @@ cd GSEA.jl &&
 julia --project --eval "using Pkg; Pkg.instantiate()"
 ```
 
-#### 2. Test before building
+#### 3. Test before building
 
 ```bash
 julia --project --eval "using Pkg; Pkg.test()"
 ```
 
-#### 3. Build
+#### 4. Build
 
 ```bash
 julia --project deps/build.jl app tarball
@@ -154,7 +154,7 @@ julia --project deps/build.jl app tarball
 
 Add `build/gsea/bin` to the path.
 
-#### 4. Test build
+#### 5. Test build
 
 ```bash
 gsea --help
