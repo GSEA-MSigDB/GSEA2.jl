@@ -6,7 +6,7 @@ function user_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
         println("Permuting sets to compute significance")
 
-        se_si = Dict(se => length(fe_) for (se, fe_) in se_fe_)
+        se_le = Dict(se => length(fe_) for (se, fe_) in se_fe_)
 
         Random.seed!(ra)
 
@@ -14,7 +14,7 @@ function user_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, ou)
             OnePiece.feature_set_enrichment.score_set(
                 fe_,
                 sc_,
-                Dict(se => sample(fe_, si, replace = false) for (se, si) in se_si);
+                Dict(se => sample(fe_, si, replace = false) for (se, si) in se_le);
                 sy_ar...,
             ) for _ in ProgressBar(1:n_pe)
         ]

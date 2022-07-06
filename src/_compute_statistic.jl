@@ -28,8 +28,8 @@ function _compute_statistic(se_en, se_ra__, ou)
         DataFrame(
             "Set" => se_,
             "Enrichment" => en_,
-            "Global pvalue" => gl_,
-            "Adjusted global pvalue" => gla_,
+            "Global p value" => gl_,
+            "Adjusted global p value" => gla_,
         ),
         "Enrichment",
     )
