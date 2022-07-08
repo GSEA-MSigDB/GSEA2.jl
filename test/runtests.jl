@@ -3,8 +3,6 @@ using OnePiece
 
 TE = OnePiece.path.make_temporary("GSEA.test")
 
-using OnePiece
-
 sett = joinpath(dirname(@__DIR__), "setting.json")
 
 set_ = joinpath(@__DIR__, "set_genes.json")
