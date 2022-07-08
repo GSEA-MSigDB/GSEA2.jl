@@ -1,15 +1,7 @@
-TE = joinpath(tempdir(), "GSEA.test")
-
-if isdir(TE)
-
-    rm(TE, recursive = true)
-
-end
-
-mkdir(TE)
-
-#using Revise
 using GSEA
+using OnePiece
+
+TE = OnePiece.path.make_temporary("GSEA.test")
 
 using OnePiece
 
@@ -72,27 +64,3 @@ GSEA.metric_rank(sett, set_, joinpath(@__DIR__, "target_x_sample_x_number.tsv"),
 OnePiece.dataframe.print(OnePiece.table.read(joinpath(ou, me)))
 
 print_output(ou)
-
-nb_ = [na for na in readdir() if occursin(r".ipynb$", na) && na != "runtests.ipynb"]
-
-if all(startswith.(nb_, r"^[0-9]+\."))
-
-    sort!(nb_, by = nb -> parse(Int64, split(nb, '.')[1]))
-
-end
-
-for (id, nb) in enumerate(nb_)
-
-    if id < 1
-
-        continue
-
-    end
-
-    println("Running ", nb, " (", id, ")")
-
-    run(
-        `jupyter-nbconvert --log-level 40 --inplace --execute --ExecutePreprocessor.timeout=-1 --clear-output $nb`,
-    )
-
-end
