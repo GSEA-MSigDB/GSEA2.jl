@@ -78,7 +78,7 @@ open output/plot/*.html
 
 - `algorithm` for computing enrichment
 
-  `kolmogorov_smirnov` | `jensen_shannon`
+  `cidac` (for _cumulative information divergence with antisymmetricity and complementation_ ) | `ks` (for _Kolmogorov Smirnov_) | `ksa` (for `ks` area)
 
 - `number_of_jobs`
 
