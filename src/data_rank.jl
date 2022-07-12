@@ -1,5 +1,5 @@
 """
-Run data-rank (single-sample) GSEA
+Run data-rank (single-sample) GSEA.
 
 # Arguments
 

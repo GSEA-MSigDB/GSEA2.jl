@@ -54,6 +54,22 @@ head -2 output/*.tsv
 open output/plot/*.html
 ```
 
+#### Alternatively, (instead of in command line) run this example in `julia`
+
+```jl
+using GSEA
+
+cd("example.sarcopenia")
+
+GSEA.metric_rank(
+    "setting.json",
+    "set_genes.json",
+    "target_x_sample_x_number.tsv",
+    "gene_x_sample_x_score.tsv",
+    "output",
+)
+```
+
 ## Settings are just a [`.json` file](setting.json)
 
 - `metric` for ranking genes (for `metric-rank`)
@@ -168,4 +184,4 @@ gsea --help
 
 To report a bug, request a feature, or leave a comment, just [submit an issue](https://github.com/KwatMDPhD/GSEA.jl/issues/new/choose).
 
-Powered by https://github.com/KwatMDPhD/Kata.jl_
+Powered by https://github.com/KwatMDPhD/Kata.jl

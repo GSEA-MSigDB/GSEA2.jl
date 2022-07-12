@@ -39,7 +39,7 @@ function user_rank(fe_, sc_, se_fe_, sy_ar, al, ra, n_pe, n_ex, pl_, ou)
 end
 
 """
-Run user-rank (pre-rank) GSEA
+Run user-rank (pre-rank) GSEA.
 
 # Arguments
 
@@ -52,13 +52,14 @@ Run user-rank (pre-rank) GSEA
 
     ke_ar = OnePiece.dict.read(setting_json)
 
-    fe_x_me_x_sc = OnePiece.table.read(gene_x_metric_x_score_tsv)
+    fe_, fe_x_me_x_sc =
+        OnePiece.dataframe.separate_row(OnePiece.table.read(gene_x_metric_x_score_tsv))
 
-    fe_ = fe_x_me_x_sc[!, 1]
+    OnePiece.vector.error_duplicate(fe_)
 
-    sc_ = fe_x_me_x_sc[!, 2]
+    OnePiece.dataframe.error_bad(fe_x_me_x_sc)
 
-    _error_feature_score(fe_, sc_)
+    sc_ = fe_x_me_x_sc[!, 1]
 
     sc_, fe_ = OnePiece.vector.sort_like(sc_, fe_)
 

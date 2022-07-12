@@ -7,7 +7,7 @@ function _compare_and_sort(bi_, ma, me, fe_)
 end
 
 """
-Run metric-rank (standard) GSEA
+Run metric-rank (standard) GSEA.
 
 # Arguments
 
@@ -27,15 +27,21 @@ Run metric-rank (standard) GSEA
 
     ke_ar = OnePiece.dict.read(setting_json)
 
-    ta_x_sa_x_nu = OnePiece.table.read(target_x_sample_x_number_tsv)
+    ta_, ta_x_sa_x_nu =
+        OnePiece.dataframe.separate_row(OnePiece.table.read(target_x_sample_x_number_tsv))
 
-    fe_x_sa_x_sc = OnePiece.table.read(gene_x_sample_x_score_tsv)
+    OnePiece.vector.error_duplicate(ta_)
 
-    _error_feature_score(fe_x_sa_x_sc)
+    OnePiece.dataframe.error_bad(ta_x_sa_x_nu)
 
-    fe_ = string.(fe_x_sa_x_sc[:, 1])
+    fe_, fe_x_sa_x_sc =
+        OnePiece.dataframe.separate_row(OnePiece.table.read(gene_x_sample_x_score_tsv))
 
-    fe_x_sa_x_sc = fe_x_sa_x_sc[:, names(ta_x_sa_x_nu)]
+    OnePiece.vector.error_duplicate(fe_)
+
+    OnePiece.dataframe.error_bad(fe_x_sa_x_sc)
+
+    fe_x_sa_x_sc = fe_x_sa_x_sc[!, names(ta_x_sa_x_nu)]
 
     bi_ = BitVector(ta_x_sa_x_nu[1, :])
 
