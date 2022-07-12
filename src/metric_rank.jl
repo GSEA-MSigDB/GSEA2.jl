@@ -12,16 +12,16 @@ Run metric-rank (standard) GSEA.
 # Arguments
 
   - `setting_json`:
-  - `set_genes_json`:
   - `target_x_sample_x_number_tsv`:
   - `gene_x_sample_x_score_tsv`:
+  - `set_genes_json`:
   - `output_directory`:
 """
 @cast function metric_rank(
     setting_json,
-    set_genes_json,
     target_x_sample_x_number_tsv,
     gene_x_sample_x_score_tsv,
+    set_genes_json,
     output_directory,
 )
 
@@ -68,6 +68,8 @@ Run metric-rank (standard) GSEA.
         ke_ar["maximum_gene_set_size"],
     )
 
+    al = ke_ar["algorithm"]
+
     sy_ar = _make_keyword_argument(ke_ar)
 
     pe = ke_ar["permutation"]
@@ -80,9 +82,9 @@ Run metric-rank (standard) GSEA.
 
     pl_ = ke_ar["gene_sets_to_plot"]
 
-    fu, st = OnePiece.feature_set_enrichment._match_algorithm(ke_ar["algorithm"])
-
     if pe == "sample"
+
+        fu, st = OnePiece.feature_set_enrichment._match_algorithm(al)
 
         se_en =
             OnePiece.feature_set_enrichment._match_algorithm(fu(fe_, sc_, se_fe_; sy_ar...), st)
@@ -115,7 +117,7 @@ Run metric-rank (standard) GSEA.
 
     elseif pe == "set"
 
-        user_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, output_directory)
+        user_rank(fe_, sc_, se_fe_, al, sy_ar, ra, n_pe, n_ex, pl_, output_directory)
 
     else
 

@@ -4,17 +4,15 @@ Run data-rank (single-sample) GSEA.
 # Arguments
 
   - `setting_json`:
-  - `set_genes_json`:
   - `gene_x_sample_x_score_tsv`:
+  - `set_genes_json`:
   - `output_directory`:
 """
-@cast function data_rank(setting_json, set_genes_json, gene_x_sample_x_score_tsv, output_directory)
+@cast function data_rank(setting_json, gene_x_sample_x_score_tsv, set_genes_json, output_directory)
 
     ke_ar = OnePiece.dict.read(setting_json)
 
     fe_x_sa_x_sc = OnePiece.table.read(gene_x_sample_x_score_tsv)
-
-    _error_feature_score(fe_x_sa_x_sc)
 
     se_fe_ = OnePiece.dict.read(set_genes_json)
 

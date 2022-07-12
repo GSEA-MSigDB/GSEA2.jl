@@ -32,3 +32,5 @@ docs/site/
 build
 
 *-application-*-julia-*-*-*.tar.gz
+
+example*/output/

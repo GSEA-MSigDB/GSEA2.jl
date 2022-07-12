@@ -1,4 +1,4 @@
-function user_rank(fe_, sc_, se_fe_, sy_ar, al, ra, n_pe, n_ex, pl_, ou)
+function user_rank(fe_, sc_, se_fe_, al, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
     fu, st = OnePiece.feature_set_enrichment._match_algorithm(al)
 
@@ -44,11 +44,11 @@ Run user-rank (pre-rank) GSEA.
 # Arguments
 
   - `setting_json`:
-  - `set_genes_json`:
   - `gene_x_metric_x_score_tsv`:
+  - `set_genes_json`:
   - `output_directory`:
 """
-@cast function user_rank(setting_json, set_genes_json, gene_x_metric_x_score_tsv, output_directory)
+@cast function user_rank(setting_json, gene_x_metric_x_score_tsv, set_genes_json, output_directory)
 
     ke_ar = OnePiece.dict.read(setting_json)
 
@@ -77,8 +77,8 @@ Run user-rank (pre-rank) GSEA.
         fe_,
         sc_,
         se_fe_,
-        _make_keyword_argument(ke_ar),
         ke_ar["algorithm"],
+        _make_keyword_argument(ke_ar),
         ke_ar["random_seed"],
         ke_ar["number_of_permutations"],
         ke_ar["number_of_extreme_gene_sets_to_plot"],

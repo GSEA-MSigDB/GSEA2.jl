@@ -45,7 +45,7 @@ mkdir output
 #### 3. Run standard GSEA
 
 ```bash
-gsea metric-rank setting.json set_genes.json target_x_sample_x_number.tsv gene_x_sample_x_score.tsv output
+gsea metric-rank setting.json target_x_sample_x_number.tsv gene_x_sample_x_score.tsv set_genes.json output
 
 ls -l output
 
@@ -94,7 +94,7 @@ GSEA.metric_rank(
 
 - `algorithm` for computing enrichment
 
-  `cidac` (for _cumulative information divergence with antisymmetricity and complementation_ ) | `ks` (for _Kolmogorov Smirnov_) | `ksa` (for `ks` area)
+  `cidac` (_cumulative information divergence with antisymmetricity and complementation_) | `ks` (_Kolmogorov Smirnov_) | `ksa` (`ks` area)
 
 - `number_of_jobs`
 
@@ -116,9 +116,9 @@ GSEA.metric_rank(
 
   Integer
 
-- `gene_sets_to_plot` no matter what (for `metric-rank` and `user-rank`)
+- `gene_sets_to_plot` in addition to the extreme ones (for `metric-rank` and `user-rank`)
 
-  List of string gene-set names
+  List of string, gene-set names
 
 ## Install
 
