@@ -1,6 +1,8 @@
-function user_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, ou)
+function user_rank(fe_, sc_, se_fe_, sy_ar, al, ra, n_pe, n_ex, pl_, ou)
 
-    se_en = OnePiece.feature_set_enrichment.score_set(fe_, sc_, se_fe_; sy_ar...)
+    fu, st = OnePiece.feature_set_enrichment._match_algorithm(al)
+
+    se_en = OnePiece.feature_set_enrichment._match_algorithm(fu(fe_, sc_, se_fe_; sy_ar...), st)
 
     if 0 < n_pe
 
@@ -10,14 +12,17 @@ function user_rank(fe_, sc_, se_fe_, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
         Random.seed!(ra)
 
-        se_ra__ = [
-            OnePiece.feature_set_enrichment.score_set(
-                fe_,
-                sc_,
-                Dict(se => sample(fe_, si, replace = false) for (se, si) in se_le);
-                sy_ar...,
-            ) for _ in ProgressBar(1:n_pe)
-        ]
+        se_ra__ = OnePiece.feature_set_enrichment._match_algorithm(
+            [
+                fu(
+                    fe_,
+                    sc_,
+                    Dict(se => sample(fe_, si, replace = false) for (se, si) in se_le);
+                    sy_ar...,
+                ) for _ in ProgressBar(1:n_pe)
+            ],
+            st,
+        )
 
     else
 
@@ -72,6 +77,7 @@ Run user-rank (pre-rank) GSEA
         sc_,
         se_fe_,
         _make_keyword_argument(ke_ar),
+        ke_ar["algorithm"],
         ke_ar["random_seed"],
         ke_ar["number_of_permutations"],
         ke_ar["number_of_extreme_gene_sets_to_plot"],

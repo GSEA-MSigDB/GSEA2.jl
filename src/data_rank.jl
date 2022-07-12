@@ -29,6 +29,7 @@ Run data-rank (single-sample) GSEA
     se_x_sa_x_en = OnePiece.feature_set_enrichment.score_set(
         fe_x_sa_x_sc,
         se_fe_;
+        al = ke_ar["algorithm"],
         _make_keyword_argument(ke_ar)...,
     )
 

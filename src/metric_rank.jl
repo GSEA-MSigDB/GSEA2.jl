@@ -74,9 +74,12 @@ Run metric-rank (standard) GSEA
 
     pl_ = ke_ar["gene_sets_to_plot"]
 
+    fu, st = OnePiece.feature_set_enrichment._match_algorithm(ke_ar["algorithm"])
+
     if pe == "sample"
 
-        se_en = OnePiece.feature_set_enrichment.score_set(fe_, sc_, se_fe_; sy_ar...)
+        se_en =
+            OnePiece.feature_set_enrichment._match_algorithm(fu(fe_, sc_, se_fe_; sy_ar...), st)
 
         if 0 < n_pe
 
@@ -84,13 +87,13 @@ Run metric-rank (standard) GSEA
 
             Random.seed!(ra)
 
-            se_ra__ = [
-                OnePiece.feature_set_enrichment.score_set(
-                    _compare_and_sort(shuffle!(bi_), ma, me, fe_)...,
-                    se_fe_;
-                    sy_ar...,
-                ) for _ in ProgressBar(1:n_pe)
-            ]
+            se_ra__ = OnePiece.feature_set_enrichment._match_algorithm(
+                [
+                    fu(_compare_and_sort(shuffle!(bi_), ma, me, fe_)..., se_fe_; sy_ar...) for
+                    _ in ProgressBar(1:n_pe)
+                ],
+                st,
+            )
 
         else
 
