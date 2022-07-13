@@ -27,7 +27,7 @@ sc = joinpath(@__DIR__, "gene_x_sample_x_score.tsv")
 
 ou = joinpath(TE, "data_rank")
 
-GSEA.data_rank(sett, set_, sc, ou)
+GSEA.data_rank(sett, sc, set_, ou)
 
 OnePiece.dataframe.print(OnePiece.table.read(joinpath(ou, "set_x_sample_x_enrichment.tsv")))
 
@@ -45,13 +45,13 @@ end
 
 ou = joinpath(TE, "user_rank")
 
-GSEA.user_rank(sett, set_, joinpath(@__DIR__, me), ou)
+GSEA.user_rank(sett, joinpath(@__DIR__, me), set_, ou)
 
 print_output(ou)
 
 ou = joinpath(TE, "metric_rank")
 
-GSEA.metric_rank(sett, set_, joinpath(@__DIR__, "target_x_sample_x_number.tsv"), sc, ou)
+GSEA.metric_rank(sett, joinpath(@__DIR__, "target_x_sample_x_number.tsv"), sc, set_, ou)
 
 OnePiece.dataframe.print(OnePiece.table.read(joinpath(ou, me)))
 
