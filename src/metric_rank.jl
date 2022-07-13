@@ -28,18 +28,18 @@ Run metric-rank (standard) GSEA.
     ke_ar = OnePiece.dict.read(setting_json)
 
     ta_, ta_x_sa_x_nu =
-        OnePiece.dataframe.separate_row(OnePiece.table.read(target_x_sample_x_number_tsv))
+        OnePiece.data_frame.separate_row(OnePiece.table.read(target_x_sample_x_number_tsv))
 
     OnePiece.vector.error_duplicate(ta_)
 
-    OnePiece.dataframe.error_bad(ta_x_sa_x_nu)
+    OnePiece.data_frame.error_bad(ta_x_sa_x_nu)
 
     fe_, fe_x_sa_x_sc =
-        OnePiece.dataframe.separate_row(OnePiece.table.read(gene_x_sample_x_score_tsv))
+        OnePiece.data_frame.separate_row(OnePiece.table.read(gene_x_sample_x_score_tsv))
 
     OnePiece.vector.error_duplicate(fe_)
 
-    OnePiece.dataframe.error_bad(fe_x_sa_x_sc)
+    OnePiece.data_frame.error_bad(fe_x_sa_x_sc)
 
     fe_x_sa_x_sc = fe_x_sa_x_sc[!, names(ta_x_sa_x_nu)]
 
