@@ -1,13 +1,12 @@
 name = "GSEA"
 uuid = "f74a9ba8-6f1f-48f2-98b6-a79c46cc06f7"
 authors = ["KwatMDPhD <kwat.me@icloud.com>"]
-version = "0.11.3"
+version = "0.11.4"
 
 [deps]
 Comonicon = "863f3e99-da2a-4334-8734-de3dacbe5542"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 OnePiece = "1fe83854-81c0-42f7-afc9-71ba9af673ca"
-PackageCompiler = "9b87118b-4619-50d2-8e1e-99f35a4d4d9d"
 ProgressBars = "49802e3a-d2f1-5c88-81d8-b72133a6f568"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
