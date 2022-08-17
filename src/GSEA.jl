@@ -8,19 +8,9 @@ using Random
 using Statistics
 using StatsBase
 
-include("_compute_statistic.jl")
+include("_include_neighbor.jl")
 
-include("_filter_set!.jl")
-
-include("_make_keyword_argument.jl")
-
-include("_plot_mountain.jl")
-
-include("data_rank.jl")
-
-include("metric_rank.jl")
-
-include("user_rank.jl")
+_include_neighbor(@__FILE__)
 
 """
 Gene-Set Enrichment Analysis.
