@@ -2,7 +2,7 @@ using GSEA
 
 using OnePiece
 
-TE = OnePiece.path.make_temporary("GSEA.test")
+te = OnePiece.path.make_temporary("GSEA.test")
 
 sett = joinpath(dirname(@__DIR__), "setting.json")
 
@@ -26,7 +26,7 @@ GSEA._make_keyword_argument(
 
 sc = joinpath(@__DIR__, "gene_x_sample_x_score.tsv")
 
-ou = joinpath(TE, "data_rank")
+ou = joinpath(te, "data_rank")
 
 GSEA.data_rank(sett, sc, set_, ou)
 
@@ -46,7 +46,7 @@ end
 
 OnePiece.dict.read(sett)
 
-ou = joinpath(TE, "user_rank")
+ou = joinpath(te, "user_rank")
 
 GSEA.user_rank(sett, joinpath(@__DIR__, me), set_, ou)
 
@@ -54,7 +54,7 @@ print_output(ou)
 
 readdir(joinpath(ou, "plot"))
 
-ou = joinpath(TE, "metric_rank")
+ou = joinpath(te, "metric_rank")
 
 GSEA.metric_rank(sett, joinpath(@__DIR__, "target_x_sample_x_number.tsv"), sc, set_, ou)
 
