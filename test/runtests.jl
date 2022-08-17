@@ -1,4 +1,5 @@
 using GSEA
+
 using OnePiece
 
 TE = OnePiece.path.make_temporary("GSEA.test")
@@ -43,11 +44,15 @@ function print_output(ou)
 
 end
 
+OnePiece.dict.read(sett)
+
 ou = joinpath(TE, "user_rank")
 
 GSEA.user_rank(sett, joinpath(@__DIR__, me), set_, ou)
 
 print_output(ou)
+
+readdir(joinpath(ou, "plot"))
 
 ou = joinpath(TE, "metric_rank")
 
