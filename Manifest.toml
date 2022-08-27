@@ -482,7 +482,7 @@ version = "1.12.7"
 
 [[deps.OnePiece]]
 deps = ["CSV", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "Distributions", "Graphs", "IJulia", "JSON", "JSON3", "KernelDensity", "LinearAlgebra", "Mmap", "NMF", "NetworkLayout", "OrderedCollections", "Printf", "Random", "Statistics", "StatsBase", "TOML", "XLSX"]
-git-tree-sha1 = "13f708f46d310dde258c58f7da9e440abb7994ad"
+git-tree-sha1 = "b7da7fe3dca0ff6ec6fc99aac5673c617b9c9571"
 repo-rev = "main"
 repo-url = "/Users/kwat/craft/OnePiece.jl"
 uuid = "1fe83854-81c0-42f7-afc9-71ba9af673ca"
