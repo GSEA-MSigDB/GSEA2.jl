@@ -52,14 +52,14 @@ Run user-rank (pre-rank) GSEA.
 
     ke_ar = OnePiece.dict.read(setting_json)
 
-    fe_, fe_x_me_x_sc =
-        OnePiece.data_frame.separate_row(OnePiece.table.read(gene_x_metric_x_score_tsv))
+    fe_, sa_, ma =
+        OnePiece.data_frame.separate(OnePiece.table.read(gene_x_metric_x_score_tsv))[[2, 3, 4]]
 
     OnePiece.vector.error_duplicate(fe_)
 
-    OnePiece.data_frame.error_bad(fe_x_me_x_sc)
+    OnePiece.vector.error_bad(eachcol(ma), na_ = sa_)
 
-    sc_ = fe_x_me_x_sc[!, 1]
+    sc_ = ma[!, 1]
 
     sc_, fe_ = OnePiece.vector.sort_like(sc_, fe_)
 

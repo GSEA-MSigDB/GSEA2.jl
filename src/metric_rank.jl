@@ -27,29 +27,27 @@ Run metric-rank (standard) GSEA.
 
     ke_ar = OnePiece.dict.read(setting_json)
 
-    ta_, ta_x_sa_x_nu =
-        OnePiece.data_frame.separate_row(OnePiece.table.read(target_x_sample_x_number_tsv))
+    fe_, sat_, mat =
+        OnePiece.data_frame.separate(OnePiece.table.read(target_x_sample_x_number_tsv))[[2, 3, 4]]
 
     OnePiece.vector.error_duplicate(ta_)
 
-    OnePiece.data_frame.error_bad(ta_x_sa_x_nu)
+    OnePiece.vector.error_bad(eachcol(mat), na_ = sat_)
 
-    fe_, fe_x_sa_x_sc =
-        OnePiece.data_frame.separate_row(OnePiece.table.read(gene_x_sample_x_score_tsv))
+    fe_, sas_, mas =
+        OnePiece.data_frame.separate(OnePiece.table.read(gene_x_sample_x_score_tsv))[[2, 3, 4]]
 
     OnePiece.vector.error_duplicate(fe_)
 
-    OnePiece.data_frame.error_bad(fe_x_sa_x_sc)
+    OnePiece.vector.error_bad(eachcol(mas), na_ = sas_)
 
-    fe_x_sa_x_sc = fe_x_sa_x_sc[!, names(ta_x_sa_x_nu)]
+    mas = mas[!, indexin(sat_, sas_)]
 
-    bi_ = BitVector(ta_x_sa_x_nu[1, :])
-
-    ma = Matrix(fe_x_sa_x_sc)
+    bi_ = BitVector(mat[1, :])
 
     me = ke_ar["metric"]
 
-    fe_, sc_ = _compare_and_sort(bi_, ma, me, fe_)
+    fe_, sc_ = _compare_and_sort(bi_, mas, me, fe_)
 
     mkpath(output_directory)
 
@@ -97,7 +95,7 @@ Run metric-rank (standard) GSEA.
 
             se_ra__ = OnePiece.feature_set_enrichment._match_algorithm(
                 [
-                    fu(_compare_and_sort(shuffle!(bi_), ma, me, fe_)..., se_fe_; sy_ar...) for
+                    fu(_compare_and_sort(shuffle!(bi_), mas, me, fe_)..., se_fe_; sy_ar...) for
                     _ in ProgressBar(1:n_pe)
                 ],
                 st,
