@@ -27,21 +27,21 @@ Run metric-rank (standard) GSEA.
 
     ke_ar = OnePiece.dict.read(setting_json)
 
-    fe_, sat_, mat =
+    ta_, sat_, mat =
         OnePiece.data_frame.separate(OnePiece.table.read(target_x_sample_x_number_tsv))[[2, 3, 4]]
 
     OnePiece.vector.error_duplicate(ta_)
 
-    OnePiece.vector.error_bad(eachcol(mat), na_ = sat_)
+    OnePiece.matrix.error_bad(mat, Real)
 
     fe_, sas_, mas =
         OnePiece.data_frame.separate(OnePiece.table.read(gene_x_sample_x_score_tsv))[[2, 3, 4]]
 
     OnePiece.vector.error_duplicate(fe_)
 
-    OnePiece.vector.error_bad(eachcol(mas), na_ = sas_)
+    OnePiece.matrix.error_bad(mas, Real)
 
-    mas = mas[!, indexin(sat_, sas_)]
+    mas = mas[:, indexin(sat_, sas_)]
 
     bi_ = BitVector(mat[1, :])
 
