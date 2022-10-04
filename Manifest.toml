@@ -502,11 +502,11 @@ version = "1.12.7"
 
 [[deps.OnePiece]]
 deps = ["CSV", "Clustering", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "Distances", "Distributions", "GZip", "Graphs", "IJulia", "InteractiveUtils", "JSON", "JSON3", "KernelDensity", "LinearAlgebra", "Mmap", "NMF", "NetworkLayout", "OrderedCollections", "Printf", "Random", "Statistics", "StatsBase", "TOML", "XLSX"]
-git-tree-sha1 = "5776e2ce2184836d2f5196f3c8ad84bbbeb0b5b4"
+git-tree-sha1 = "dda6bc0f8a67bb201e90c0226bba993c7cb3be10"
 repo-rev = "main"
 repo-url = "/Users/kwat/craft/OnePiece.jl"
 uuid = "1fe83854-81c0-42f7-afc9-71ba9af673ca"
-version = "0.25.0"
+version = "0.25.1"
 
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
