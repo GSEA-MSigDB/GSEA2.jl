@@ -32,7 +32,7 @@ function user_rank(fe_, sc_, se_fe_, al, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
     se_x_st_x_nu = _compute_statistic(se_en, se_ra__, ou)
 
-    _plot_mountain(se_x_st_x_nu, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
+    _plot_mountain(se_x_st_x_nu, n_ex, pl_, al, fe_, sc_, se_fe_, sy_ar, ou)
 
     se_x_st_x_nu
 

@@ -1,4 +1,4 @@
-function _plot_mountain(se_x_st_x_nu, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
+function _plot_mountain(se_x_st_x_nu, n_ex, pl_, al, fe_, sc_, se_fe_, sy_ar, ou)
 
     n_se = size(se_x_st_x_nu, 1)
 
@@ -36,9 +36,19 @@ function _plot_mountain(se_x_st_x_nu, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, ou)
 
     pop!(sy_ar, :n_jo)
 
+    if al == "cidac"
+
+        fu = OnePiece.feature_set_enrichment.score_set_new
+
+    elseif al == "ks"
+
+        fu = OnePiece.feature_set_enrichment.score_set
+
+    end
+
     for se in pl_
 
-        OnePiece.feature_set_enrichment.score_set(
+        fu(
             fe_,
             sc_,
             se_fe_[se];

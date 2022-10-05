@@ -109,7 +109,7 @@ Run metric-rank (standard) GSEA.
 
         se_x_st_x_nu = _compute_statistic(se_en, se_ra__, output_directory)
 
-        _plot_mountain(se_x_st_x_nu, n_ex, pl_, fe_, sc_, se_fe_, sy_ar, output_directory)
+        _plot_mountain(se_x_st_x_nu, n_ex, pl_, al, fe_, sc_, se_fe_, sy_ar, output_directory)
 
         se_x_st_x_nu
 
