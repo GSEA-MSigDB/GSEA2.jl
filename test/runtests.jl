@@ -62,13 +62,13 @@ OnePiece.data_frame.print(OnePiece.table.read(joinpath(ou, me)))
 
 print_output(ou)
 
-sm = "small"
+sm = joinpath(@__DIR__, "small")
 
 ou = joinpath(te, "metric_rank.small")
 
 GSEA.metric_rank(
     joinpath(sm, "setting.json"),
-    joinpath("target_x_sample_x_number.tsv"),
+    joinpath(@__DIR__, "target_x_sample_x_number.tsv"),
     sc,
     joinpath(sm, "set_genes.json"),
     ou,
