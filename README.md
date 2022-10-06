@@ -134,7 +134,7 @@ gsea --help
 
 ## Build
 
-If there is no release matching desired machine or if installation fails, try building.
+If there is no release matching desired machine or installation fails, try building.
 
 #### 1. Download this repository
 
