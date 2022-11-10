@@ -8,9 +8,9 @@ using Random
 using Statistics
 using StatsBase
 
-include("_include_neighbor.jl")
+include("_include.jl")
 
-_include_neighbor(@__FILE__)
+@_include()
 
 """
 Gene-Set Enrichment Analysis.
