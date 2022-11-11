@@ -1,19 +1,25 @@
 module GSEA
 
-using Comonicon
+using Comonicon: @cast, @main
+
 using DataFrames
-using OnePiece
+
 using ProgressBars
+
 using Random
-using Statistics
+
+#using Statistics
+
 using StatsBase
+
+using OnePiece
 
 include("_include.jl")
 
 @_include()
 
 """
-Gene-Set Enrichment Analysis.
+The ✨ new ✨ Gene Set Enrichment Analysis 🧬
 """
 @main
 
