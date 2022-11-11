@@ -1,4 +1,6 @@
-**:information_desk_person: Join the [bioinformatics community](https://discord.gg/tKh7fguMrD) to get live help on GSEA (and everything bioinformatics) :circus_tent: :keyboard: :beginner: :bulb:**
+The ✨ new ✨ Gene Set Enrichment Analysis 🧬
+
+💁 Join the [bioinformatics community](https://discord.gg/tKh7fguMrD) to get live help on GSEA (and everything bioinformatics) 🎪 ⌨️ 🔰 💡
 
 ## Use `gsea` command-line interface
 
@@ -130,7 +132,7 @@ We plan to sign `gsea` in the near future. Meanwhile, enable 3rd-party apps on y
 gsea --help
 ```
 
-:tada:
+🎉
 
 ## Build
 
@@ -162,7 +164,7 @@ julia --project --eval "using Pkg; Pkg.test()"
 julia --project deps/build.jl app tarball
 ```
 
-:point_up: makes `build` and `gsea-application-N.N.N-julia-N.N.N-MACHINE-xNN.tar.gz`.
+☝️ makes `build` and `gsea-application-N.N.N-julia-N.N.N-MACHINE-xNN.tar.gz`.
 
 Add `build/gsea/bin` to the path.
 
@@ -172,12 +174,12 @@ Add `build/gsea/bin` to the path.
 gsea --help
 ```
 
-:tada:
+🎊
 
 ---
 
-## :wave: :cowboy_hat_face: Howdy
+## 👋 🤠 Howdy
 
 To report a bug, request a feature, or leave a comment, just [submit an issue](https://github.com/KwatMDPhD/GSEA.jl/issues/new/choose).
 
-Powered by https://github.com/KwatMDPhD/Kata.jl
+Powered by https://github.com/KwatMDPhD/Kata.jl 🌝
