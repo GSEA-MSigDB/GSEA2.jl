@@ -43,11 +43,11 @@ function _plot_mountain(se_x_st_x_nu, n_ex, pl_, al, fe_, sc_, se_fe_, sy_ar, di
 
     if al == "cidac"
 
-        fu = OnePiece.feature_set_enrichment.score_set_new
+        fu = OnePiece.FeatureSetEnrichment.score_set_new
 
     elseif al == "ks"
 
-        fu = OnePiece.feature_set_enrichment.score_set
+        fu = OnePiece.FeatureSetEnrichment.score_set
 
     end
 

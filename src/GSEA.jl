@@ -2,11 +2,11 @@ module GSEA
 
 using Comonicon: @cast, @main
 
-using DataFrames
+using DataFrames: DataFrame
 
 using ProgressBars
 
-using Random
+using Random: seed!
 
 #using Statistics
 

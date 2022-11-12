@@ -1,8 +1,11 @@
 function _compare_and_sort(bi_, ma, me, fe_)
 
-    reverse!(
-        OnePiece.vector.sort_like(OnePiece.feature_x_sample.compare_with_target(bi_, ma, me), fe_),
-    )
+    sc_, fes_ = OnePiece.Vector.sort_like((
+        OnePiece.FeatureSetEnrichment.compare_with_target(bi_, ma, me),
+        fe_,
+    ))
+
+    fes_, sc_
 
 end
 
@@ -25,21 +28,21 @@ Run metric-rank (standard) GSEA.
     output_directory,
 )
 
-    ke_ar = OnePiece.dict.read(setting_json)
+    ke_ar = OnePiece.Dict.read(setting_json)
 
     ta_, sat_, mat =
-        OnePiece.data_frame.separate(OnePiece.table.read(target_x_sample_x_number_tsv))[[2, 3, 4]]
+        OnePiece.DataFrame.separate(OnePiece.Table.read(target_x_sample_x_number_tsv))[[2, 3, 4]]
 
-    OnePiece.vector.error_duplicate(ta_)
+    OnePiece.Vector.error_duplicate(ta_)
 
-    OnePiece.matrix.error_bad(mat, Real)
+    OnePiece.Matrix.error_bad(mat, Real)
 
     fe_, sas_, mas =
-        OnePiece.data_frame.separate(OnePiece.table.read(gene_x_sample_x_score_tsv))[[2, 3, 4]]
+        OnePiece.DataFrame.separate(OnePiece.Table.read(gene_x_sample_x_score_tsv))[[2, 3, 4]]
 
-    OnePiece.vector.error_duplicate(fe_)
+    OnePiece.Vector.error_duplicate(fe_)
 
-    OnePiece.matrix.error_bad(mas, Real)
+    OnePiece.Matrix.error_bad(mas, Real)
 
     mas = mas[:, indexin(sat_, sas_)]
 
@@ -51,12 +54,12 @@ Run metric-rank (standard) GSEA.
 
     mkpath(output_directory)
 
-    OnePiece.table.write(
+    OnePiece.Table.write(
         joinpath(output_directory, "gene_x_metric_x_score.tsv"),
         DataFrame("Gene" => fe_, me => sc_),
     )
 
-    se_fe_ = OnePiece.dict.read(set_genes_json)
+    se_fe_ = OnePiece.Dict.read(set_genes_json)
 
     _filter_set!(
         se_fe_,
@@ -82,10 +85,9 @@ Run metric-rank (standard) GSEA.
 
     if pe == "sample"
 
-        fu, st = OnePiece.feature_set_enrichment._match_algorithm(al)
+        fu, st = OnePiece.FeatureSetEnrichment._match_algorithm(al)
 
-        se_en =
-            OnePiece.feature_set_enrichment._match_algorithm(fu(fe_, sc_, se_fe_; sy_ar...), st)
+        se_en = OnePiece.FeatureSetEnrichment._match_algorithm(fu(fe_, sc_, se_fe_; sy_ar...), st)
 
         if 0 < n_pe
 
@@ -93,7 +95,7 @@ Run metric-rank (standard) GSEA.
 
             Random.seed!(ra)
 
-            se_ra__ = OnePiece.feature_set_enrichment._match_algorithm(
+            se_ra__ = OnePiece.FeatureSetEnrichment._match_algorithm(
                 [
                     fu(_compare_and_sort(shuffle!(bi_), mas, me, fe_)..., se_fe_; sy_ar...) for
                     _ in ProgressBar(1:n_pe)

@@ -1,8 +1,8 @@
 function user_rank(fe_, sc_, se_fe_, al, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
-    fu, st = OnePiece.feature_set_enrichment._match_algorithm(al)
+    fu, st = OnePiece.FeatureSetEnrichment._match_algorithm(al)
 
-    se_en = OnePiece.feature_set_enrichment._match_algorithm(fu(fe_, sc_, se_fe_; sy_ar...), st)
+    se_en = OnePiece.FeatureSetEnrichment._match_algorithm(fu(fe_, sc_, se_fe_; sy_ar...), st)
 
     if 0 < n_pe
 
@@ -12,7 +12,7 @@ function user_rank(fe_, sc_, se_fe_, al, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
         Random.seed!(ra)
 
-        se_ra__ = OnePiece.feature_set_enrichment._match_algorithm(
+        se_ra__ = OnePiece.FeatureSetEnrichment._match_algorithm(
             [
                 fu(
                     fe_,
@@ -50,19 +50,19 @@ Run user-rank (pre-rank) GSEA.
 """
 @cast function user_rank(setting_json, gene_x_metric_x_score_tsv, set_genes_json, output_directory)
 
-    ke_ar = OnePiece.dict.read(setting_json)
+    ke_ar = OnePiece.Dict.read(setting_json)
 
-    fe_, ma = OnePiece.data_frame.separate(OnePiece.table.read(gene_x_metric_x_score_tsv))[[2, 4]]
+    fe_, ma = OnePiece.DataFrame.separate(OnePiece.Table.read(gene_x_metric_x_score_tsv))[[2, 4]]
 
-    OnePiece.vector.error_duplicate(fe_)
+    OnePiece.Vector.error_duplicate(fe_)
 
-    OnePiece.matrix.error_bad(ma, Real)
+    OnePiece.Matrix.error_bad(ma, Real)
 
     sc_ = ma[:, 1]
 
-    sc_, fe_ = OnePiece.vector.sort_like(sc_, fe_)
+    sc_, fe_ = OnePiece.Vector.sort_like(sc_, fe_)
 
-    se_fe_ = OnePiece.dict.read(set_genes_json)
+    se_fe_ = OnePiece.Dict.read(set_genes_json)
 
     _filter_set!(
         se_fe_,
