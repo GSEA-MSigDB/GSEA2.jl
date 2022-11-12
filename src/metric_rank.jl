@@ -1,9 +1,7 @@
 function _compare_and_sort(bi_, fe_x_sa_x_sc, me, fe_)
 
-    sc_, fes_ = OnePiece.Vector.sort_like((
-        OnePiece.FeatureSetEnrichment.compare_with_target(bi_, fe_x_sa_x_sc, me),
-        fe_,
-    ))
+    sc_, fes_ =
+        OnePiece.Vector.sort_like((OnePiece.FeatureXSample.target(bi_, fe_x_sa_x_sc, me), fe_))
 
     fes_, sc_
 

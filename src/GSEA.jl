@@ -4,13 +4,13 @@ using Comonicon: @cast, @main
 
 using DataFrames: DataFrame
 
-using ProgressBars
+using ProgressBars: ProgressBar
 
 using Random: seed!
 
 #using Statistics
 
-using StatsBase
+#using StatsBase
 
 using OnePiece
 
