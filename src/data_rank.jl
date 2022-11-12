@@ -10,10 +10,13 @@ Run data-rank (single-sample) GSEA.
 """
 @cast function data_rank(setting_json, gene_x_sample_x_score_tsv, set_genes_json, output_directory)
 
+    #
     ke_ar = OnePiece.Dict.read(setting_json)
 
+    #
     fe_x_sa_x_sc = OnePiece.Table.read(gene_x_sample_x_score_tsv)
 
+    #
     se_fe_ = OnePiece.Dict.read(set_genes_json)
 
     _filter_set!(
@@ -24,6 +27,7 @@ Run data-rank (single-sample) GSEA.
         ke_ar["maximum_gene_set_size"],
     )
 
+    #
     se_x_sa_x_en = OnePiece.FeatureSetEnrichment.score_set(
         fe_x_sa_x_sc,
         se_fe_;
