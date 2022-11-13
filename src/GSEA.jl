@@ -2,15 +2,13 @@ module GSEA
 
 using Comonicon: @cast, @main
 
-using DataFrames: DataFrame
+using DataFrames: DataFrame, insertcols!
 
 using ProgressBars: ProgressBar
 
-using Random: seed!
+using Random: seed!, shuffle!
 
-#using Statistics
-
-#using StatsBase
+using StatsBase: sample
 
 using OnePiece
 

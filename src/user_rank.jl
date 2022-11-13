@@ -1,4 +1,4 @@
-function user_rank(fe_, sc_, se_fe_, al, sy_ar, ra, n_pe, n_ex, pl_, ou)
+function user_rank(fe_, sc_, se_fe_, fe, sc, al, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
     #
     fu, st = OnePiece.FeatureSetEnrichment._match_algorithm(al)
@@ -37,7 +37,7 @@ function user_rank(fe_, sc_, se_fe_, al, sy_ar, ra, n_pe, n_ex, pl_, ou)
     #
     se_x_st_x_nu = _compute_statistic(se_en, se_ra__, ou)
 
-    _plot_mountain(se_x_st_x_nu, n_ex, pl_, al, fe_, sc_, se_fe_, sy_ar, ou)
+    _plot_mountain(se_x_st_x_nu, fe, sc, n_ex, pl_, al, fe_, sc_, se_fe_, sy_ar, ou)
 
     se_x_st_x_nu
 
@@ -62,7 +62,7 @@ Run user-rank (pre-rank) GSEA.
     fe_, fe_x_me_x_sc =
         OnePiece.DataFrame.separate(OnePiece.Table.read(gene_x_metric_x_score_tsv))[[2, 4]]
 
-    OnePiece.Vector.error_duplicate(fe_)
+    OnePiece.Array.error_duplicate(fe_)
 
     OnePiece.Matrix.error_bad(fe_x_me_x_sc, Real)
 
@@ -87,6 +87,8 @@ Run user-rank (pre-rank) GSEA.
         fe_,
         sc_,
         se_fe_,
+        ke_ar["feature_name"],
+        ke_ar["score_name"],
         ke_ar["algorithm"],
         _make_keyword_argument(ke_ar),
         ke_ar["random_seed"],

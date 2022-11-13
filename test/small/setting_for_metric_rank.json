@@ -1,0 +1,16 @@
+{
+  "metric": "signal_to_noise_ratio",
+  "feature_name": "Gene",
+  "score_name": "Signal-to-Noise",
+  "remove_gene_set_genes": false,
+  "minimum_gene_set_size": 15,
+  "maximum_gene_set_size": 500,
+  "exponent": 1.0,
+  "algorithm": "cidac",
+  "number_of_jobs": 1,
+  "permutation": "sample",
+  "random_seed": 20150603,
+  "number_of_permutations": 0,
+  "number_of_extreme_gene_sets_to_plot": 2,
+  "gene_sets_to_plot": []
+}

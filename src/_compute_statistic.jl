@@ -25,7 +25,7 @@ function _compute_statistic(se_en, se_ra__, di)
         #
         se_x_ra_x_en = DataFrame("Set" => se_)
 
-        insertcols!(se_x_ra_x_en, (id => ra_ for (id, ra_) in enumerate(ra__))...)
+        insertcols!(se_x_ra_x_en, (string(id) => ra_ for (id, ra_) in enumerate(ra__))...)
 
         OnePiece.Table.write(joinpath(di, "set_x_random_x_enrichment.tsv"), se_x_ra_x_en)
 

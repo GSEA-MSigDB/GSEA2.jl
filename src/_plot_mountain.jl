@@ -1,4 +1,4 @@
-function _plot_mountain(se_x_st_x_nu, n_ex, pl_, al, fe_, sc_, se_fe_, sy_ar, di)
+function _plot_mountain(se_x_st_x_nu, fe, sc, n_ex, pl_, al, fe_, sc_, se_fe_, sy_ar, di)
 
     #
     n_se = size(se_x_st_x_nu, 1)
@@ -59,8 +59,9 @@ function _plot_mountain(se_x_st_x_nu, n_ex, pl_, al, fe_, sc_, se_fe_, sy_ar, di
             sc_,
             se_fe_[se];
             title_text = se,
-            fe = "Gene",
-            di = joinpath(pl, "$(OnePiece.Path.clean(se)).html"),
+            fe = fe,
+            sc = sc,
+            ht = joinpath(pl, "$(OnePiece.Path.clean(se)).html"),
             sy_ar...,
         )
 

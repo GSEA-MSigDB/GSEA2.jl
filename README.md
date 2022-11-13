@@ -74,6 +74,14 @@ GSEA.metric_rank(
 
   `signal_to_noise_ratio` | `mean_difference` | `median_difference` | `pearson_correlation` | `cosine_distance` | `information_coefficient`
 
+- `feature_name` (for `metric-rank` and `user-rank`)
+
+  String
+
+- `score_name` (for `metric-rank` and `user-rank`)
+
+  String
+
 - `remove_gene_set_genes` that are not in the gene-x-sample-x-score genes
 
   `false` | `true`
@@ -98,9 +106,9 @@ GSEA.metric_rank(
 
   Integer
 
-- `permutation` for computing significance
+- `permutation` for computing significance (for `metric-rank`)
 
-  `sample` (for `metric-rank`) | `set` (for `metric-rank` and `user-rank`)
+  `sample` | `set` (`user-rank` permutes sets)
 
 - `random_seed` from which to generate randomness for computing significance (for `metric-rank` and `user-rank`)
 
