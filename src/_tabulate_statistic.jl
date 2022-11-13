@@ -1,4 +1,4 @@
-function _compute_statistic(se_en, se_ra__, di)
+function _tabulate_statistic(se_en, se_ra_, ou)
 
     #
     se_ = collect(keys(se_en))
@@ -6,10 +6,10 @@ function _compute_statistic(se_en, se_ra__, di)
     en_ = collect(values(se_en))
 
     #
-    mkpath(di)
+    mkpath(ou)
 
     #
-    if isempty(se_ra__)
+    if isempty(se_ra_)
 
         #
         gl_ = gla_ = fill(NaN, length(se_))
@@ -17,7 +17,7 @@ function _compute_statistic(se_en, se_ra__, di)
     else
 
         #
-        ra__ = [collect(values(se_ra_)) for se_ra_ in se_ra__]
+        ra__ = [collect(values(se_ra)) for se_ra in se_ra_]
 
         #
         gl_, gla_ = OnePiece.Significance.get_p_value_and_adjust(en_, vcat(ra__...))
@@ -27,7 +27,7 @@ function _compute_statistic(se_en, se_ra__, di)
 
         insertcols!(se_x_ra_x_en, (string(id) => ra_ for (id, ra_) in enumerate(ra__))...)
 
-        OnePiece.Table.write(joinpath(di, "set_x_random_x_enrichment.tsv"), se_x_ra_x_en)
+        OnePiece.Table.write(joinpath(ou, "set_x_random_x_enrichment.tsv"), se_x_ra_x_en)
 
     end
 
@@ -42,7 +42,7 @@ function _compute_statistic(se_en, se_ra__, di)
         "Enrichment",
     )
 
-    OnePiece.Table.write(joinpath(di, "set_x_statistic_x_number.tsv"), se_x_st_x_nu)
+    OnePiece.Table.write(joinpath(ou, "set_x_statistic_x_number.tsv"), se_x_st_x_nu)
 
     se_x_st_x_nu
 

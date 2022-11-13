@@ -96,9 +96,9 @@ Run metric-rank (standard) GSEA.
     if pe == "sample"
 
         #
-        fu, st = OnePiece.FeatureSetEnrichment._match_algorithm(al)
+        fu, id = OnePiece.FeatureSetEnrichment._match_algorithm(al)
 
-        se_en = OnePiece.FeatureSetEnrichment._match_algorithm(fu(fe_, sc_, se_fe_; sy_ar...), st)
+        se_en = Dict(se => en[id] for (se, en) in fu(fe_, sc_, se_fe_; sy_ar...))
 
         #
         if 0 < n_pe
@@ -108,25 +108,25 @@ Run metric-rank (standard) GSEA.
             #
             seed!(ra)
 
-            se_ra__ = OnePiece.FeatureSetEnrichment._match_algorithm(
-                [
+            #
+            se_ra_ = [
+                Dict(se => en[id] for (se, en) in se_en) for se_en in (
                     fu(
                         _compare_and_sort(shuffle!(bi_), fe_x_sa_x_sc, me, fe_)...,
                         se_fe_;
                         sy_ar...,
                     ) for _ in ProgressBar(1:n_pe)
-                ],
-                st,
-            )
+                )
+            ]
 
         else
 
-            se_ra__ = []
+            se_ra_ = []
 
         end
 
         #
-        se_x_st_x_nu = _compute_statistic(se_en, se_ra__, output_directory)
+        se_x_st_x_nu = _tabulate_statistic(se_en, se_ra_, output_directory)
 
         _plot_mountain(
             se_x_st_x_nu,

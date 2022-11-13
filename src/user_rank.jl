@@ -1,9 +1,9 @@
 function user_rank(fe_, sc_, se_fe_, fe, sc, al, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
     #
-    fu, st = OnePiece.FeatureSetEnrichment._match_algorithm(al)
+    fu, id = OnePiece.FeatureSetEnrichment._match_algorithm(al)
 
-    se_en = OnePiece.FeatureSetEnrichment._match_algorithm(fu(fe_, sc_, se_fe_; sy_ar...), st)
+    se_en = Dict(se => en[id] for (se, en) in fu(fe_, sc_, se_fe_; sy_ar...))
 
     #
     if 0 < n_pe
@@ -15,27 +15,26 @@ function user_rank(fe_, sc_, se_fe_, fe, sc, al, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
         seed!(ra)
 
-        se_ra__ = OnePiece.FeatureSetEnrichment._match_algorithm(
-            [
+        #
+        se_ra_ = [
+            Dict(se => en[id] for (se, en) in se_en) for se_en in (
                 fu(
                     fe_,
                     sc_,
                     Dict(se => sample(fe_, si, replace = false) for (se, si) in se_si);
                     sy_ar...,
                 ) for _ in ProgressBar(1:n_pe)
-            ],
-            st,
-        )
+            )
+        ]
 
-        #
     else
 
-        se_ra__ = []
+        se_ra_ = []
 
     end
 
     #
-    se_x_st_x_nu = _compute_statistic(se_en, se_ra__, ou)
+    se_x_st_x_nu = _tabulate_statistic(se_en, se_ra_, ou)
 
     _plot_mountain(se_x_st_x_nu, fe, sc, n_ex, pl_, al, fe_, sc_, se_fe_, sy_ar, ou)
 
