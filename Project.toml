@@ -1,7 +1,7 @@
 name = "GSEA"
 uuid = "f74a9ba8-6f1f-48f2-98b6-a79c46cc06f7"
 authors = ["KwatMDPhD <kwat.me@icloud.com>"]
-version = "2022.11.13-release-candidate"
+version = "2022.11.14-release-candidate"
 
 [deps]
 Comonicon = "863f3e99-da2a-4334-8734-de3dacbe5542"
