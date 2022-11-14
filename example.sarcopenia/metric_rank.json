@@ -1,5 +1,7 @@
 {
   "metric": "signal_to_noise_ratio",
+  "feature_name": "Gene",
+  "score_name": "Signal-to-Noise",
   "remove_gene_set_genes": true,
   "minimum_gene_set_size": 15,
   "maximum_gene_set_size": 500,

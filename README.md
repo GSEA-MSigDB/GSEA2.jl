@@ -43,7 +43,7 @@ mkdir output
 #### 3. Run standard GSEA
 
 ```bash
-gsea metric-rank setting.json target_x_sample_x_number.tsv gene_x_sample_x_score.tsv set_genes.json output
+gsea metric-rank metric_rank.json target_x_sample_x_number.tsv gene_x_sample_x_score.tsv set_genes.json output
 
 ls -l output
 
@@ -60,15 +60,15 @@ using GSEA
 cd("example.sarcopenia")
 
 GSEA.metric_rank(
-    "setting.json",
-    "set_genes.json",
+    "metric_rank.json",
     "target_x_sample_x_number.tsv",
     "gene_x_sample_x_score.tsv",
+    "set_genes.json",
     "output",
 )
 ```
 
-## Settings are just a [`.json` file](setting.json)
+## Settings are just a [`.json` file](setting)
 
 - `metric` for ranking genes (for `metric-rank`)
 
