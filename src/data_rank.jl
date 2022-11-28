@@ -11,13 +11,13 @@ Run data-rank (single-sample) GSEA.
 @cast function data_rank(setting_json, gene_x_sample_x_score_tsv, set_genes_json, output_directory)
 
     #
-    ke_ar = OnePiece.Dict.read(setting_json)
+    ke_ar = BioinformaticsCore.Dict.read(setting_json)
 
     #
-    fe_x_sa_x_sc = OnePiece.Table.read(gene_x_sample_x_score_tsv)
+    fe_x_sa_x_sc = BioinformaticsCore.Table.read(gene_x_sample_x_score_tsv)
 
     #
-    se_fe_ = OnePiece.Dict.read(set_genes_json)
+    se_fe_ = BioinformaticsCore.Dict.read(set_genes_json)
 
     _filter_set!(
         se_fe_,
@@ -28,14 +28,14 @@ Run data-rank (single-sample) GSEA.
     )
 
     #
-    se_x_sa_x_en = OnePiece.FeatureSetEnrichment.score_set(
+    se_x_sa_x_en = BioinformaticsCore.FeatureSetEnrichment.score_set(
         fe_x_sa_x_sc,
         se_fe_;
         al = ke_ar["algorithm"],
         _make_keyword_argument(ke_ar)...,
     )
 
-    OnePiece.Table.write(
+    BioinformaticsCore.Table.write(
         joinpath(mkpath(output_directory), "set_x_sample_x_enrichment.tsv"),
         se_x_sa_x_en,
     )

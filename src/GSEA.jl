@@ -10,7 +10,7 @@ using Random: seed!, shuffle!
 
 using StatsBase: sample
 
-using OnePiece
+using BioinformaticsCore
 
 include("_include.jl")
 

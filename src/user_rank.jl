@@ -1,7 +1,7 @@
 function user_rank(fe_, sc_, se_fe_, fe, sc, al, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
     #
-    fu, id = OnePiece.FeatureSetEnrichment._match_algorithm(al)
+    fu, id = BioinformaticsCore.FeatureSetEnrichment._match_algorithm(al)
 
     se_en = Dict(se => en[id] for (se, en) in fu(fe_, sc_, se_fe_; sy_ar...))
 
@@ -55,23 +55,24 @@ Run user-rank (pre-rank) GSEA.
 @cast function user_rank(setting_json, gene_x_metric_x_score_tsv, set_genes_json, output_directory)
 
     #
-    ke_ar = OnePiece.Dict.read(setting_json)
+    ke_ar = BioinformaticsCore.Dict.read(setting_json)
 
     #
-    fe_, fe_x_me_x_sc =
-        OnePiece.DataFrame.separate(OnePiece.Table.read(gene_x_metric_x_score_tsv))[[2, 4]]
+    fe_, fe_x_me_x_sc = BioinformaticsCore.DataFrame.separate(
+        BioinformaticsCore.Table.read(gene_x_metric_x_score_tsv),
+    )[[2, 4]]
 
-    OnePiece.Array.error_duplicate(fe_)
+    BioinformaticsCore.Array.error_duplicate(fe_)
 
-    OnePiece.Matrix.error_bad(fe_x_me_x_sc, Real)
+    BioinformaticsCore.Matrix.error_bad(fe_x_me_x_sc, Real)
 
     #
     sc_ = fe_x_me_x_sc[:, 1]
 
-    sc_, fe_ = OnePiece.Vector.sort_like((sc_, fe_))
+    sc_, fe_ = BioinformaticsCore.Vector.sort_like((sc_, fe_))
 
     #
-    se_fe_ = OnePiece.Dict.read(set_genes_json)
+    se_fe_ = BioinformaticsCore.Dict.read(set_genes_json)
 
     _filter_set!(
         se_fe_,

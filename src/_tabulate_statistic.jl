@@ -20,14 +20,14 @@ function _tabulate_statistic(se_en, se_ra_, ou)
         ra__ = [collect(values(se_ra)) for se_ra in se_ra_]
 
         #
-        gl_, gla_ = OnePiece.Significance.get_p_value_and_adjust(en_, vcat(ra__...))
+        gl_, gla_ = BioinformaticsCore.Significance.get_p_value_and_adjust(en_, vcat(ra__...))
 
         #
         se_x_ra_x_en = DataFrame("Set" => se_)
 
         insertcols!(se_x_ra_x_en, (string(id) => ra_ for (id, ra_) in enumerate(ra__))...)
 
-        OnePiece.Table.write(joinpath(ou, "set_x_random_x_enrichment.tsv"), se_x_ra_x_en)
+        BioinformaticsCore.Table.write(joinpath(ou, "set_x_random_x_enrichment.tsv"), se_x_ra_x_en)
 
     end
 
@@ -42,7 +42,7 @@ function _tabulate_statistic(se_en, se_ra_, ou)
         "Enrichment",
     )
 
-    OnePiece.Table.write(joinpath(ou, "set_x_statistic_x_number.tsv"), se_x_st_x_nu)
+    BioinformaticsCore.Table.write(joinpath(ou, "set_x_statistic_x_number.tsv"), se_x_st_x_nu)
 
     se_x_st_x_nu
 
