@@ -1,6 +1,6 @@
 using GSEA
 
-using BioinformaticsCore
+using BioLab
 
 se = joinpath(dirname(@__DIR__), "setting")
 
@@ -8,11 +8,11 @@ da = joinpath(@__DIR__, "data")
 
 js = joinpath(da, "set_genes.json")
 
-te = BioinformaticsCore.Path.make_temporary("GSEA.test")
+te = BioLab.Path.make_temporary("GSEA.test")
 
 ;
 
-se_fe_ = BioinformaticsCore.Dict.read(js)
+se_fe_ = BioLab.Dict.read(js)
 
 GSEA._filter_set!(se_fe_, false, [], 33, 36)
 
@@ -22,7 +22,7 @@ if length(se_fe_) != 2
 
 end
 
-se_fe_ = BioinformaticsCore.Dict.read(js)
+se_fe_ = BioLab.Dict.read(js)
 
 GSEA._filter_set!(se_fe_, true, ["SHH", "XIST"], 1, 5656)
 
@@ -44,9 +44,7 @@ ou = joinpath(te, "data_rank")
 
 GSEA.data_rank(joinpath(se, "data_rank.json"), tss, js, ou)
 
-BioinformaticsCore.DataFrame.print(
-    BioinformaticsCore.Table.read(joinpath(ou, "set_x_sample_x_enrichment.tsv")),
-)
+BioLab.DataFrame.print(BioLab.Table.read(joinpath(ou, "set_x_sample_x_enrichment.tsv")))
 
 tsm = "gene_x_metric_x_score.tsv"
 
@@ -56,13 +54,9 @@ function print_output(ou)
 
     println(readdir(ou))
 
-    BioinformaticsCore.DataFrame.print(
-        BioinformaticsCore.Table.read(joinpath(ou, "set_x_statistic_x_number.tsv")),
-    )
+    BioLab.DataFrame.print(BioLab.Table.read(joinpath(ou, "set_x_statistic_x_number.tsv")))
 
-    BioinformaticsCore.DataFrame.print(
-        BioinformaticsCore.Table.read(joinpath(ou, "set_x_random_x_enrichment.tsv")),
-    )
+    BioLab.DataFrame.print(BioLab.Table.read(joinpath(ou, "set_x_random_x_enrichment.tsv")))
 
 end
 
@@ -84,7 +78,7 @@ ou = joinpath(te, "metric_rank")
 
 GSEA.metric_rank(joinpath(se, "metric_rank.json"), tst, tss, js, ou)
 
-BioinformaticsCore.DataFrame.print(BioinformaticsCore.Table.read(joinpath(ou, tsm)))
+BioLab.DataFrame.print(BioLab.Table.read(joinpath(ou, tsm)))
 
 print_output(ou)
 

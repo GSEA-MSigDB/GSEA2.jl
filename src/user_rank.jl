@@ -1,7 +1,7 @@
 function user_rank(fe_, sc_, se_fe_, fe, sc, al, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
     #
-    fu, id = BioinformaticsCore.FeatureSetEnrichment._match_algorithm(al)
+    fu, id = BioLab.FeatureSetEnrichment._match_algorithm(al)
 
     se_en = Dict(se => en[id] for (se, en) in fu(fe_, sc_, se_fe_; sy_ar...))
 
@@ -55,24 +55,23 @@ Run user-rank (pre-rank) GSEA.
 @cast function user_rank(setting_json, gene_x_metric_x_score_tsv, set_genes_json, output_directory)
 
     #
-    ke_ar = BioinformaticsCore.Dict.read(setting_json)
+    ke_ar = BioLab.Dict.read(setting_json)
 
     #
-    fe_, fe_x_me_x_sc = BioinformaticsCore.DataFrame.separate(
-        BioinformaticsCore.Table.read(gene_x_metric_x_score_tsv),
-    )[[2, 4]]
+    fe_, fe_x_me_x_sc =
+        BioLab.DataFrame.separate(BioLab.Table.read(gene_x_metric_x_score_tsv))[[2, 4]]
 
-    BioinformaticsCore.Array.error_duplicate(fe_)
+    BioLab.Array.error_duplicate(fe_)
 
-    BioinformaticsCore.Matrix.error_bad(fe_x_me_x_sc, Real)
+    BioLab.Matrix.error_bad(fe_x_me_x_sc, Real)
 
     #
     sc_ = fe_x_me_x_sc[:, 1]
 
-    sc_, fe_ = BioinformaticsCore.Vector.sort_like((sc_, fe_))
+    sc_, fe_ = BioLab.Vector.sort_like((sc_, fe_))
 
     #
-    se_fe_ = BioinformaticsCore.Dict.read(set_genes_json)
+    se_fe_ = BioLab.Dict.read(set_genes_json)
 
     _filter_set!(
         se_fe_,

@@ -3,7 +3,7 @@ function _filter_set!(se_fe_, re, in_, mi, ma)
     #
     println("Before filtering sets")
 
-    BioinformaticsCore.Dict.print(se_fe_, 0)
+    BioLab.Dict.print(se_fe_, 0)
 
     #
     if re
@@ -34,6 +34,6 @@ function _filter_set!(se_fe_, re, in_, mi, ma)
     #
     println("After")
 
-    BioinformaticsCore.Dict.print(se_fe_, 0)
+    BioLab.Dict.print(se_fe_, 0)
 
 end

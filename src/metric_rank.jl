@@ -1,9 +1,6 @@
 function _compare_and_sort(bi_, fe_x_sa_x_sc, me, fe_)
 
-    sc_, fes_ = BioinformaticsCore.Vector.sort_like((
-        BioinformaticsCore.FeatureXSample.target(bi_, fe_x_sa_x_sc, me),
-        fe_,
-    ))
+    sc_, fes_ = BioLab.Vector.sort_like((BioLab.FeatureXSample.target(bi_, fe_x_sa_x_sc, me), fe_))
 
     fes_, sc_
 
@@ -29,25 +26,23 @@ Run metric-rank (standard) GSEA.
 )
 
     #
-    ke_ar = BioinformaticsCore.Dict.read(setting_json)
+    ke_ar = BioLab.Dict.read(setting_json)
 
     #
-    ta_, sat_, ta_x_sa_x_nu = BioinformaticsCore.DataFrame.separate(
-        BioinformaticsCore.Table.read(target_x_sample_x_number_tsv),
-    )[[2, 3, 4]]
+    ta_, sat_, ta_x_sa_x_nu =
+        BioLab.DataFrame.separate(BioLab.Table.read(target_x_sample_x_number_tsv))[[2, 3, 4]]
 
-    BioinformaticsCore.Array.error_duplicate(ta_)
+    BioLab.Array.error_duplicate(ta_)
 
-    BioinformaticsCore.Matrix.error_bad(ta_x_sa_x_nu, Real)
+    BioLab.Matrix.error_bad(ta_x_sa_x_nu, Real)
 
     #
-    fe_, saf_, fe_x_sa_x_sc = BioinformaticsCore.DataFrame.separate(
-        BioinformaticsCore.Table.read(gene_x_sample_x_score_tsv),
-    )[[2, 3, 4]]
+    fe_, saf_, fe_x_sa_x_sc =
+        BioLab.DataFrame.separate(BioLab.Table.read(gene_x_sample_x_score_tsv))[[2, 3, 4]]
 
-    BioinformaticsCore.Array.error_duplicate(fe_)
+    BioLab.Array.error_duplicate(fe_)
 
-    BioinformaticsCore.Matrix.error_bad(fe_x_sa_x_sc, Real)
+    BioLab.Matrix.error_bad(fe_x_sa_x_sc, Real)
 
     fe_x_sa_x_sc = fe_x_sa_x_sc[:, indexin(sat_, saf_)]
 
@@ -61,13 +56,13 @@ Run metric-rank (standard) GSEA.
 
     fe_, sc_ = _compare_and_sort(bi_, fe_x_sa_x_sc, me, fe_)
 
-    BioinformaticsCore.Table.write(
+    BioLab.Table.write(
         joinpath(output_directory, "gene_x_metric_x_score.tsv"),
         DataFrame("Gene" => fe_, me => sc_),
     )
 
     #
-    se_fe_ = BioinformaticsCore.Dict.read(set_genes_json)
+    se_fe_ = BioLab.Dict.read(set_genes_json)
 
     _filter_set!(
         se_fe_,
@@ -100,7 +95,7 @@ Run metric-rank (standard) GSEA.
     if pe == "sample"
 
         #
-        fu, id = BioinformaticsCore.FeatureSetEnrichment._match_algorithm(al)
+        fu, id = BioLab.FeatureSetEnrichment._match_algorithm(al)
 
         se_en = Dict(se => en[id] for (se, en) in fu(fe_, sc_, se_fe_; sy_ar...))
 

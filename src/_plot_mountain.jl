@@ -43,11 +43,11 @@ function _plot_mountain(se_x_st_x_nu, fe, sc, n_ex, pl_, al, fe_, sc_, se_fe_, s
 
     if al == "cidac"
 
-        fu = BioinformaticsCore.FeatureSetEnrichment.score_set_new
+        fu = BioLab.FeatureSetEnrichment.score_set_new
 
     elseif al == "ks"
 
-        fu = BioinformaticsCore.FeatureSetEnrichment.score_set
+        fu = BioLab.FeatureSetEnrichment.score_set
 
     end
 
@@ -61,7 +61,7 @@ function _plot_mountain(se_x_st_x_nu, fe, sc, n_ex, pl_, al, fe_, sc_, se_fe_, s
             title_text = se,
             fe = fe,
             sc = sc,
-            ht = joinpath(pl, "$(BioinformaticsCore.Path.clean(se)).html"),
+            ht = joinpath(pl, "$(BioLab.Path.clean(se)).html"),
             sy_ar...,
         )
 
