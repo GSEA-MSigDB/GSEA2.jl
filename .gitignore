@@ -28,3 +28,9 @@ docs/site/
 .ipynb_checkpoints/
 
 # ----------------------------------------------------------------------------------------------- #
+
+build
+
+*-application-*-julia-*-*-*.tar.gz
+
+example*/output/
