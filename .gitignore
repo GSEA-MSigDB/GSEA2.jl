@@ -33,4 +33,4 @@ build
 
 *-application-*-julia-*-*-*.tar.gz
 
-#example*/output/
+example*/output/
