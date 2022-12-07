@@ -12,9 +12,7 @@ using StatsBase: sample
 
 using BioLab
 
-include("_include.jl")
-
-@_include()
+BioLab.@include
 
 """
 The ✨ new ✨ Gene Set Enrichment Analysis 🧬
