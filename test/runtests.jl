@@ -6,13 +6,13 @@ se = joinpath(dirname(@__DIR__), "setting")
 
 da = joinpath(@__DIR__, "data")
 
-js = joinpath(da, "set_genes.json")
+sg = joinpath(da, "set_genes.json")
 
 te = BioLab.Path.make_temporary("GSEA.test")
 
 ;
 
-se_fe_ = BioLab.Dict.read(js)
+se_fe_ = BioLab.Dict.read(sg)
 
 GSEA._filter_set!(se_fe_, false, [], 33, 36)
 
@@ -22,7 +22,7 @@ if length(se_fe_) != 2
 
 end
 
-se_fe_ = BioLab.Dict.read(js)
+se_fe_ = BioLab.Dict.read(sg)
 
 GSEA._filter_set!(se_fe_, true, ["SHH", "XIST"], 1, 5656)
 
@@ -33,16 +33,18 @@ if length(se_fe_) != 2
 end
 
 GSEA._make_keyword_argument(
-    Dict("exponent" => 2.0, "algorithm" => "Jensen-Shannon divergence", "number_of_jobs" => 8),
+    Dict("exponent" => 2.0, "algorithm" => "Elegant", "number_of_jobs" => 8),
 )
 
 tss = joinpath(da, "gene_x_sample_x_score.tsv")
+
+;
 
 ou = joinpath(te, "data_rank")
 
 ;
 
-GSEA.data_rank(joinpath(se, "data_rank.json"), tss, js, ou)
+GSEA.data_rank(joinpath(se, "data_rank.json"), tss, sg, ou)
 
 BioLab.DataFrame.print(BioLab.Table.read(joinpath(ou, "set_x_sample_x_enrichment.tsv")))
 
@@ -64,7 +66,7 @@ ou = joinpath(te, "user_rank")
 
 ;
 
-GSEA.user_rank(joinpath(se, "user_rank.json"), joinpath(da, tsm), js, ou)
+GSEA.user_rank(joinpath(se, "user_rank.json"), joinpath(da, tsm), sg, ou)
 
 print_output(ou)
 
@@ -76,7 +78,7 @@ ou = joinpath(te, "metric_rank")
 
 ;
 
-GSEA.metric_rank(joinpath(se, "metric_rank.json"), tst, tss, js, ou)
+GSEA.metric_rank(joinpath(se, "metric_rank.json"), tst, tss, sg, ou)
 
 BioLab.DataFrame.print(BioLab.Table.read(joinpath(ou, tsm)))
 

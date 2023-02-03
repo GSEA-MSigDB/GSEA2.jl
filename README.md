@@ -52,22 +52,6 @@ head -2 output/*.tsv
 open output/plot/*.html
 ```
 
-#### Alternatively, (instead of in command line) run this example in `julia`
-
-```jl
-using GSEA
-
-cd("example.sarcopenia")
-
-GSEA.metric_rank(
-    "metric_rank.json",
-    "target_x_sample_x_number.tsv",
-    "gene_x_sample_x_score.tsv",
-    "set_genes.json",
-    "output",
-)
-```
-
 ## Settings are just a [`.json` file](setting)
 
 - `metric` for ranking genes (for `metric-rank`)
@@ -100,7 +84,7 @@ GSEA.metric_rank(
 
 - `algorithm` for computing enrichment
 
-  `cidac` (_cumulative information divergence with antisymmetricity and complementation_) | `ks` (_Kolmogorov Smirnov_) | `ksa` (`ks` area)
+  `KS` (_Kolmogorov Smirnov_) | `KSA` (`KS` area) | `KL` (cumulative information divergence) | `SKL` (_symmetric_ cumulative information divergence) | `AKL` (_antisymmetric_ cumulative information divergence)
 
 - `number_of_jobs`
 

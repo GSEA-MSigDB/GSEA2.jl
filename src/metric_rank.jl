@@ -25,10 +25,8 @@ Run metric-rank (standard) GSEA.
     output_directory,
 )
 
-    #
     ke_ar = BioLab.Dict.read(setting_json)
 
-    #
     ta_, sat_, ta_x_sa_x_nu =
         BioLab.DataFrame.separate(BioLab.Table.read(target_x_sample_x_number_tsv))[[2, 3, 4]]
 
@@ -36,7 +34,6 @@ Run metric-rank (standard) GSEA.
 
     BioLab.Matrix.error_bad(ta_x_sa_x_nu, Real)
 
-    #
     fe_, saf_, fe_x_sa_x_sc =
         BioLab.DataFrame.separate(BioLab.Table.read(gene_x_sample_x_score_tsv))[[2, 3, 4]]
 
@@ -46,10 +43,8 @@ Run metric-rank (standard) GSEA.
 
     fe_x_sa_x_sc = fe_x_sa_x_sc[:, indexin(sat_, saf_)]
 
-    #
     mkpath(output_directory)
 
-    #
     bi_ = BitVector(ta_x_sa_x_nu[1, :])
 
     me = ke_ar["metric"]
@@ -61,7 +56,6 @@ Run metric-rank (standard) GSEA.
         DataFrame("Gene" => fe_, me => sc_),
     )
 
-    #
     se_fe_ = BioLab.Dict.read(set_genes_json)
 
     _filter_set!(
@@ -72,12 +66,11 @@ Run metric-rank (standard) GSEA.
         ke_ar["maximum_gene_set_size"],
     )
 
-    #
+    al = ke_ar["algorithm"]
+
     fe = ke_ar["feature_name"]
 
     sc = ke_ar["score_name"]
-
-    al = ke_ar["algorithm"]
 
     sy_ar = _make_keyword_argument(ke_ar)
 
@@ -91,31 +84,23 @@ Run metric-rank (standard) GSEA.
 
     pl_ = ke_ar["gene_sets_to_plot"]
 
-    #
     if pe == "sample"
 
-        #
-        fu, id = BioLab.FeatureSetEnrichment._match_algorithm(al)
+        se_en = BioLab.FeatureSetEnrichment.score_set(al, fe_, sc_, se_fe_; sy_ar...)
 
-        se_en = Dict(se => en[id] for (se, en) in fu(fe_, sc_, se_fe_; sy_ar...))
-
-        #
         if 0 < n_pe
 
             println("Permuting $(pe)s to compute significance")
 
-            #
             seed!(ra)
 
-            #
             se_ra_ = [
-                Dict(se => en[id] for (se, en) in se_en) for se_en in (
-                    fu(
-                        _compare_and_sort(shuffle!(bi_), fe_x_sa_x_sc, me, fe_)...,
-                        se_fe_;
-                        sy_ar...,
-                    ) for _ in ProgressBar(1:n_pe)
-                )
+                BioLab.FeatureSetEnrichment.score_set(
+                    al,
+                    _compare_and_sort(shuffle!(bi_), fe_x_sa_x_sc, me, fe_)...,
+                    se_fe_;
+                    sy_ar...,
+                ) for _ in ProgressBar(1:n_pe)
             ]
 
         else
@@ -124,7 +109,6 @@ Run metric-rank (standard) GSEA.
 
         end
 
-        #
         se_x_st_x_nu = _tabulate_statistic(se_en, se_ra_, output_directory)
 
         _plot_mountain(
@@ -143,12 +127,10 @@ Run metric-rank (standard) GSEA.
 
         se_x_st_x_nu
 
-        #
     elseif pe == "set"
 
-        user_rank(fe_, sc_, se_fe_, fe, sc, al, sy_ar, ra, n_pe, n_ex, pl_, output_directory)
+        user_rank(al, fe_, sc_, se_fe_, fe, sc, sy_ar, ra, n_pe, n_ex, pl_, output_directory)
 
-        #
     else
 
         error("`permutation` is not `sample` or `set`.")

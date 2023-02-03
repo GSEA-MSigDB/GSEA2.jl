@@ -1,11 +1,9 @@
 function _filter_set!(se_fe_, re, in_, mi, ma)
 
-    #
     println("Before filtering sets")
 
     BioLab.Dict.print(se_fe_, 0)
 
-    #
     if re
 
         println("Removing set genes not found in gene-x-sample genes")
@@ -18,7 +16,6 @@ function _filter_set!(se_fe_, re, in_, mi, ma)
 
     end
 
-    #
     println("Keeping sets: $mi <= size <= $ma")
 
     for (se, fe_) in se_fe_
@@ -31,7 +28,6 @@ function _filter_set!(se_fe_, re, in_, mi, ma)
 
     end
 
-    #
     println("After")
 
     BioLab.Dict.print(se_fe_, 0)
