@@ -1,6 +1,6 @@
-function _compare_and_sort(bi_, fe_x_sa_x_sc, me, fe_)
+function _compare_and_sort(bo_, fe_x_sa_x_sc, me, fe_)
 
-    sc_, fes_ = BioLab.Vector.sort_like((BioLab.FeatureXSample.target(bi_, fe_x_sa_x_sc, me), fe_))
+    sc_, fes_ = BioLab.Vector.sort_like((BioLab.FeatureXSample.target(bo_, fe_x_sa_x_sc, me), fe_))
 
     fes_, sc_
 
@@ -45,11 +45,11 @@ Run metric-rank (standard) GSEA.
 
     mkpath(output_directory)
 
-    bi_ = BitVector(ta_x_sa_x_nu[1, :])
+    bo_ = convert(Vector{Bool}, ta_x_sa_x_nu[1, :])
 
     me = ke_ar["metric"]
 
-    fe_, sc_ = _compare_and_sort(bi_, fe_x_sa_x_sc, me, fe_)
+    fe_, sc_ = _compare_and_sort(bo_, fe_x_sa_x_sc, me, fe_)
 
     BioLab.Table.write(
         joinpath(output_directory, "gene_x_metric_x_score.tsv"),
@@ -97,7 +97,7 @@ Run metric-rank (standard) GSEA.
             se_ra_ = [
                 BioLab.FeatureSetEnrichment.score_set(
                     al,
-                    _compare_and_sort(shuffle!(bi_), fe_x_sa_x_sc, me, fe_)...,
+                    _compare_and_sort(shuffle!(bo_), fe_x_sa_x_sc, me, fe_)...,
                     se_fe_;
                     sy_ar...,
                 ) for _ in ProgressBar(1:n_pe)
