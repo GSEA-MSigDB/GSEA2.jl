@@ -4,6 +4,7 @@ function _plot_mountain(se_x_st_x_nu, fe, sc, n_ex, pl_, al, fe_, sc_, se_fe_, s
 
     n_ex = min(n_ex, n_se)
 
+    # TODO: Try `1:2`.
     co_ = [1, 2]
 
     for ro in 1:n_ex
