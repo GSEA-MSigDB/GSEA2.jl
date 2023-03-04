@@ -1,8 +1,8 @@
 using Test
 
-using GSEA
-
 using BioLab
+
+using GSEA
 
 se = joinpath(dirname(@__DIR__), "setting")
 
