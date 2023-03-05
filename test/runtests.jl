@@ -12,7 +12,9 @@ da = joinpath(@__DIR__, "data")
 
 sg = joinpath(da, "set_genes.json")
 
-te = BioLab.Path.make_temporary("GSEA.test")
+te = joinpath(tempdir(), "GSEA.test")
+
+BioLab.Path.reset(te)
 
 # ----------------------------------------------------------------------------------------------- #
 
