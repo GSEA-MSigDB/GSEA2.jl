@@ -1,4 +1,4 @@
-function _filter_set!(se_fe_, re, in_, mi, ma)
+function _filter_set!(se_fe_, re, it_, mi, ma)
 
     println("Before filtering sets")
 
@@ -10,7 +10,7 @@ function _filter_set!(se_fe_, re, in_, mi, ma)
 
         for (se, fe_) in se_fe_
 
-            se_fe_[se] = intersect(fe_, in_)
+            se_fe_[se] = intersect(fe_, it_)
 
         end
 
