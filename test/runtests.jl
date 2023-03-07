@@ -14,7 +14,7 @@ sg = joinpath(da, "set_genes.json")
 
 te = joinpath(tempdir(), "GSEA.test")
 
-BioLab.Path.reset(te)
+BioLab.Path.empty(te)
 
 # ----------------------------------------------------------------------------------------------- #
 
