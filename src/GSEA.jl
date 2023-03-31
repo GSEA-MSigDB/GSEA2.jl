@@ -4,7 +4,7 @@ using Comonicon: @cast, @main
 
 using DataFrames: DataFrame, insertcols!
 
-using ProgressBars: ProgressBar
+using ProgressMeter: @showprogress
 
 using Random: seed!, shuffle!
 
@@ -12,16 +12,9 @@ using StatsBase: sample
 
 using BioLab
 
-BioLab.@include
-
-"""
-The ✨ new ✨ Gene Set Enrichment Analysis 🧬
-"""
-@main
-
 function _filter_set!(se_fe_, re, it_, mi, ma)
 
-    println("Before filtering sets")
+    println("🕺 Before filtering sets")
 
     BioLab.Dict.print(se_fe_, 0)
 
@@ -37,7 +30,7 @@ function _filter_set!(se_fe_, re, it_, mi, ma)
 
     end
 
-    println("Keeping sets: $mi <= size <= $ma")
+    println("🎣 Keeping sets: $mi <= size <= $ma")
 
     for (se, fe_) in se_fe_
 
@@ -49,7 +42,7 @@ function _filter_set!(se_fe_, re, it_, mi, ma)
 
     end
 
-    println("After")
+    println("💃 After")
 
     BioLab.Dict.print(se_fe_, 0)
 
@@ -212,14 +205,14 @@ function user_rank(al, fe_, sc_, se_fe_, fe, sc, sy_ar, ra, n_pe, n_ex, pl_, ou)
 
         seed!(ra)
 
-        se_ra_ = [
+        se_ra_ = @showprogress [
             BioLab.FeatureSetEnrichment.score_set(
                 al,
                 fe_,
                 sc_,
                 Dict(se => sample(fe_, si, replace = false) for (se, si) in se_si);
                 sy_ar...,
-            ) for _ in ProgressBar(1:n_pe)
+            ) for _ in 1:n_pe
         ]
 
     else
@@ -384,13 +377,13 @@ Run metric-rank (standard) GSEA.
 
             seed!(ra)
 
-            se_ra_ = [
+            se_ra_ = @showprogress [
                 BioLab.FeatureSetEnrichment.score_set(
                     al,
                     _compare_and_sort(shuffle!(bo_), fe_x_sa_x_sc, me, fe_)...,
                     se_fe_;
                     sy_ar...,
-                ) for _ in ProgressBar(1:n_pe)
+                ) for _ in 1:n_pe
             ]
 
         else
@@ -428,5 +421,10 @@ Run metric-rank (standard) GSEA.
     end
 
 end
+
+"""
+The ✨ new ✨ Gene-Set Enrichment Analysis 🧬
+"""
+@main
 
 end
