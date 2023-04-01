@@ -3,6 +3,6 @@
   "minimum_gene_set_size": 15,
   "maximum_gene_set_size": 500,
   "exponent": 1.0,
-  "algorithm": "AKL",
+  "algorithm": "KLioM",
   "number_of_jobs": 1
 }

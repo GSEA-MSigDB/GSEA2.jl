@@ -84,7 +84,7 @@ open output/plot/*.html
 
 - `algorithm` for computing enrichment
 
-  `KS` (_Kolmogorov Smirnov_) | `KSA` (`KS` area) | `KL` (cumulative information divergence) | `SKL` (_symmetric_ cumulative information divergence) | `AKL` (_antisymmetric_ cumulative information divergence)
+  `KS` (_Kolmogorov Smirnov_) | `KSa` (`KS` area) | `KLi` | `KLioP` | `KLioM`
 
 - `number_of_jobs`
 
