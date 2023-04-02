@@ -1,8 +1,8 @@
 {
   "feature_name": "Gene",
   "score_name": "Expression",
-  "score_low_side_label": "Low Side",
-  "score_high_side_label": "High Side",
+  "low_text": "Low Side",
+  "high_text": "High Side",
   "remove_gene_set_genes": false,
   "minimum_gene_set_size": 15,
   "maximum_gene_set_size": 500,

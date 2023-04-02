@@ -167,7 +167,7 @@ function _tabulate_statistic(se_en, se_ra_, ou)
 
 end
 
-function _plot_mountain(se_x_st_x_nu, fe, sc, n_ex, pl_, al, fe_, sc_, se_fe_, ex, di)
+function _plot_mountain(se_x_st_x_nu, fe, sc, lo, hi, n_ex, pl_, al, fe_, sc_, se_fe_, ex, di)
 
     n_se = size(se_x_st_x_nu, 1)
 
@@ -213,6 +213,8 @@ function _plot_mountain(se_x_st_x_nu, fe, sc, n_ex, pl_, al, fe_, sc_, se_fe_, e
             title_text = se,
             fe,
             sc,
+            lo,
+            hi,
             ht = joinpath(pl, "$(BioLab.Path.clean(se)).html"),
         )
 
@@ -222,7 +224,7 @@ function _plot_mountain(se_x_st_x_nu, fe, sc, n_ex, pl_, al, fe_, sc_, se_fe_, e
 
 end
 
-function user_rank(al, fe_, sc_, se_fe_, fe, sc, ex, ra, n_pe, n_ex, pl_, ou)
+function user_rank(al, fe_, sc_, se_fe_, fe, sc, lo, hi, ex, ra, n_pe, n_ex, pl_, ou)
 
     se_en = BioLab.FeatureSetEnrichment.score_set(al, fe_, sc_, se_fe_; ex)
 
@@ -252,7 +254,7 @@ function user_rank(al, fe_, sc_, se_fe_, fe, sc, ex, ra, n_pe, n_ex, pl_, ou)
 
     se_x_st_x_nu = _tabulate_statistic(se_en, se_ra_, ou)
 
-    _plot_mountain(se_x_st_x_nu, fe, sc, n_ex, pl_, al, fe_, sc_, se_fe_, ex, ou)
+    _plot_mountain(se_x_st_x_nu, fe, sc, lo, hi, n_ex, pl_, al, fe_, sc_, se_fe_, ex, ou)
 
     return se_x_st_x_nu
 
@@ -281,7 +283,7 @@ Run user-rank (pre-rank) GSEA.
 
     sc_ = fe_x_me_x_sc[:, 1]
 
-    sc_, fe_ = BioLab.Collection.sort_like((sc_, fe_))
+    sc_, fe_ = BioLab.Collection.sort_like((sc_, fe_); ic = false)
 
     se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(set_genes_json))
 
@@ -300,6 +302,8 @@ Run user-rank (pre-rank) GSEA.
         se_fe_,
         ke_ar["feature_name"],
         ke_ar["score_name"],
+        ke_ar["low_text"],
+        ke_ar["high_text"],
         ke_ar["exponent"],
         ke_ar["random_seed"],
         ke_ar["number_of_permutations"],
@@ -314,8 +318,10 @@ end
 
 function _compare_and_sort(fu, bo_, fe_x_sa_x_sc, fe_)
 
-    sc_, fes_ =
-        BioLab.Collection.sort_like((BioLab.FeatureXSample.target(fu, bo_, fe_x_sa_x_sc), fe_))
+    sc_, fes_ = BioLab.Collection.sort_like(
+        (BioLab.FeatureXSample.target(fu, bo_, fe_x_sa_x_sc), fe_);
+        ic = false,
+    )
 
     return fes_, sc_
 
@@ -397,6 +403,10 @@ Run metric-rank (standard) GSEA.
 
     sc = ke_ar["score_name"]
 
+    lo = ke_ar["low_text"]
+
+    hi = ke_ar["high_text"]
+
     ex = ke_ar["exponent"]
 
     pe = ke_ar["permutation"]
@@ -436,13 +446,27 @@ Run metric-rank (standard) GSEA.
 
         se_x_st_x_nu = _tabulate_statistic(se_en, se_ra_, output_directory)
 
-        _plot_mountain(se_x_st_x_nu, fe, sc, n_ex, pl_, al, fe_, sc_, se_fe_, ex, output_directory)
+        _plot_mountain(
+            se_x_st_x_nu,
+            fe,
+            sc,
+            lo,
+            hi,
+            n_ex,
+            pl_,
+            al,
+            fe_,
+            sc_,
+            se_fe_,
+            ex,
+            output_directory,
+        )
 
         se_x_st_x_nu
 
     elseif pe == "set"
 
-        user_rank(al, fe_, sc_, se_fe_, fe, sc, ex, ra, n_pe, n_ex, pl_, output_directory)
+        user_rank(al, fe_, sc_, se_fe_, fe, sc, lo, hi, ex, ra, n_pe, n_ex, pl_, output_directory)
 
     else
 

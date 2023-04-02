@@ -66,11 +66,11 @@ open output/plot/*.html
 
   String
 
-- `score_low_side_label` (for `metric-rank` and `user-rank`)
+- `low_text` (for `metric-rank` and `user-rank`)
 
   String
 
-- `score_high_side_label` (for `metric-rank` and `user-rank`)
+- `high_text` (for `metric-rank` and `user-rank`)
 
   String
 
