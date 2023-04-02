@@ -50,23 +50,23 @@ end
 
 function _use_algorithm(al)
 
-    if al == "KS"
+    if al == "ks"
 
         return BioLab.FeatureSetEnrichment.KS()
 
-    elseif al == "KSa"
+    elseif al == "ksa"
 
         return BioLab.FeatureSetEnrichment.KSa()
 
-    elseif al == "KLi"
+    elseif al == "kli"
 
         return BioLab.FeatureSetEnrichment.KLi()
 
-    elseif al == "KLioP"
+    elseif al == "kliop"
 
         return BioLab.FeatureSetEnrichment.KLioP()
 
-    elseif al == "KLioM"
+    elseif al == "kliom"
 
         return BioLab.FeatureSetEnrichment.KLioM()
 
@@ -302,10 +302,10 @@ Run user-rank (pre-rank) GSEA.
 
 end
 
-function _compare_and_sort(bo_, fe_x_sa_x_sc, me, fe_)
+function _compare_and_sort(fu, bo_, fe_x_sa_x_sc, fe_)
 
     sc_, fes_ =
-        BioLab.Collection.sort_like((BioLab.FeatureXSample.target(bo_, fe_x_sa_x_sc, me), fe_))
+        BioLab.Collection.sort_like((BioLab.FeatureXSample.target(fu, bo_, fe_x_sa_x_sc), fe_))
 
     fes_, sc_
 
@@ -332,14 +332,14 @@ Run metric-rank (standard) GSEA.
 
     ke_ar = BioLab.Dict.read(setting_json)
 
-    _, ta_, sat_, ta_x_sa_x_nu =
+    _nat, ta_, sat_, ta_x_sa_x_nu =
         BioLab.DataFrame.separate(BioLab.Table.read(target_x_sample_x_number_tsv))
 
     BioLab.Array.error_duplicate(ta_)
 
     BioLab.Matrix.error_bad(ta_x_sa_x_nu, Real)
 
-    _, fe_, saf_, fe_x_sa_x_sc =
+    _nag, fe_, saf_, fe_x_sa_x_sc =
         BioLab.DataFrame.separate(BioLab.Table.read(gene_x_sample_x_score_tsv))
 
     BioLab.Array.error_duplicate(fe_)
@@ -354,7 +354,17 @@ Run metric-rank (standard) GSEA.
 
     me = ke_ar["metric"]
 
-    fe_, sc_ = _compare_and_sort(bo_, fe_x_sa_x_sc, me, fe_)
+    if me == "signal_to_noise_ratio"
+
+        fu = BioLab.Information.get_signal_to_noise_ratio
+
+    else
+
+        error()
+
+    end
+
+    fe_, sc_ = _compare_and_sort(fu, bo_, fe_x_sa_x_sc, fe_)
 
     BioLab.Table.write(
         joinpath(output_directory, "gene_x_metric_x_score.tsv"),
@@ -402,7 +412,7 @@ Run metric-rank (standard) GSEA.
             se_ra_ = @showprogress [
                 BioLab.FeatureSetEnrichment.score_set(
                     al,
-                    _compare_and_sort(shuffle!(bo_), fe_x_sa_x_sc, me, fe_)...,
+                    _compare_and_sort(fu, shuffle!(bo_), fe_x_sa_x_sc, fe_)...,
                     se_fe_;
                     ex,
                 ) for _ in 1:n_pe
