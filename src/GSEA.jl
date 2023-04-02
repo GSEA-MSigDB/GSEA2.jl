@@ -46,6 +46,8 @@ function _filter_set!(se_fe_, it, it_, mi, ma)
 
     BioLab.Dict.print(se_fe_; n = 0)
 
+    return nothing
+
 end
 
 function _use_algorithm(al)
@@ -78,6 +80,8 @@ function _use_algorithm(al)
 
 end
 
+# TODO: Benchmark if the lower-level functions are getting the correct type.
+
 """
 Run data-rank (single-sample) GSEA.
 
@@ -94,7 +98,7 @@ Run data-rank (single-sample) GSEA.
 
     fe_x_sa_x_sc = BioLab.Table.read(gene_x_sample_x_score_tsv)
 
-    se_fe_ = BioLab.Dict.read(set_genes_json)
+    se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(set_genes_json))
 
     _filter_set!(
         se_fe_,
@@ -116,6 +120,8 @@ Run data-rank (single-sample) GSEA.
         joinpath(mkpath(output_directory), "set_x_sample_x_enrichment.tsv"),
         se_x_sa_x_en,
     )
+
+    return nothing
 
 end
 
@@ -157,7 +163,7 @@ function _tabulate_statistic(se_en, se_ra_, ou)
 
     BioLab.Table.write(joinpath(ou, "set_x_statistic_x_number.tsv"), se_x_st_x_nu)
 
-    se_x_st_x_nu
+    return se_x_st_x_nu
 
 end
 
@@ -212,6 +218,8 @@ function _plot_mountain(se_x_st_x_nu, fe, sc, n_ex, pl_, al, fe_, sc_, se_fe_, e
 
     end
 
+    return nothing
+
 end
 
 function user_rank(al, fe_, sc_, se_fe_, fe, sc, ex, ra, n_pe, n_ex, pl_, ou)
@@ -264,8 +272,8 @@ Run user-rank (pre-rank) GSEA.
 
     ke_ar = BioLab.Dict.read(setting_json)
 
-    fe_, fe_x_me_x_sc =
-        BioLab.DataFrame.separate(BioLab.Table.read(gene_x_metric_x_score_tsv))[[2, 4]]
+    _nag, fe_, _me, fe_x_me_x_sc =
+        BioLab.DataFrame.separate(BioLab.Table.read(gene_x_metric_x_score_tsv))
 
     BioLab.Array.error_duplicate(fe_)
 
@@ -275,7 +283,7 @@ Run user-rank (pre-rank) GSEA.
 
     sc_, fe_ = BioLab.Collection.sort_like((sc_, fe_))
 
-    se_fe_ = BioLab.Dict.read(set_genes_json)
+    se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(set_genes_json))
 
     _filter_set!(
         se_fe_,
@@ -296,9 +304,11 @@ Run user-rank (pre-rank) GSEA.
         ke_ar["random_seed"],
         ke_ar["number_of_permutations"],
         ke_ar["number_of_extreme_gene_sets_to_plot"],
-        ke_ar["gene_sets_to_plot"],
+        convert(Vector{String}, ke_ar["gene_sets_to_plot"]),
         output_directory,
     )
+
+    return nothing
 
 end
 
@@ -307,7 +317,7 @@ function _compare_and_sort(fu, bo_, fe_x_sa_x_sc, fe_)
     sc_, fes_ =
         BioLab.Collection.sort_like((BioLab.FeatureXSample.target(fu, bo_, fe_x_sa_x_sc), fe_))
 
-    fes_, sc_
+    return fes_, sc_
 
 end
 
@@ -371,7 +381,7 @@ Run metric-rank (standard) GSEA.
         DataFrame("Gene" => fe_, me => sc_),
     )
 
-    se_fe_ = BioLab.Dict.read(set_genes_json)
+    se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(set_genes_json))
 
     _filter_set!(
         se_fe_,
@@ -439,6 +449,8 @@ Run metric-rank (standard) GSEA.
         error("`permutation` is not `sample` or `set`.")
 
     end
+
+    return nothing
 
 end
 

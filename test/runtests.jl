@@ -16,7 +16,7 @@ SE = joinpath(dirname(@__DIR__), "setting")
 
 DA = @__DIR__
 
-SG = joinpath(DA, "set_genes.json")
+ST = joinpath(DA, "set_genes.json")
 
 TSS = joinpath(DA, "gene_x_sample_x_score.tsv")
 
@@ -26,31 +26,35 @@ TSM = "gene_x_metric_x_score.tsv"
 
 # --------------------------------------------- #
 
-se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(SG))
+se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(ST))
 
 GSEA._filter_set!(se_fe_, false, [], 33, 36)
 
 @test length(se_fe_) == 2
 
-se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(SG))
+se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(ST))
 
 GSEA._filter_set!(se_fe_, true, ["SHH", "XIST"], 1, 5656)
 
 @test length(se_fe_) == 2
 
-se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(SG))
+# se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(ST))
 
 # @code_warntype GSEA._filter_set!(se_fe_, true, ["SHH", "XIST"], 1, 5656)
 
 # --------------------------------------------- #
 
-ou = joinpath(TE, "data_rank")
+na = "data_rank"
 
-GSEA.data_rank(joinpath(SE, "data_rank.json"), TSS, SG, ou)
+ou = joinpath(TE, na)
 
-# @code_warntype GSEA.data_rank(joinpath(SE, "data_rank.json"), TSS, SG, ou)
+se = joinpath(SE, "$na.json")
+
+GSEA.data_rank(se, TSS, ST, ou)
 
 BioLab.DataFrame.print(BioLab.Table.read(joinpath(ou, "set_x_sample_x_enrichment.tsv")))
+
+# @code_warntype GSEA.data_rank(se, TSS, ST, ou)
 
 # --------------------------------------------- #
 
@@ -68,29 +72,41 @@ end
 
 # --------------------------------------------- #
 
-ou = joinpath(TE, "user_rank")
+na = "user_rank"
 
-GSEA.user_rank(joinpath(SE, "user_rank.json"), joinpath(DA, TSM), SG, ou)
+ou = joinpath(TE, na)
 
-# @code_warntype GSEA.user_rank(joinpath(SE, "user_rank.json"), joinpath(DA, TSM), SG, ou)
+se = joinpath(SE, "$na.json")
+
+me = joinpath(DA, TSM)
+
+GSEA.user_rank(se, me, ST, ou)
 
 print_output(ou)
 
 readdir(joinpath(ou, "plot"))
 
+# @code_warntype GSEA.user_rank(se, me, ST, ou)
+
 # --------------------------------------------- #
 
-ou = joinpath(TE, "metric_rank")
+na = "metric_rank"
 
-GSEA.metric_rank(joinpath(SE, "metric_rank.json"), TST, TSS, SG, ou)
+ou = joinpath(TE, na)
 
-# @code_warntype GSEA.metric_rank(joinpath(SE, "metric_rank.json"), TST, TSS, SG, ou)
+se = joinpath(SE, "$na.json")
+
+GSEA.metric_rank(se, TST, TSS, ST, ou)
 
 BioLab.DataFrame.print(BioLab.Table.read(joinpath(ou, TSM)))
 
 print_output(ou)
 
 readdir(joinpath(ou, "plot"))
+
+# @code_warntype GSEA.metric_rank(se, TST, TSS, ST, ou)
+
+# --------------------------------------------- #
 
 sm = joinpath(DA, "small")
 
