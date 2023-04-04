@@ -20,7 +20,7 @@ function _filter_set!(se_fe_, it, it_, mi, ma)
 
     if it
 
-        println("🎏 Removing non-intersecting genes")
+        println("🐡 Removing non-intersecting genes")
 
         for (se, fe_) in se_fe_
 
@@ -125,21 +125,25 @@ Run data-rank (single-sample) GSEA.
 
 end
 
-function _tabulate_statistic(se_en, se_ra_, ou)
+function _tabulate_statistic(se_en, se_ra__, ou)
 
     se_ = collect(keys(se_en))
 
     en_ = collect(values(se_en))
 
+    n = length(se_)
+
     mkpath(ou)
 
-    if isempty(se_ra_)
+    if isempty(se_ra__)
 
-        gl_ = gla_ = fill(NaN, length(se_))
+        gl_ = fill(NaN, n)
+
+        gla_ = fill(NaN, n)
 
     else
 
-        ra__ = [collect(values(se_ra)) for se_ra in se_ra_]
+        ra__ = [collect(values(se_ra)) for se_ra in se_ra__]
 
         gl_, gla_ = BioLab.Significance.get_p_value_and_adjust(en_, vcat(ra__...))
 
@@ -236,23 +240,23 @@ function user_rank(al, fe_, sc_, se_fe_, fe, sc, lo, hi, ex, ra, n_pe, n_ex, pl_
 
         seed!(ra)
 
-        se_ra_ = @showprogress [
+        se_ra__ = @showprogress [
             BioLab.FeatureSetEnrichment.score_set(
                 al,
                 fe_,
                 sc_,
-                Dict(se => sample(fe_, si, replace = false) for (se, si) in se_si);
+                Dict(se => sample(fe_, si; replace = false) for (se, si) in se_si);
                 ex,
             ) for _ in 1:n_pe
         ]
 
     else
 
-        se_ra_ = []
+        se_ra__ = []
 
     end
 
-    se_x_st_x_nu = _tabulate_statistic(se_en, se_ra_, ou)
+    se_x_st_x_nu = _tabulate_statistic(se_en, se_ra__, ou)
 
     _plot_mountain(se_x_st_x_nu, fe, sc, lo, hi, n_ex, pl_, al, fe_, sc_, se_fe_, ex, ou)
 
@@ -429,7 +433,7 @@ Run metric-rank (standard) GSEA.
 
             seed!(ra)
 
-            se_ra_ = @showprogress [
+            se_ra__ = @showprogress [
                 BioLab.FeatureSetEnrichment.score_set(
                     al,
                     _compare_and_sort(fu, shuffle!(bo_), fe_x_sa_x_sc, fe_)...,
@@ -440,11 +444,11 @@ Run metric-rank (standard) GSEA.
 
         else
 
-            se_ra_ = []
+            se_ra__ = []
 
         end
 
-        se_x_st_x_nu = _tabulate_statistic(se_en, se_ra_, output_directory)
+        se_x_st_x_nu = _tabulate_statistic(se_en, se_ra__, output_directory)
 
         _plot_mountain(
             se_x_st_x_nu,
