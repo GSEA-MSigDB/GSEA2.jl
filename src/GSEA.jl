@@ -247,12 +247,12 @@ function user_rank(al, fe_, sc_, se_fe_, fe, sc, lo, hi, ex, ra, n_pe, n_ex, pl_
                 sc_,
                 Dict(se => sample(fe_, si; replace = false) for (se, si) in se_si);
                 ex,
-            ) for _ in 1:n_pe
+            ) for id in 1:n_pe
         ]
 
     else
 
-        se_ra__ = []
+        se_ra__ = Vector{Dict{String, Float64}}()
 
     end
 
@@ -312,7 +312,7 @@ Run user-rank (pre-rank) GSEA.
         ke_ar["random_seed"],
         ke_ar["number_of_permutations"],
         ke_ar["number_of_extreme_gene_sets_to_plot"],
-        convert(Vector{String}, ke_ar["gene_sets_to_plot"]),
+        ke_ar["gene_sets_to_plot"],
         output_directory,
     )
 
