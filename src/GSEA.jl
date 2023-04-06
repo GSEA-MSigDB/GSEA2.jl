@@ -171,7 +171,7 @@ function _tabulate_statistic(se_en, se_ra__, ou)
 
 end
 
-function _plot_mountain(se_x_st_x_nu, fe, sc, lo, hi, n_ex, pl_, al, fe_, sc_, se_fe_, ex, di)
+function _plot_mountain(se_x_st_x_nu, al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, n_ex, pl_, di)
 
     n_se = size(se_x_st_x_nu, 1)
 
@@ -228,7 +228,7 @@ function _plot_mountain(se_x_st_x_nu, fe, sc, lo, hi, n_ex, pl_, al, fe_, sc_, s
 
 end
 
-function user_rank(al, fe_, sc_, se_fe_, fe, sc, lo, hi, ex, ra, n_pe, n_ex, pl_, ou)
+function user_rank(al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, ra, n_pe, n_ex, pl_, ou)
 
     se_en = BioLab.FeatureSetEnrichment.score_set(al, fe_, sc_, se_fe_; ex)
 
@@ -258,7 +258,7 @@ function user_rank(al, fe_, sc_, se_fe_, fe, sc, lo, hi, ex, ra, n_pe, n_ex, pl_
 
     se_x_st_x_nu = _tabulate_statistic(se_en, se_ra__, ou)
 
-    _plot_mountain(se_x_st_x_nu, fe, sc, lo, hi, n_ex, pl_, al, fe_, sc_, se_fe_, ex, ou)
+    _plot_mountain(se_x_st_x_nu, al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, n_ex, pl_, ou)
 
     return se_x_st_x_nu
 
@@ -304,11 +304,11 @@ Run user-rank (pre-rank) GSEA.
         fe_,
         sc_,
         se_fe_,
+        ke_ar["exponent"],
         ke_ar["feature_name"],
         ke_ar["score_name"],
         ke_ar["low_text"],
         ke_ar["high_text"],
-        ke_ar["exponent"],
         ke_ar["random_seed"],
         ke_ar["number_of_permutations"],
         ke_ar["number_of_extreme_gene_sets_to_plot"],
@@ -403,6 +403,8 @@ Run metric-rank (standard) GSEA.
 
     al = _use_algorithm(ke_ar["algorithm"])
 
+    ex = ke_ar["exponent"]
+
     fe = ke_ar["feature_name"]
 
     sc = ke_ar["score_name"]
@@ -410,8 +412,6 @@ Run metric-rank (standard) GSEA.
     lo = ke_ar["low_text"]
 
     hi = ke_ar["high_text"]
-
-    ex = ke_ar["exponent"]
 
     pe = ke_ar["permutation"]
 
@@ -439,12 +439,12 @@ Run metric-rank (standard) GSEA.
                     _compare_and_sort(fu, shuffle!(bo_), fe_x_sa_x_sc, fe_)...,
                     se_fe_;
                     ex,
-                ) for _ in 1:n_pe
+                ) for id in 1:n_pe
             ]
 
         else
 
-            se_ra__ = []
+            se_ra__ = Vector{Dict{String, Float64}}()
 
         end
 
@@ -452,17 +452,17 @@ Run metric-rank (standard) GSEA.
 
         _plot_mountain(
             se_x_st_x_nu,
+            al,
+            fe_,
+            sc_,
+            se_fe_,
+            ex,
             fe,
             sc,
             lo,
             hi,
             n_ex,
             pl_,
-            al,
-            fe_,
-            sc_,
-            se_fe_,
-            ex,
             output_directory,
         )
 
@@ -470,7 +470,7 @@ Run metric-rank (standard) GSEA.
 
     elseif pe == "set"
 
-        user_rank(al, fe_, sc_, se_fe_, fe, sc, lo, hi, ex, ra, n_pe, n_ex, pl_, output_directory)
+        user_rank(al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, ra, n_pe, n_ex, pl_, output_directory)
 
     else
 
