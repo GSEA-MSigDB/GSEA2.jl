@@ -1,4 +1,4 @@
-The ✨ new ✨ Gene-Set Enrichment Analysis 🧬
+The ✨ new (*not-yet-official*) ✨ Gene-Set Enrichment Analysis 🧬
 
 💁 Join the [bioinformatics community](https://discord.gg/tKh7fguMrD) to get live help on GSEA (and everything bioinformatics) 🎪 ⌨️ 🔰 💡
 
