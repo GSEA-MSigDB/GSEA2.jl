@@ -50,8 +50,10 @@ BioLab.Table.write(ta, ta_x_sa_x_nu)
 
 # --------------------------------------------- #
 
-se_ge_ =
-    BioLab.GMT.read("/Users/kwat/craft/GSEA_KS_run_all_files/input/h.all.v2022.1.Hs.symbols.gmt")
+se_ge_ = BioLab.GMT.read((
+    "/Users/kwat/craft/GSEA_KS_run_all_files/input/h.all.v2022.1.Hs.symbols.gmt",
+    "/Users/kwat/craft/GSEA_KS_run_all_files/input/c2.all.v2022.1.Hs.symbols.gmt",
+))
 
 st = joinpath(ip, "set_genes.json")
 
@@ -59,4 +61,4 @@ BioLab.Dict.write(st, se_ge_)
 
 # --------------------------------------------- #
 
-GSEA.metric_rank(joinpath(ip, "metric_rank.json"), ta, fe, st, ou)
+GSEA.metric_rank(joinpath(ip, "setting.json"), ta, fe, st, ou)

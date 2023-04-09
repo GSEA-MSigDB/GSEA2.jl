@@ -1,5 +1,4 @@
 {
-  "remove_gene_set_genes": false,
   "minimum_gene_set_size": 15,
   "maximum_gene_set_size": 500,
   "exponent": 1.0,

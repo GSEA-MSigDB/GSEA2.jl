@@ -74,10 +74,6 @@ open output/plot/*.html
 
   String
 
-- `remove_gene_set_genes` that are not in the gene-x-sample-x-score genes
-
-  `false` | `true`
-
 - `minimum_gene_set_size` that removes sets smaller than this
 
   Integer

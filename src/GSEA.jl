@@ -12,21 +12,17 @@ using StatsBase: sample
 
 using BioLab
 
-function _filter_set!(se_fe_, it, it_, mi, ma)
+function _filter_set!(se_fe_, it_, mi, ma)
 
     println("⛵️ Before filtering sets")
 
     BioLab.Dict.print(se_fe_; n = 0)
 
-    if it
+    println("🐡 Removing non-intersecting genes")
 
-        println("🐡 Removing non-intersecting genes")
+    for (se, fe_) in se_fe_
 
-        for (se, fe_) in se_fe_
-
-            se_fe_[se] = intersect(fe_, it_)
-
-        end
+        se_fe_[se] = intersect(fe_, it_)
 
     end
 
@@ -102,7 +98,6 @@ Run data-rank (single-sample) GSEA.
 
     _filter_set!(
         se_fe_,
-        ke_ar["remove_gene_set_genes"],
         fe_x_sa_x_sc[!, 1],
         ke_ar["minimum_gene_set_size"],
         ke_ar["maximum_gene_set_size"],
@@ -291,13 +286,7 @@ Run user-rank (pre-rank) GSEA.
 
     se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(set_genes_json))
 
-    _filter_set!(
-        se_fe_,
-        ke_ar["remove_gene_set_genes"],
-        fe_,
-        ke_ar["minimum_gene_set_size"],
-        ke_ar["maximum_gene_set_size"],
-    )
+    _filter_set!(se_fe_, fe_, ke_ar["minimum_gene_set_size"], ke_ar["maximum_gene_set_size"])
 
     user_rank(
         _use_algorithm(ke_ar["algorithm"]),
@@ -393,13 +382,7 @@ Run metric-rank (standard) GSEA.
 
     se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(set_genes_json))
 
-    _filter_set!(
-        se_fe_,
-        ke_ar["remove_gene_set_genes"],
-        fe_,
-        ke_ar["minimum_gene_set_size"],
-        ke_ar["maximum_gene_set_size"],
-    )
+    _filter_set!(se_fe_, fe_, ke_ar["minimum_gene_set_size"], ke_ar["maximum_gene_set_size"])
 
     al = _use_algorithm(ke_ar["algorithm"])
 

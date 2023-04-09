@@ -111,7 +111,7 @@ readdir(joinpath(ou, "plot"))
 sm = joinpath(DA, "small")
 
 GSEA.metric_rank(
-    joinpath(sm, "metric_rank.json"),
+    joinpath(sm, "setting.json"),
     TST,
     TSS,
     joinpath(sm, "set_genes.json"),
