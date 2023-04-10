@@ -114,6 +114,10 @@ open output/plot/*.html
 
   List of strings (set names)
 
+- `write_set_x_index_x_random_tsv` (for `metric-rank` and `user-rank`)
+
+  Boolean
+
 ## Install
 
 1. Download the latest [release](https://github.com/KwatMDPhD/GSEA.jl/releases/latest) and decompress it.

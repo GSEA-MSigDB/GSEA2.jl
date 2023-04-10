@@ -120,7 +120,7 @@ Run data-rank (single-sample) GSEA.
 
 end
 
-function _tabulate_statistic(se_en, se_ra__, ou)
+function _tabulate_statistic(se_en, se_ra__, ou, wr)
 
     se_ = collect(keys(se_en))
 
@@ -146,7 +146,11 @@ function _tabulate_statistic(se_en, se_ra__, ou)
 
         insertcols!(se_x_ra_x_en, (string(id) => ra_ for (id, ra_) in enumerate(ra__))...)
 
-        BioLab.Table.write(joinpath(ou, "set_x_index_x_random.tsv"), se_x_ra_x_en)
+        if wr
+
+            BioLab.Table.write(joinpath(ou, "set_x_index_x_random.tsv"), se_x_ra_x_en)
+
+        end
 
     end
 
@@ -223,7 +227,7 @@ function _plot_mountain(se_x_st_x_nu, al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, 
 
 end
 
-function user_rank(al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, ra, n_pe, n_ex, pl_, ou)
+function user_rank(al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, ra, n_pe, n_ex, pl_, ou, wr)
 
     se_en = BioLab.FeatureSetEnrichment.score_set(al, fe_, sc_, se_fe_; ex)
 
@@ -251,7 +255,7 @@ function user_rank(al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, ra, n_pe, n_ex, pl_
 
     end
 
-    se_x_st_x_nu = _tabulate_statistic(se_en, se_ra__, ou)
+    se_x_st_x_nu = _tabulate_statistic(se_en, se_ra__, ou, wr)
 
     _plot_mountain(se_x_st_x_nu, al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, n_ex, pl_, ou)
 
@@ -308,6 +312,7 @@ Run user-rank (pre-rank) GSEA.
         ke_ar["number_of_sets_to_plot"],
         ke_ar["more_sets_to_plot"],
         output_directory,
+        ke_ar["write_set_x_index_x_random_tsv"],
     )
 
     return nothing
@@ -444,6 +449,8 @@ Run metric-rank (standard) GSEA.
 
     pl_ = ke_ar["more_sets_to_plot"]
 
+    wr = ke_ar["write_set_x_index_x_random_tsv"]
+
     if pe == "sample"
 
         se_en = BioLab.FeatureSetEnrichment.score_set(al, fe_, sc_, se_fe_; ex)
@@ -486,7 +493,7 @@ Run metric-rank (standard) GSEA.
 
         end
 
-        se_x_st_x_nu = _tabulate_statistic(se_en, se_ra__, output_directory)
+        se_x_st_x_nu = _tabulate_statistic(se_en, se_ra__, output_directory, wr)
 
         _plot_mountain(
             se_x_st_x_nu,
@@ -508,7 +515,23 @@ Run metric-rank (standard) GSEA.
 
     elseif pe == "set"
 
-        user_rank(al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, ra, n_pe, n_ex, pl_, output_directory)
+        user_rank(
+            al,
+            fe_,
+            sc_,
+            se_fe_,
+            ex,
+            fe,
+            sc,
+            lo,
+            hi,
+            ra,
+            n_pe,
+            n_ex,
+            pl_,
+            output_directory,
+            wr,
+        )
 
     else
 

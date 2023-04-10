@@ -13,5 +13,6 @@
   "random_seed": 20150603,
   "number_of_permutations": 100,
   "number_of_sets_to_plot": 4,
-  "gene_sets_to_plot": []
+  "more_sets_to_plot": [],
+  "write_set_x_index_x_random_tsv": false
 }
