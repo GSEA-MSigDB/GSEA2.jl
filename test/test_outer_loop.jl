@@ -10,55 +10,114 @@ using GSEA
 
 di = "test_outer_loop"
 
+pip = mkpath(joinpath(di, "python", "input"))
+
 ip = mkpath(joinpath(di, "input"))
 
 ou = mkpath(joinpath(di, "output"))
+
+BioLab.Path.empty(ip)
 
 BioLab.Path.empty(ou)
 
 # --------------------------------------------- #
 
-fe_x_sa_x_sc = BioLab.GCT.read(
-    "/Users/kwat/craft/GSEA_KS_run_all_files/input/Coller_et_al_gene_exp_preproc.gct",
-)
+_fen, fe_, sa_, fe_x_sa_x_nu =
+    BioLab.DataFrame.separate(BioLab.GCT.read(joinpath(pip, "Coller_et_al_gene_exp_preproc.gct")))
 
-sa_ = names(fe_x_sa_x_sc)[2:end]
+BioLab.Matrix.apply_by_row!(BioLab.Normalization.normalize_with_0!, fe_x_sa_x_nu)
 
-rename!(fe_x_sa_x_sc, vcat("Gene", sa_))
+clamp!(fe_x_sa_x_nu, -3, 3)
 
-fe = joinpath(ip, "feature_x_sample_x_score.tsv")
+tsf = joinpath(ip, "feature_x_sample_x_number.tsv")
 
-BioLab.Table.write(fe, fe_x_sa_x_sc)
+BioLab.Table.write(tsf, BioLab.DataFrame.make("Feature", fe_, sa_, fe_x_sa_x_nu))
 
 # --------------------------------------------- #
 
 ta_ = replace(
-    split(
-        readlines("/Users/kwat/craft/GSEA_KS_run_all_files/input/Coller_et_al_phen.cls")[3],
-        ' ';
-        keepempty = false,
-    ),
+    split(readlines(joinpath(pip, "Coller_et_al_phen.cls"))[3], ' '; keepempty = false),
     "cntrl" => 0,
     "myc" => 1,
 )
 
-ta_x_sa_x_nu = DataFrame(permutedims(vcat("Control vs MYC", ta_)), vcat("Target", sa_))
+target_x_sample_x_number = DataFrame(permutedims(vcat("Control vs MYC", ta_)), vcat("Target", sa_))
 
-ta = joinpath(ip, "target_x_sample_x_number.tsv")
+tst = joinpath(ip, "target_x_sample_x_number.tsv")
 
-BioLab.Table.write(ta, ta_x_sa_x_nu)
+BioLab.Table.write(tst, target_x_sample_x_number)
 
 # --------------------------------------------- #
 
-se_ge_ = BioLab.GMT.read((
-    "/Users/kwat/craft/GSEA_KS_run_all_files/input/h.all.v2022.1.Hs.symbols.gmt",
-    "/Users/kwat/craft/GSEA_KS_run_all_files/input/c2.all.v2022.1.Hs.symbols.gmt",
+se_fe_ = BioLab.GMT.read((
+    joinpath(pip, "h.all.v2022.1.Hs.symbols.gmt"),
+    joinpath(pip, "c2.all.v2022.1.Hs.symbols.gmt"),
 ))
 
-st = joinpath(ip, "set_genes.json")
+jss = joinpath(ip, "set_features.json")
 
-BioLab.Dict.write(st, se_ge_)
+BioLab.Dict.write(jss, se_fe_)
 
 # --------------------------------------------- #
 
-GSEA.metric_rank(joinpath(ip, "setting.json"), ta, fe, st, ou)
+feature2_x_index_x_random = BioLab.Table.read(
+    joinpath(di, "python", "txt", "KS_SUP example mean scaling_rand_perm_gene_scores.txt"),
+)
+
+GSEA.metric_rank(joinpath(di, "setting.json"), tst, tsf, jss, ou; feature2_x_index_x_random)
+
+# --------------------------------------------- #
+
+dap = BioLab.Table.read(
+    joinpath(di, "python", "txt", "KS_SUP example mean scaling_gene_selection_scores.txt"),
+)
+
+daj = BioLab.Table.read(joinpath(ou, "feature_x_metric_x_score.tsv"))
+
+idp = 2
+
+idj = 2
+
+digits = 3
+
+transform!(dap, idp => co -> [round(nu; digits) for nu in co]; renamecols = false)
+
+transform!(daj, idj => co -> [round(nu; digits) for nu in co]; renamecols = false)
+
+sort!(dap, [idp, 1])
+
+sort!(daj, [idj, 1])
+
+@test isequal(dap[!, 1], daj[!, 1])
+
+@test isequal(dap[!, idp], daj[!, idj])
+
+# --------------------------------------------- #
+
+dap = BioLab.Table.read(
+    joinpath(di, "python", "txt", "KS_SUP example mean scaling_GSEA_results_table.txt"),
+)
+
+daj = BioLab.Table.read(joinpath(ou, "set_x_statistic_x_number.tsv"))
+
+idp = 5
+
+idj = 2
+
+digits = 3
+
+transform!(dap, idp => co -> [round(nu; digits) for nu in co]; renamecols = false)
+
+transform!(daj, idj => co -> [round(nu; digits) for nu in co]; renamecols = false)
+
+sort!(dap, [idp, 1])
+
+sort!(daj, [idj, 1])
+
+@test isequal(dap[!, 1], daj[!, 1])
+
+@test isequal(dap[!, idp], daj[!, idj])
+
+# --------------------------------------------- #
+
+fe_x_id_x_ra

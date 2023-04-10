@@ -1,4 +1,4 @@
-The ✨ new (_not-yet-official_) ✨ Gene-Set Enrichment Analysis 🧬
+The ✨ new (_not-yet-official_) ✨ (Gene-) Set Enrichment Analysis 🧬
 
 💁 Join the [bioinformatics community](https://discord.gg/tKh7fguMrD) to get live help on GSEA (and everything bioinformatics) 🎪 ⌨️ 🔰 💡
 
@@ -43,7 +43,7 @@ mkdir output
 #### 3. Run standard GSEA
 
 ```bash
-gsea metric-rank metric_rank.json target_x_sample_x_number.tsv gene_x_sample_x_score.tsv set_genes.json output
+gsea metric-rank setting.json target_x_sample_x_number.tsv feature_x_sample_x_number.tsv set_features.json output
 
 ls -l output
 
@@ -54,7 +54,7 @@ open output/plot/*.html
 
 ## Settings are just a [`.json` file](setting)
 
-- `metric` for ranking genes (for `metric-rank`)
+- `metric` for scoring and ranking features (for `metric-rank`)
 
   `signal_to_noise_ratio` (coming soon... | `mean_difference` | `median_difference` | `pearson_correlation` | `cosine_distance` | `information_coefficient`)
 
@@ -74,15 +74,15 @@ open output/plot/*.html
 
   String
 
-- `minimum_gene_set_size` that removes sets smaller than this
+- `minimum_set_size` that removes sets smaller than this
 
   Integer
 
-- `maximum_gene_set_size` that removes sets bigger than this
+- `maximum_set_size` that removes sets bigger than this
 
   Integer
 
-- `exponent` to raise the gene scores
+- `exponent` to raise the scores
 
   Number
 
@@ -94,11 +94,11 @@ open output/plot/*.html
 
   Integer
 
-- `permutation` for computing significance (for `metric-rank`)
+- `permutation` for computing significance
 
-  `sample` | `set` (`user-rank` permutes sets)
+  `sample` (for `metric-rank`) | `set` (for `metric-rank` and `user-rank`)
 
-- `random_seed` from which to generate randomness for computing significance (for `metric-rank` and `user-rank`)
+- `random_seed` (for `metric-rank` and `user-rank`)
 
   Integer
 
@@ -106,13 +106,13 @@ open output/plot/*.html
 
   Integer
 
-- `number_of_extreme_gene_sets_to_plot` (for `metric-rank` and `user-rank`)
+- `number_of_sets_to_plot` (for `metric-rank` and `user-rank`)
 
   Integer
 
-- `gene_sets_to_plot` in addition to the extreme ones (for `metric-rank` and `user-rank`)
+- `more_sets_to_plot` (for `metric-rank` and `user-rank`)
 
-  List of string, gene-set names
+  List of strings (set names)
 
 ## Install
 
@@ -132,7 +132,7 @@ gsea --help
 
 ## Build
 
-If there is no release matching desired machine or installation fails, try building.
+If installation is unavailable or fails, try building.
 
 #### 1. Download this repository
 
