@@ -64,7 +64,7 @@ feature2_x_index_x_random = BioLab.Table.read(
     joinpath(di, "python", "txt", "KS_SUP example mean scaling_rand_perm_gene_scores.txt"),
 )
 
-# GSEA.metric_rank(joinpath(di, "setting.json"), tst, tsf, jss, ou; feature2_x_index_x_random)
+GSEA.metric_rank(joinpath(di, "setting.json"), tst, tsf, jss, ou; feature2_x_index_x_random)
 
 # --------------------------------------------- #
 
@@ -165,8 +165,6 @@ end
 
 en_ = se_x_st_x_nu[:, 1]
 
-@test en_ == dap[!, 5]
-
 # --------------------------------------------- #
 
 idp = findfirst(0.0 < en for en in en_)
@@ -188,8 +186,6 @@ for id in idp_
     enn_[id] = en_[id] / mep_[id]
 
 end
-
-@test all(isapprox(enn_[id], dap[id, 4]; atol = 10^-3) for id in 1:n)
 
 # --------------------------------------------- #
 
@@ -232,6 +228,12 @@ pvm_, adm_ = BioLab.Significance.get_p_value_and_adjust(
 pv_ = vcat(pvl_, pvm_)
 
 ad_ = vcat(adl_, adm_)
+
+# --------------------------------------------- #
+
+@test en_ == dap[!, 5]
+
+@test all(isapprox(enn_[id], dap[id, 4]; atol = 10^-3) for id in 1:n)
 
 @test all(isapprox(pv_[id], dap[id, 6]; atol = 10^-3) for id in 1:n)
 

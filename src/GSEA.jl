@@ -70,7 +70,7 @@ function _use_algorithm(al)
 
     else
 
-        error()
+        error("`algorithm` is not one of the listed in https://github.com/KwatMDPhD/GSEA.jl.")
 
     end
 
@@ -132,25 +132,119 @@ function _tabulate_statistic(se_en, se_ra__, ou, wr)
 
     if isempty(se_ra__)
 
-        gl_ = fill(NaN, n)
+        pv_ = fill(NaN, n)
 
-        gla_ = fill(NaN, n)
+        ad_ = fill(NaN, n)
 
     else
 
-        ra__ = [collect(values(se_ra)) for se_ra in se_ra__]
+        set_x_index_x_random = DataFrame("Set" => se_)
 
-        gl_, gla_ = BioLab.Significance.get_p_value_and_adjust(en_, vcat(ra__...))
-
-        se_x_ra_x_en = DataFrame("Set" => se_)
-
-        insertcols!(se_x_ra_x_en, (string(id) => ra_ for (id, ra_) in enumerate(ra__))...)
+        insertcols!(
+            set_x_index_x_random,
+            (
+                string(id) => ra_ for
+                (id, ra_) in enumerate(collect(values(se_ra)) for se_ra in se_ra__)
+            )...,
+        )
 
         if wr
 
-            BioLab.Table.write(joinpath(ou, "set_x_index_x_random.tsv"), se_x_ra_x_en)
+            BioLab.Table.write(joinpath(ou, "set_x_index_x_random.tsv"), set_x_index_x_random)
 
         end
+
+        _sen, _se_, _id_, se_x_id_x_ra = BioLab.DataFrame.separate(set_x_index_x_random)
+
+        nem_ = Vector{Float64}(undef, n)
+
+        pom_ = Vector{Float64}(undef, n)
+
+        for id in 1:n
+
+            ne_ = Vector{Float64}()
+
+            po_ = Vector{Float64}()
+
+            for ra in se_x_id_x_ra[id, :]
+
+                if ra < 0.0
+
+                    push!(ne_, ra)
+
+                elseif 0.0 < ra
+
+                    push!(po_, ra)
+
+                end
+
+            end
+
+            nem_[id] = mean(ne_)
+
+            pom_[id] = mean(po_)
+
+        end
+
+        nei_ = 1:findlast(en < 0.0 for en in en_)
+
+        poi_ = (nei_[end] + 1):n
+
+        # TODO: Benchmark against `vcat`.
+
+        enn_ = Vector{Float64}(undef, n)
+
+        for id in nei_
+
+            enn_[id] = -en_[id] / nem_[id]
+
+        end
+
+        for id in poi_
+
+            enn_[id] = en_[id] / pom_[id]
+
+        end
+
+        nen_ = Vector{Float64}()
+
+        pon_ = Vector{Float64}()
+
+        for id2 in 1:size(se_x_id_x_ra, 2)
+
+            for id1 in 1:size(se_x_id_x_ra, 1)
+
+                ra = se_x_id_x_ra[id1, id2]
+
+                if ra < 0.0
+
+                    push!(nen_, -ra / nem_[id1])
+
+                elseif 0.0 < ra
+
+                    push!(pon_, ra / pom_[id1])
+
+                end
+
+            end
+
+        end
+
+        nep_, nea_ = BioLab.Significance.get_p_value_and_adjust(
+            BioLab.Significance.get_p_value_for_less,
+            enn_[nei_],
+            nen_,
+        )
+
+        pop_, poa_ = BioLab.Significance.get_p_value_and_adjust(
+            BioLab.Significance.get_p_value_for_more,
+            enn_[poi_],
+            pon_,
+        )
+
+        pv_ = vcat(nep_, pop_)
+
+        ad_ = vcat(nea_, poa_)
 
     end
 
@@ -158,10 +252,11 @@ function _tabulate_statistic(se_en, se_ra__, ou, wr)
         DataFrame(
             "Set" => se_,
             "Enrichment" => en_,
-            "Global p value" => gl_,
-            "Adjusted global p value" => gla_,
+            "Normalized Enrichment" => enn_,
+            "P Value" => pv_,
+            "Adjusted P Value" => ad_,
         ),
-        "Enrichment",
+        3,
     )
 
     BioLab.Table.write(joinpath(ou, "set_x_statistic_x_number.tsv"), se_x_st_x_nu)
@@ -412,7 +507,7 @@ Run metric-rank (standard) GSEA.
 
     else
 
-        error()
+        error("`metric` is not one of the listed in https://github.com/KwatMDPhD/GSEA.jl.")
 
     end
 
@@ -529,7 +624,7 @@ Run metric-rank (standard) GSEA.
 
     else
 
-        error("`permutation` is not `sample` or `set`.")
+        error("`permutation` is not one of the listed in https://github.com/KwatMDPhD/GSEA.jl.")
 
     end
 
