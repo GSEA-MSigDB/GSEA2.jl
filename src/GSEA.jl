@@ -132,6 +132,8 @@ function _tabulate_statistic(se_en, se_ra__, ou, wr)
 
     if isempty(se_ra__)
 
+        enn_ = fill(NaN, n)
+
         pv_ = fill(NaN, n)
 
         ad_ = fill(NaN, n)
@@ -155,6 +157,14 @@ function _tabulate_statistic(se_en, se_ra__, ou, wr)
         end
 
         _sen, _se_, _id_, se_x_id_x_ra = BioLab.DataFrame.separate(set_x_index_x_random)
+
+        id_ = sortperm(en_)
+
+        en_ = en_[id_]
+
+        se_ = se_[id_]
+
+        se_x_id_x_ra = se_x_id_x_ra[id_, :]
 
         nem_ = Vector{Float64}(undef, n)
 
@@ -256,7 +266,7 @@ function _tabulate_statistic(se_en, se_ra__, ou, wr)
             "P Value" => pv_,
             "Adjusted P Value" => ad_,
         ),
-        3,
+        2,
     )
 
     BioLab.Table.write(joinpath(ou, "set_x_statistic_x_number.tsv"), se_x_st_x_nu)

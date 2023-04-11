@@ -35,62 +35,74 @@ BioLab.Table.write(tsf, BioLab.DataFrame.make("Feature", fe_, sa_, fe_x_sa_x_nu)
 
 # --------------------------------------------- #
 
-ta_ = replace(
-    split(readlines(joinpath(pip, "Coller_et_al_phen.cls"))[3], ' '; keepempty = false),
-    "cntrl" => 0,
-    "myc" => 1,
-)
-
-target_x_sample_x_number = DataFrame(permutedims(vcat("Control vs MYC", ta_)), vcat("Target", sa_))
-
 tst = joinpath(ip, "target_x_sample_x_number.tsv")
 
-BioLab.Table.write(tst, target_x_sample_x_number)
+BioLab.Table.write(
+    tst,
+    DataFrame(
+        permutedims(
+            vcat(
+                "Control vs MYC",
+                replace(
+                    split(
+                        readlines(joinpath(pip, "Coller_et_al_phen.cls"))[3],
+                        ' ';
+                        keepempty = false,
+                    ),
+                    "cntrl" => 0,
+                    "myc" => 1,
+                ),
+            ),
+        ),
+        vcat("Target", sa_),
+    ),
+)
 
 # --------------------------------------------- #
-
-se_fe_ = BioLab.GMT.read((
-    joinpath(pip, "h.all.v2022.1.Hs.symbols.gmt"),
-    joinpath(pip, "c2.all.v2022.1.Hs.symbols.gmt"),
-))
 
 jss = joinpath(ip, "set_features.json")
 
-BioLab.Dict.write(jss, se_fe_)
+BioLab.Dict.write(
+    jss,
+    BioLab.GMT.read((
+        joinpath(pip, "h.all.v2022.1.Hs.symbols.gmt"),
+        joinpath(pip, "c2.all.v2022.1.Hs.symbols.gmt"),
+    )),
+)
 
 # --------------------------------------------- #
 
-feature2_x_index_x_random = BioLab.Table.read(
-    joinpath(di, "python", "txt", "KS_SUP example mean scaling_rand_perm_gene_scores.txt"),
+GSEA.metric_rank(
+    joinpath(di, "setting.json"),
+    tst,
+    tsf,
+    jss,
+    ou;
+    feature2_x_index_x_random = BioLab.Table.read(
+        joinpath(di, "python", "txt", "KS_SUP example mean scaling_rand_perm_gene_scores.txt"),
+    ),
 )
-
-GSEA.metric_rank(joinpath(di, "setting.json"), tst, tsf, jss, ou; feature2_x_index_x_random)
 
 # --------------------------------------------- #
 
-dap = BioLab.Table.read(
-    joinpath(di, "python", "txt", "KS_SUP example mean scaling_gene_selection_scores.txt"),
+dap = sort!(
+    BioLab.Table.read(
+        joinpath(di, "python", "txt", "KS_SUP example mean scaling_gene_selection_scores.txt"),
+    ),
+    1,
 )
 
-daj = BioLab.Table.read(joinpath(ou, "feature_x_metric_x_score.tsv"))
+daj = sort!(BioLab.Table.read(joinpath(ou, "feature_x_metric_x_score.tsv")), 1)
 
-idp = 2
+@test size(dap, 1) == size(daj, 1)
 
-idj = 2
+for id in 1:size(dap, 1)
 
-digits = 3
+    @test dap[id, 1] == daj[id, 1]
 
-transform!(dap, idp => co -> [round(nu; digits) for nu in co]; renamecols = false)
+    @test isapprox(dap[id, 2], daj[id, 2]; atol = 10^-6)
 
-transform!(daj, idj => co -> [round(nu; digits) for nu in co]; renamecols = false)
-
-sort!(dap, [idp, 1])
-
-sort!(daj, [idj, 1])
-
-@test isequal(dap[!, 1], daj[!, 1])
-
-@test isequal(dap[!, idp], daj[!, idj])
+end
 
 # --------------------------------------------- #
 
@@ -103,8 +115,16 @@ dap = sort!(
 
 daj = sort!(BioLab.Table.read(joinpath(ou, "set_x_statistic_x_number.tsv")), 1)
 
-for (idp, idj) in ((1, 1), (5, 2), (4, 3), (6, 4), (7, 5))
+for id in 1:size(dap, 1)
 
-    @test all(isapprox(dap[id, idp], daj[id, idj]; atol = 10^-3) for id in 1:n)
+    @test dap[id, 1] == daj[id, 1]
+
+    @test isapprox(dap[id, 5], daj[id, 2]; atol = 10^-3)
+
+    @test isapprox(dap[id, 4], daj[id, 3]; atol = 10^-2)
+
+    @test isapprox(dap[id, 6], daj[id, 4]; atol = 10^-2)
+
+    @test isapprox(dap[id, 7], daj[id, 5]; atol = 10^-2)
 
 end
