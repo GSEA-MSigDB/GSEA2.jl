@@ -282,7 +282,7 @@ Run user-rank (pre-rank) GSEA.
 
     ke_ar = BioLab.Dict.read(setting_json)
 
-    _fen, fe_, _me, fe_x_me_x_sc =
+    _fen, fe_, _me_, fe_x_me_x_sc =
         BioLab.DataFrame.separate(BioLab.Table.read(feature_x_metric_x_score_tsv))
 
     BioLab.Array.error_duplicate(fe_)
@@ -459,13 +459,7 @@ Run metric-rank (standard) GSEA.
 
         if !isnothing(feature2_x_index_x_random)
 
-            _fe2n, fe2_, _id, fe2_x_id_x_ra = BioLab.DataFrame.separate(feature2_x_index_x_random)
-
-            if n_pe != size(fe2_x_id_x_ra, 2)
-
-                error()
-
-            end
+            _fe2n, fe2_, _id_, fe2_x_id_x_ra = BioLab.DataFrame.separate(feature2_x_index_x_random)
 
             println("Using predefined $n_pe $pe permutations to compute significance")
 

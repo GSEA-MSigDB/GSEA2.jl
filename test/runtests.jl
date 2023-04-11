@@ -70,8 +70,6 @@ function print_output(ou)
 
     BioLab.DataFrame.print(BioLab.Table.read(joinpath(ou, "set_x_statistic_x_number.tsv")))
 
-    BioLab.DataFrame.print(BioLab.Table.read(joinpath(ou, "set_x_index_x_random.tsv")))
-
     return nothing
 
 end
@@ -137,3 +135,13 @@ print_output(ou)
 readdir(joinpath(ou, "plot"))
 
 # @code_warntype GSEA.metric_rank(se, TST, TSS, ST, ou)
+
+# --------------------------------------------- #
+
+for jl in ("small.jl", "outer_loop.jl")
+
+    println(jl)
+
+    include(jl)
+
+end
