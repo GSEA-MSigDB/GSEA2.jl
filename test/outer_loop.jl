@@ -18,7 +18,7 @@ ou = mkpath(joinpath(di, "output"))
 
 BioLab.Path.empty(ip)
 
-# BioLab.Path.empty(ou)
+BioLab.Path.empty(ou)
 
 # --------------------------------------------- #
 
@@ -94,147 +94,17 @@ sort!(daj, [idj, 1])
 
 # --------------------------------------------- #
 
-dap = BioLab.Table.read(
-    joinpath(di, "python", "txt", "KS_SUP example mean scaling_GSEA_results_table.txt"),
+dap = sort!(
+    BioLab.Table.read(
+        joinpath(di, "python", "txt", "KS_SUP example mean scaling_GSEA_results_table.txt"),
+    ),
+    1,
 )
 
-daj = BioLab.Table.read(joinpath(ou, "set_x_statistic_x_number.tsv"))
+daj = sort!(BioLab.Table.read(joinpath(ou, "set_x_statistic_x_number.tsv")), 1)
 
-idp = 5
+for (idp, idj) in ((1, 1), (5, 2), (4, 3), (6, 4), (7, 5))
 
-idj = 2
-
-digits = 3
-
-transform!(dap, idp => co -> [round(nu; digits) for nu in co]; renamecols = false)
-
-transform!(daj, idj => co -> [round(nu; digits) for nu in co]; renamecols = false)
-
-sort!(dap, [idp, 1])
-
-sort!(daj, [idj, 1])
-
-@test isequal(dap[!, 1], daj[!, 1])
-
-@test isequal(dap[!, idp], daj[!, idj])
-
-# --------------------------------------------- #
-
-_sen, se_, _st_, se_x_st_x_nu = BioLab.DataFrame.separate(daj)
-
-n = length(se_)
-
-set_x_index_x_random = BioLab.Table.read(joinpath(ou, "set_x_index_x_random.tsv"))
-
-_sen, _se_, _id_, se_x_id_x_ra =
-    BioLab.DataFrame.separate(set_x_index_x_random[indexin(se_, set_x_index_x_random[!, 1]), :])
-
-# --------------------------------------------- #
-
-men_ = Vector{Float64}(undef, n)
-
-mep_ = Vector{Float64}(undef, n)
-
-for id in 1:n
-
-    ne_ = Vector{Float64}()
-
-    po_ = Vector{Float64}()
-
-    for ra in se_x_id_x_ra[id, :]
-
-        if ra < 0.0
-
-            push!(ne_, ra)
-
-        elseif 0.0 < ra
-
-            push!(po_, ra)
-
-        end
-
-    end
-
-    men_[id] = mean(ne_)
-
-    mep_[id] = mean(po_)
+    @test all(isapprox(dap[id, idp], daj[id, idj]; atol = 10^-3) for id in 1:n)
 
 end
-
-# --------------------------------------------- #
-
-en_ = se_x_st_x_nu[:, 1]
-
-# --------------------------------------------- #
-
-idp = findfirst(0.0 < en for en in en_)
-
-idn_ = 1:(idp - 1)
-
-idp_ = idp:n
-
-enn_ = Vector{Float64}(undef, n)
-
-for id in idn_
-
-    enn_[id] = -en_[id] / men_[id]
-
-end
-
-for id in idp_
-
-    enn_[id] = en_[id] / mep_[id]
-
-end
-
-# --------------------------------------------- #
-
-ran_ = Vector{Float64}()
-
-rap_ = Vector{Float64}()
-
-for id2 in 1:size(se_x_id_x_ra, 2)
-
-    for id1 in 1:size(se_x_id_x_ra, 1)
-
-        ra = se_x_id_x_ra[id1, id2]
-
-        if ra < 0.0
-
-            push!(ran_, -ra / men_[id1])
-
-        elseif 0.0 < ra
-
-            push!(rap_, ra / mep_[id1])
-
-        end
-
-    end
-
-end
-
-pvl_, adl_ = BioLab.Significance.get_p_value_and_adjust(
-    BioLab.Significance.get_p_value_for_less,
-    enn_[idn_],
-    ran_,
-)
-
-pvm_, adm_ = BioLab.Significance.get_p_value_and_adjust(
-    BioLab.Significance.get_p_value_for_more,
-    enn_[idp_],
-    rap_,
-)
-
-pv_ = vcat(pvl_, pvm_)
-
-ad_ = vcat(adl_, adm_)
-
-# --------------------------------------------- #
-
-@test en_ == dap[!, 5]
-
-@test all(isapprox(enn_[id], dap[id, 4]; atol = 10^-3) for id in 1:n)
-
-@test all(isapprox(pv_[id], dap[id, 6]; atol = 10^-3) for id in 1:n)
-
-@test all(isapprox(ad_[id], dap[id, 7]; atol = 10^-3) for id in 1:n)
