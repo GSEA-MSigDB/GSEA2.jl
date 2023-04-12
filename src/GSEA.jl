@@ -12,37 +12,35 @@ using StatsBase: mean, sample, std
 
 using BioLab
 
-function _filter_set!(se_fe_, it_, mi, ma)
+function _read_set(js, it_, mi, ma)
 
-    println("⛵️ Before filtering sets")
+    se_fe1_ = BioLab.Dict.read(js)
 
-    BioLab.Dict.print(se_fe_; n = 0)
+    se_ = collect(keys(se_fe1_))
 
-    println("🐡 Removing non-intersecting features")
+    fe1___ = [convert(Vector{String}, fe1_) for fe1_ in values(se_fe1_)]
 
-    for (se, fe_) in se_fe_
+    n = length(se_)
 
-        se_fe_[se] = intersect(fe_, it_)
+    println("🎣 Before filtering sets")
 
-    end
+    println(n)
 
-    println("🎣 Removing sets whose size is not between $mi and $ma")
+    ke_ = Vector{Bool}(undef, n)
 
-    for (se, fe_) in se_fe_
+    for (id, fe1_) in enumerate(fe1___)
 
-        if !(mi <= length(fe_) <= ma)
+        intersect!(fe1_, it_)
 
-            pop!(se_fe_, se)
-
-        end
+        ke_[id] = mi <= length(fe1_) <= ma
 
     end
 
     println("🍣 After")
 
-    BioLab.Dict.print(se_fe_; n = 0)
+    println(sum(ke_))
 
-    return nothing
+    return se_[ke_], fe1___[ke_]
 
 end
 
@@ -97,40 +95,44 @@ Run data-rank (single-sample) GSEA.
 
     ke_ar = BioLab.Dict.read(setting_json)
 
-    fe_x_sa_x_sc = BioLab.Table.read(feature_x_sample_x_score_tsv)
+    _fen, fe_::Vector{String}, sa_::Vector{String}, fe_x_sa_x_sc::Matrix{Float64} =
+        BioLab.DataFrame.separate(BioLab.Table.read(feature_x_sample_x_score_tsv))
 
-    se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(set_features_json))
+    BioLab.Array.error_duplicate(fe_)
 
-    _filter_set!(se_fe_, fe_x_sa_x_sc[!, 1], ke_ar["minimum_set_size"], ke_ar["maximum_set_size"])
+    BioLab.Matrix.error_bad(fe_x_me_x_sc, Real)
 
-    se_x_sa_x_en = BioLab.FeatureSetEnrichment.score_set(
+    se_, fe1___ =
+        _read_set(set_features_json, fe_, ke_ar["minimum_set_size"], ke_ar["maximum_set_size"])
+
+    se_x_sa_x_en = BioLab.FeatureSetEnrichment.enrich(
         _use_algorithm(ke_ar["algorithm"]),
+        fe_,
+        sa_,
         fe_x_sa_x_sc,
-        se_fe_;
+        se_,
+        fe1___;
         ex = ke_ar["exponent"],
         n_jo = ke_ar["number_of_jobs"],
     )
 
     BioLab.Table.write(
         joinpath(mkpath(output_directory), "set_x_sample_x_enrichment.tsv"),
-        se_x_sa_x_en,
+        BioLab.DataFrame.make("Set", se_, sa_, se_x_sa_x_en),
     )
 
     return nothing
 
 end
 
-function _tabulate_statistic(se_en, se_ra__, ou, wr)
+function _tabulate(se_, en_, se_x_id_x_ra, ou, wr)
 
-    se_ = collect(keys(se_en))
-
-    en_ = collect(values(se_en))
-
-    n = length(se_)
+    # TODO: Pick `id` or `pe`.
+    n_se, n_pe = size(se_x_id_x_ra)
 
     mkpath(ou)
 
-    if isempty(se_ra__)
+    if isempty(se_x_id_x_ra)
 
         enn_ = fill(NaN, n)
 
@@ -140,29 +142,20 @@ function _tabulate_statistic(se_en, se_ra__, ou, wr)
 
     else
 
-        set_x_index_x_random = DataFrame("Set" => se_)
-
-        insertcols!(
-            set_x_index_x_random,
-            (
-                string(id) => ra_ for
-                (id, ra_) in enumerate(collect(values(se_ra)) for se_ra in se_ra__)
-            )...,
-        )
-
         if wr
 
-            BioLab.Table.write(joinpath(ou, "set_x_index_x_random.tsv"), set_x_index_x_random)
+            BioLab.Table.write(
+                joinpath(ou, "set_x_index_x_random.tsv"),
+                BioLab.DataFrame.make("Set", se_, 1:n_pe, se_x_id_x_ra),
+            )
 
         end
 
-        _sen, _se_, _id_, se_x_id_x_ra = BioLab.DataFrame.separate(set_x_index_x_random)
-
         id_ = sortperm(en_)
 
-        en_ = en_[id_]
-
         se_ = se_[id_]
+
+        en_ = en_[id_]
 
         se_x_id_x_ra = se_x_id_x_ra[id_, :]
 
@@ -220,19 +213,19 @@ function _tabulate_statistic(se_en, se_ra__, ou, wr)
 
         pon_ = Vector{Float64}()
 
-        for id2 in 1:size(se_x_id_x_ra, 2)
+        for idp in 1:n_pe
 
-            for id1 in 1:size(se_x_id_x_ra, 1)
+            for ids in 1:n_se
 
-                ra = se_x_id_x_ra[id1, id2]
+                ra = se_x_id_x_ra[ids, idp]
 
                 if ra < 0.0
 
-                    push!(nen_, -ra / nem_[id1])
+                    push!(nen_, -ra / nem_[ids])
 
                 elseif 0.0 < ra
 
-                    push!(pon_, ra / pom_[id1])
+                    push!(pon_, ra / pom_[ids])
 
                 end
 
@@ -258,7 +251,8 @@ function _tabulate_statistic(se_en, se_ra__, ou, wr)
 
     end
 
-    se_x_st_x_nu = sort(
+    BioLab.Table.write(
+        joinpath(ou, "set_x_statistic_x_number.tsv"),
         DataFrame(
             "Set" => se_,
             "Enrichment" => en_,
@@ -266,29 +260,27 @@ function _tabulate_statistic(se_en, se_ra__, ou, wr)
             "P Value" => pv_,
             "Adjusted P Value" => ad_,
         ),
-        2,
     )
 
-    BioLab.Table.write(joinpath(ou, "set_x_statistic_x_number.tsv"), se_x_st_x_nu)
-
-    return se_x_st_x_nu
+    return enn_, pv_, ad_
 
 end
 
-function _plot_mountain(se_x_st_x_nu, al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, n_ex, pl_, di)
+function _plot(en_, al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, n_ex, pl_, di)
 
-    n_se = size(se_x_st_x_nu, 1)
+    n_se = length(se_)
 
     n_ex = min(n_ex, n_se)
 
-    # TODO: Try `1:2`.
-    co_ = [1, 2]
+    # TODO: Ensure `en_` is sorted.
 
     for ro in 1:n_ex
 
-        se, en = se_x_st_x_nu[ro, co_]
+        en = en_[ro]
 
-        if en <= 0 && !(se in pl_)
+        se = se_[ro]
+
+        if en < 0 && !(se in pl_)
 
             push!(pl_, se)
 
@@ -298,9 +290,11 @@ function _plot_mountain(se_x_st_x_nu, al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, 
 
     for ro in n_se:-1:(n_se - n_ex + 1)
 
-        se, en = se_x_st_x_nu[ro, co_]
+        en = en_[ro]
 
-        if 0 <= en && !(se in pl_)
+        se = se_[ro]
+
+        if 0 < en && !(se in pl_)
 
             push!(pl_, se)
 
@@ -308,22 +302,22 @@ function _plot_mountain(se_x_st_x_nu, al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, 
 
     end
 
-    pl = mkpath(joinpath(di, "plot"))
+    di = mkpath(joinpath(di, "plot"))
 
-    for se in pl_
+    for (se, id) in zip(pl_, indexin(pl_, se_))
 
-        BioLab.FeatureSetEnrichment.score_set(
+        BioLab.FeatureSetEnrichment.enrich(
             al,
             fe_,
             sc_,
-            se_fe_[se];
+            fe1___[id];
             ex,
             title_text = se,
             fe,
             sc,
             lo,
             hi,
-            ht = joinpath(pl, "$(BioLab.Path.clean(se)).html"),
+            ht = joinpath(di, "$(BioLab.Path.clean(se)).html"),
         )
 
     end
@@ -332,27 +326,27 @@ function _plot_mountain(se_x_st_x_nu, al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, 
 
 end
 
-function user_rank(al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, ra, n_pe, n_ex, pl_, ou, wr)
+function user_rank(al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, ra, n_pe, n_ex, pl_, ou, wr)
 
-    se_en = BioLab.FeatureSetEnrichment.score_set(al, fe_, sc_, se_fe_; ex)
+    se_en = BioLab.FeatureSetEnrichment.enrich(al, fe_, sc_, se_, fe1___; ex)
 
-    se_ra__ = Vector{Dict{String, Float64}}(undef, n_pe)
+    se_x_id_x_ra = Matrix{Float64}(undef, length(se_), n_pe)
 
     if 0 < n_pe
 
         println("Permuting sets to compute significance")
 
-        se_si = Dict(se => length(fe_) for (se, fe_) in se_fe_)
+        si_ = [length(fe1_) for fe1_ in fe1___]
 
         seed!(ra)
 
         @showprogress for id in 1:n_pe
 
-            se_ra__[id] = BioLab.FeatureSetEnrichment.score_set(
+            se_x_id_x_ra[:, id] = BioLab.FeatureSetEnrichment.enrich(
                 al,
                 fe_,
                 sc_,
-                Dict(se => sample(fe_, si; replace = false) for (se, si) in se_si);
+                [sample(fe_, si; replace = false) for si in si_];
                 ex,
             )
 
@@ -360,11 +354,11 @@ function user_rank(al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, ra, n_pe, n_ex, pl_
 
     end
 
-    se_x_st_x_nu = _tabulate_statistic(se_en, se_ra__, ou, wr)
+    enn_, pv_, ad_ = _tabulate(se_, en_, se_x_id_x_ra, ou, wr)
 
-    _plot_mountain(se_x_st_x_nu, al, fe_, sc_, se_fe_, ex, fe, sc, lo, hi, n_ex, pl_, ou)
+    _plot(en_, al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, n_ex, pl_, ou)
 
-    return se_x_st_x_nu
+    return nothing
 
 end
 
@@ -392,21 +386,22 @@ Run user-rank (pre-rank) GSEA.
 
     BioLab.Array.error_duplicate(fe_)
 
-    BioLab.Matrix.error_bad(fe_x_me_x_sc, Real)
-
     sc_ = fe_x_me_x_sc[:, 1]
+
+    # TODO
+    BioLab.Matrix.error_bad(sc_, Real)
 
     sc_, fe_ = BioLab.Collection.sort_like((sc_, fe_); ic = false)
 
-    se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(set_features_json))
-
-    _filter_set!(se_fe_, fe_, ke_ar["minimum_set_size"], ke_ar["maximum_set_size"])
+    se_, fe1___ =
+        _read_set(set_features_json, fe_, ke_ar["minimum_set_size"], ke_ar["maximum_set_size"])
 
     user_rank(
         _use_algorithm(ke_ar["algorithm"]),
         fe_,
         sc_,
-        se_fe_,
+        se_,
+        fe1___,
         ke_ar["exponent"],
         ke_ar["feature_name"],
         ke_ar["score_name"],
@@ -528,9 +523,8 @@ Run metric-rank (standard) GSEA.
         DataFrame("Feature" => fe_, me => sc_),
     )
 
-    se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(set_features_json))
-
-    _filter_set!(se_fe_, fe_, ke_ar["minimum_set_size"], ke_ar["maximum_set_size"])
+    se_, fe1___ =
+        _read_set(set_features_json, fe_, ke_ar["minimum_set_size"], ke_ar["maximum_set_size"])
 
     al = _use_algorithm(ke_ar["algorithm"])
 
@@ -558,9 +552,9 @@ Run metric-rank (standard) GSEA.
 
     if pe == "sample"
 
-        se_en = BioLab.FeatureSetEnrichment.score_set(al, fe_, sc_, se_fe_; ex)
+        en_ = BioLab.FeatureSetEnrichment.enrich(al, fe_, sc_, se_, fe1___; ex)
 
-        se_ra__ = Vector{Dict{String, Float64}}(undef, n_pe)
+        se_x_id_x_ra = Matrix{Float64}(undef, length(se_), n_pe)
 
         if !isnothing(feature2_x_index_x_random)
 
@@ -572,7 +566,8 @@ Run metric-rank (standard) GSEA.
 
                 ra_, fer_ = BioLab.Collection.sort_like((fe2_x_id_x_ra[:, id], fe2_); ic = false)
 
-                se_ra__[id] = BioLab.FeatureSetEnrichment.score_set(al, fer_, ra_, se_fe_; ex)
+                se_x_id_x_ra[:, id] =
+                    BioLab.FeatureSetEnrichment.enrich(al, fer_, ra_, se_, fe1___; ex)
 
             end
 
@@ -586,31 +581,16 @@ Run metric-rank (standard) GSEA.
 
                 fer_, ra_ = _compare_and_sort(fu, shuffle!(bo_), fe_x_sa_x_sc, fe_)
 
-                se_ra__[id] = BioLab.FeatureSetEnrichment.score_set(al, fer_, ra_, se_fe_; ex)
+                se_x_id_x_ra[:, id] =
+                    BioLab.FeatureSetEnrichment.enrich(al, fer_, ra_, se_, fe1___; ex)
 
             end
 
         end
 
-        se_x_st_x_nu = _tabulate_statistic(se_en, se_ra__, output_directory, wr)
+        enn_, pv_, ad_ = _tabulate(se_, en_, se_x_id_x_ra, output_directory, wr)
 
-        _plot_mountain(
-            se_x_st_x_nu,
-            al,
-            fe_,
-            sc_,
-            se_fe_,
-            ex,
-            fe,
-            sc,
-            lo,
-            hi,
-            n_ex,
-            pl_,
-            output_directory,
-        )
-
-        se_x_st_x_nu
+        _plot(en_, al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, n_ex, pl_, output_directory)
 
     elseif pe == "set"
 
@@ -618,7 +598,8 @@ Run metric-rank (standard) GSEA.
             al,
             fe_,
             sc_,
-            se_fe_,
+            se_,
+            fe1___,
             ex,
             fe,
             sc,
