@@ -1,3 +1,5 @@
+using Revise
+
 using Test
 
 using BioLab
@@ -26,27 +28,19 @@ TSM = "feature_x_metric_x_score.tsv"
 
 # --------------------------------------------- #
 
-se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(ST))
+se_, fe1___ = GSEA._read_set(ST, [], 33, 36)
 
-GSEA._filter_set!(se_fe_, [], 33, 36)
+@test length(se_) == length(fe1___) == 0
 
-@test length(se_fe_) == 0
+se_, fe1___ = GSEA._read_set(ST, unique(vcat(values(BioLab.Dict.read(ST))...)), 33, 36)
 
-se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(ST))
+@test length(se_) == length(fe1___) == 2
 
-GSEA._filter_set!(se_fe_, unique(vcat(values(se_fe_)...)), 33, 36)
+se_, fe1___ = GSEA._read_set(ST, ["SHH", "XIST"], 1, 5656)
 
-@test length(se_fe_) == 2
+@test length(se_) == length(fe1___) == 2
 
-se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(ST))
-
-GSEA._filter_set!(se_fe_, ["SHH", "XIST"], 1, 5656)
-
-@test length(se_fe_) == 2
-
-# se_fe_ = convert(Dict{String, Vector{String}}, BioLab.Dict.read(ST))
-
-# @code_warntype GSEA._filter_set!(se_fe_, ["SHH", "XIST"], 1, 5656)
+# @code_warntype GSEA._read_set(ST, ["SHH", "XIST"], 1, 5656)
 
 # --------------------------------------------- #
 
@@ -69,8 +63,6 @@ function print_output(ou)
     println(readdir(ou))
 
     BioLab.DataFrame.print(BioLab.Table.read(joinpath(ou, "set_x_statistic_x_number.tsv")))
-
-    return nothing
 
 end
 

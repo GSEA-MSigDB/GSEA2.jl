@@ -4,7 +4,7 @@ using GSEA
 
 # --------------------------------------------- #
 
-TE = joinpath(tempdir(), "GSEA.test")
+TE = joinpath(tempdir(), "GSEA.test.small")
 
 BioLab.Path.empty(TE)
 
@@ -19,5 +19,5 @@ GSEA.metric_rank(
     joinpath(DA, "target_x_sample_x_number.tsv"),
     joinpath(DA, "feature_x_sample_x_number.tsv"),
     joinpath(sm, "set_features.json"),
-    joinpath(TE, "small"),
+    TE,
 )
