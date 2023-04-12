@@ -2,8 +2,6 @@ module GSEA
 
 using Comonicon: @cast, @main
 
-using DataFrames: DataFrame, insertcols!
-
 using ProgressMeter: @showprogress
 
 using Random: seed!, shuffle!
@@ -40,7 +38,7 @@ function _read_set(js, it_, mi, ma)
 
     println(sum(ke_))
 
-    return se_[ke_], fe1___[ke_]
+    se_[ke_], fe1___[ke_]
 
 end
 
@@ -48,23 +46,23 @@ function _use_algorithm(al)
 
     if al == "ks"
 
-        return BioLab.FeatureSetEnrichment.KS()
+        BioLab.FeatureSetEnrichment.KS()
 
     elseif al == "ksa"
 
-        return BioLab.FeatureSetEnrichment.KSa()
+        BioLab.FeatureSetEnrichment.KSa()
 
     elseif al == "kli"
 
-        return BioLab.FeatureSetEnrichment.KLi()
+        BioLab.FeatureSetEnrichment.KLi()
 
     elseif al == "kliop"
 
-        return BioLab.FeatureSetEnrichment.KLioP()
+        BioLab.FeatureSetEnrichment.KLioP()
 
     elseif al == "kliom"
 
-        return BioLab.FeatureSetEnrichment.KLioM()
+        BioLab.FeatureSetEnrichment.KLioM()
 
     else
 
@@ -100,7 +98,7 @@ Run data-rank (single-sample) GSEA.
 
     BioLab.Array.error_duplicate(fe_)
 
-    BioLab.Matrix.error_bad(fe_x_me_x_sc, Real)
+    BioLab.Matrix.error_bad(fe_x_sa_x_sc, Real)
 
     se_, fe1___ =
         _read_set(set_features_json, fe_, ke_ar["minimum_set_size"], ke_ar["maximum_set_size"])
@@ -121,24 +119,50 @@ Run data-rank (single-sample) GSEA.
         BioLab.DataFrame.make("Set", se_, sa_, se_x_sa_x_en),
     )
 
-    return nothing
+    nothing
 
 end
 
-function _tabulate(se_, en_, se_x_id_x_ra, ou, wr)
+function _write(
+    se_,
+    en_,
+    se_x_id_x_ra,
+    al,
+    fe_,
+    sc_,
+    fe1___,
+    ex,
+    fe,
+    sc,
+    lo,
+    hi,
+    n_ex,
+    pl_,
+    ou,
+    wr,
+)
 
-    # TODO: Pick `id` or `pe`.
-    n_se, n_pe = size(se_x_id_x_ra)
+    id_ = sortperm(en_)
+
+    en_ = en_[id_]
+
+    se_ = se_[id_]
+
+    se_x_id_x_ra = se_x_id_x_ra[id_, :]
+
+    n_se = length(se_)
+
+    se_x_st_x_nu = Matrix{Float64}(undef, n_se, 4)
+
+    se_x_st_x_nu[:, 1] = en_
+
+    n_ra = size(se_x_id_x_ra, 2)
 
     mkpath(ou)
 
     if isempty(se_x_id_x_ra)
 
-        enn_ = fill(NaN, n)
-
-        pv_ = fill(NaN, n)
-
-        ad_ = fill(NaN, n)
+        se_x_st_x_nu[:, 2:4] = NaN
 
     else
 
@@ -146,24 +170,16 @@ function _tabulate(se_, en_, se_x_id_x_ra, ou, wr)
 
             BioLab.Table.write(
                 joinpath(ou, "set_x_index_x_random.tsv"),
-                BioLab.DataFrame.make("Set", se_, 1:n_pe, se_x_id_x_ra),
+                BioLab.DataFrame.make("Set", se_, 1:n_ra, se_x_id_x_ra),
             )
 
         end
 
-        id_ = sortperm(en_)
+        nem_ = Vector{Float64}(undef, n_se)
 
-        se_ = se_[id_]
+        pom_ = Vector{Float64}(undef, n_se)
 
-        en_ = en_[id_]
-
-        se_x_id_x_ra = se_x_id_x_ra[id_, :]
-
-        nem_ = Vector{Float64}(undef, n)
-
-        pom_ = Vector{Float64}(undef, n)
-
-        for id in 1:n
+        for id in 1:n_se
 
             ne_ = Vector{Float64}()
 
@@ -175,7 +191,7 @@ function _tabulate(se_, en_, se_x_id_x_ra, ou, wr)
 
                     push!(ne_, ra)
 
-                elseif 0.0 < ra
+                else
 
                     push!(po_, ra)
 
@@ -191,11 +207,11 @@ function _tabulate(se_, en_, se_x_id_x_ra, ou, wr)
 
         nei_ = 1:findlast(en < 0.0 for en in en_)
 
-        poi_ = (nei_[end] + 1):n
+        poi_ = (nei_[end] + 1):n_se
 
         # TODO: Benchmark against `vcat`.
 
-        enn_ = Vector{Float64}(undef, n)
+        enn_ = Vector{Float64}(undef, n_se)
 
         for id in nei_
 
@@ -209,23 +225,27 @@ function _tabulate(se_, en_, se_x_id_x_ra, ou, wr)
 
         end
 
+        se_x_st_x_nu[:, 2] = enn_
+
         nen_ = Vector{Float64}()
 
         pon_ = Vector{Float64}()
 
-        for idp in 1:n_pe
+        # TODO: Benchmark iteration order.
 
-            for ids in 1:n_se
+        for id2 in 1:n_ra
 
-                ra = se_x_id_x_ra[ids, idp]
+            for id1 in 1:n_se
+
+                ra = se_x_id_x_ra[id1, id2]
 
                 if ra < 0.0
 
-                    push!(nen_, -ra / nem_[ids])
+                    push!(nen_, -ra / nem_[id1])
 
                 elseif 0.0 < ra
 
-                    push!(pon_, ra / pom_[ids])
+                    push!(pon_, ra / pom_[id1])
 
                 end
 
@@ -239,46 +259,39 @@ function _tabulate(se_, en_, se_x_id_x_ra, ou, wr)
             nen_,
         )
 
+        se_x_st_x_nu[nei_, 3] = nep_
+
+        se_x_st_x_nu[nei_, 4] = nea_
+
         pop_, poa_ = BioLab.Significance.get_p_value_and_adjust(
             BioLab.Significance.get_p_value_for_more,
             enn_[poi_],
             pon_,
         )
 
-        pv_ = vcat(nep_, pop_)
+        se_x_st_x_nu[poi_, 3] = pop_
 
-        ad_ = vcat(nea_, poa_)
+        se_x_st_x_nu[poi_, 4] = poa_
 
     end
 
     BioLab.Table.write(
         joinpath(ou, "set_x_statistic_x_number.tsv"),
-        DataFrame(
-            "Set" => se_,
-            "Enrichment" => en_,
-            "Normalized Enrichment" => enn_,
-            "P Value" => pv_,
-            "Adjusted P Value" => ad_,
+        BioLab.DataFrame.make(
+            "Set",
+            se_,
+            ("Enrichment", "Normalized Enrichment", "P Value", "Adjusted P Value"),
+            se_x_st_x_nu,
         ),
     )
 
-    return enn_, pv_, ad_
-
-end
-
-function _plot(en_, al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, n_ex, pl_, di)
-
-    n_se = length(se_)
-
     n_ex = min(n_ex, n_se)
 
-    # TODO: Ensure `en_` is sorted.
+    for id in 1:n_ex
 
-    for ro in 1:n_ex
+        se = se_[id]
 
-        en = en_[ro]
-
-        se = se_[ro]
+        en = en_[id]
 
         if en < 0 && !(se in pl_)
 
@@ -288,11 +301,11 @@ function _plot(en_, al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, n_ex, pl_, di
 
     end
 
-    for ro in n_se:-1:(n_se - n_ex + 1)
+    for id in n_se:-1:(n_se - n_ex + 1)
 
-        en = en_[ro]
+        se = se_[id]
 
-        se = se_[ro]
+        en = en_[id]
 
         if 0 < en && !(se in pl_)
 
@@ -302,7 +315,7 @@ function _plot(en_, al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, n_ex, pl_, di
 
     end
 
-    di = mkpath(joinpath(di, "plot"))
+    oup = mkpath(joinpath(ou, "plot"))
 
     for (se, id) in zip(pl_, indexin(pl_, se_))
 
@@ -317,18 +330,18 @@ function _plot(en_, al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, n_ex, pl_, di
             sc,
             lo,
             hi,
-            ht = joinpath(di, "$(BioLab.Path.clean(se)).html"),
+            ht = joinpath(oup, "$(BioLab.Path.clean(se)).html"),
         )
 
     end
 
-    return nothing
+    nothing
 
 end
 
 function user_rank(al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, ra, n_pe, n_ex, pl_, ou, wr)
 
-    se_en = BioLab.FeatureSetEnrichment.enrich(al, fe_, sc_, se_, fe1___; ex)
+    en_ = BioLab.FeatureSetEnrichment.enrich(al, fe_, sc_, se_, fe1___; ex)
 
     se_x_id_x_ra = Matrix{Float64}(undef, length(se_), n_pe)
 
@@ -354,11 +367,7 @@ function user_rank(al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, ra, n_pe, n_ex
 
     end
 
-    enn_, pv_, ad_ = _tabulate(se_, en_, se_x_id_x_ra, ou, wr)
-
-    _plot(en_, al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, n_ex, pl_, ou)
-
-    return nothing
+    _write(se_, en_, se_x_id_x_ra, al, fe_, sc_, fe1___, ex, fe, sc, lo, hi, n_ex, pl_, ou, wr)
 
 end
 
@@ -415,8 +424,6 @@ Run user-rank (pre-rank) GSEA.
         ke_ar["write_set_x_index_x_random_tsv"],
     )
 
-    return nothing
-
 end
 
 function _get_standard_deviation(nu_, me)
@@ -425,7 +432,7 @@ function _get_standard_deviation(nu_, me)
 
     if me == 0.0
 
-        return fr
+        fr
 
     else
 
@@ -435,7 +442,7 @@ function _get_standard_deviation(nu_, me)
 
         end
 
-        return max(me * fr, std(nu_; corrected = true))
+        max(me * fr, std(nu_; corrected = true))
 
     end
 
@@ -447,18 +454,16 @@ function _get_signal_to_noise_ratio(nu1_, nu2_)
 
     me2 = mean(nu2_)
 
-    return (me1 - me2) / (_get_standard_deviation(nu1_, me1) + _get_standard_deviation(nu2_, me2))
+    (me1 - me2) / (_get_standard_deviation(nu1_, me1) + _get_standard_deviation(nu2_, me2))
 
 end
 
 function _compare_and_sort(fu, bo_, fe_x_sa_x_sc, fe_)
 
-    sc_, fes_ = BioLab.Collection.sort_like(
+    BioLab.Collection.sort_like(
         (BioLab.FeatureXSample.target(fu, bo_, fe_x_sa_x_sc), fe_);
         ic = false,
     )
-
-    return fes_, sc_
 
 end
 
@@ -516,7 +521,7 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    fe_, sc_ = _compare_and_sort(fu, bo_, fe_x_sa_x_sc, fe_)
+    sc_, fe_ = _compare_and_sort(fu, bo_, fe_x_sa_x_sc, fe_)
 
     BioLab.Table.write(
         joinpath(output_directory, "feature_x_metric_x_score.tsv"),
@@ -579,7 +584,7 @@ Run metric-rank (standard) GSEA.
 
             @showprogress for id in 1:n_pe
 
-                fer_, ra_ = _compare_and_sort(fu, shuffle!(bo_), fe_x_sa_x_sc, fe_)
+                ra_, fer_ = _compare_and_sort(fu, shuffle!(bo_), fe_x_sa_x_sc, fe_)
 
                 se_x_id_x_ra[:, id] =
                     BioLab.FeatureSetEnrichment.enrich(al, fer_, ra_, se_, fe1___; ex)
@@ -588,9 +593,24 @@ Run metric-rank (standard) GSEA.
 
         end
 
-        enn_, pv_, ad_ = _tabulate(se_, en_, se_x_id_x_ra, output_directory, wr)
-
-        _plot(en_, al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, n_ex, pl_, output_directory)
+        _write(
+            se_,
+            en_,
+            se_x_id_x_ra,
+            al,
+            fe_,
+            sc_,
+            fe1___,
+            ex,
+            fe,
+            sc,
+            lo,
+            hi,
+            n_ex,
+            pl_,
+            output_directory,
+            wr,
+        )
 
     elseif pe == "set"
 
@@ -618,8 +638,6 @@ Run metric-rank (standard) GSEA.
         error("`permutation` is not one of the listed in https://github.com/KwatMDPhD/GSEA.jl.")
 
     end
-
-    return nothing
 
 end
 
