@@ -1,4 +1,4 @@
-The ✨ new (_not-yet-official_) ✨ (Gene-) Set Enrichment Analysis 🧬
+🧬 The ✨ new (_not-yet-official_) ✨ (Gene-) Set Enrichment Analysis.
 
 💁 Join the [bioinformatics community](https://discord.gg/tKh7fguMrD) to get live help on GSEA (and everything bioinformatics) 🎪 ⌨️ 🔰 💡
 
@@ -46,8 +46,12 @@ mkdir output
 gsea metric-rank setting.json target_x_sample_x_number.tsv feature_x_sample_x_number.tsv set_features.json output
 
 ls -l output
+```
 
-head -2 output/*.tsv
+#### 4. Look at the results
+
+```bash
+head -3 output/*.tsv
 
 open output/plot/*.html
 ```

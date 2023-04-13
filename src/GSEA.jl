@@ -632,9 +632,9 @@ Run metric-rank (standard) GSEA.
 end
 
 """
-The ✨ new ✨ (Gene-) Set Enrichment Analysis 🧬
+🧬 The ✨ new ✨ (Gene-) Set Enrichment Analysis.
+📍 Learn more at https://github.com/KwatMDPhD/GSEA.jl.
 """
-
 @main
 
 end

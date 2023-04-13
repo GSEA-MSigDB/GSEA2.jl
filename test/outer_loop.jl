@@ -8,7 +8,7 @@ using GSEA
 
 # --------------------------------------------- #
 
-di = "outer_loop"
+di = joinpath(@__DIR__, "outer_loop")
 
 pip = mkpath(joinpath(di, "python", "input"))
 
