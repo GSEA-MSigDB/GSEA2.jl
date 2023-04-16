@@ -168,7 +168,7 @@ julia --project --eval "using Pkg; Pkg.test()"
 julia --project deps/build.jl app tarball
 ```
 
-☝️ makes `build` and `gsea-application-N.N.N-julia-N.N.N-MACHINE-xNN.tar.gz`.
+☝️ makes `build` (and `gsea-*.tar.gz`).
 
 Add `build/gsea/bin` to the path.
 
