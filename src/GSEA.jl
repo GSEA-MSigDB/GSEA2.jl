@@ -557,7 +557,7 @@ Run metric-rank (standard) GSEA.
 
             _fe2n, fe2_, _id_, fe2_x_id_x_ra = BioLab.DataFrame.separate(feature2_x_index_x_random)
 
-            println("Using predefined $n_pe $pe permutations to compute significance")
+            println("🎰 Using predefined $n_pe $pe permutations to compute significance")
 
             @showprogress for id in 1:n_pe
 
@@ -569,7 +569,7 @@ Run metric-rank (standard) GSEA.
 
         elseif 0 < n_pe
 
-            println("Permuting $(pe)s $n_pe times to compute significance")
+            println("🎰 Permuting $(pe)s $n_pe times to compute significance")
 
             seed!(ra)
 
@@ -632,8 +632,7 @@ Run metric-rank (standard) GSEA.
 end
 
 """
-🧬 The ✨ new ✨ (Gene-) Set Enrichment Analysis.
-📍 Learn more at https://github.com/KwatMDPhD/GSEA.jl.
+🧬 The ✨ new ✨ (Gene-) Set Enrichment Analysis. 📍 Learn more at https://github.com/KwatMDPhD/GSEA.jl.
 """
 @main
 
