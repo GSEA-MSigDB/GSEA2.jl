@@ -128,7 +128,10 @@ readdir(joinpath(ou, "plot"))
 
 # --------------------------------------------- #
 
-for jl in ("small.jl", "outer_loop.jl")
+for jl in (
+    "small.jl",
+    # "outer_loop.jl",
+)
 
     println(jl)
 
