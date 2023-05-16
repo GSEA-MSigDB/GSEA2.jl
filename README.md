@@ -144,6 +144,8 @@ If installation is unavailable or fails, try building.
 
 #### 1. Download this repository
 
+Install `git-lfs`.
+
 ```bash
 git clone https://github.com/KwatMDPhD/GSEA.jl
 ```
