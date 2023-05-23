@@ -2,13 +2,13 @@ using BioLab
 
 using GSEA
 
-# --------------------------------------------- #
+# ---- #
 
 TE = joinpath(tempdir(), "GSEA.test.small")
 
 BioLab.Path.empty(TE)
 
-# --------------------------------------------- #
+# ---- #
 
 DA = @__DIR__
 

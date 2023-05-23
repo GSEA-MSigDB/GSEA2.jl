@@ -6,7 +6,7 @@ using BioLab
 
 using GSEA
 
-# --------------------------------------------- #
+# ---- #
 
 di = joinpath(@__DIR__, "outer_loop")
 
@@ -20,7 +20,7 @@ BioLab.Path.empty(ip)
 
 BioLab.Path.empty(ou)
 
-# --------------------------------------------- #
+# ---- #
 
 _fen, fe_, sa_, fe_x_sa_x_nu =
     BioLab.DataFrame.separate(BioLab.GCT.read(joinpath(pip, "Coller_et_al_gene_exp_preproc.gct")))
@@ -33,7 +33,7 @@ tsf = joinpath(ip, "feature_x_sample_x_number.tsv")
 
 BioLab.Table.write(tsf, BioLab.DataFrame.make("Feature", fe_, sa_, fe_x_sa_x_nu))
 
-# --------------------------------------------- #
+# ---- #
 
 tst = joinpath(ip, "target_x_sample_x_number.tsv")
 
@@ -58,7 +58,7 @@ BioLab.Table.write(
     ),
 )
 
-# --------------------------------------------- #
+# ---- #
 
 jss = joinpath(ip, "set_features.json")
 
@@ -70,7 +70,7 @@ BioLab.Dict.write(
     )),
 )
 
-# --------------------------------------------- #
+# ---- #
 
 GSEA.metric_rank(
     joinpath(di, "setting.json"),
@@ -83,7 +83,7 @@ GSEA.metric_rank(
     ),
 )
 
-# --------------------------------------------- #
+# ---- #
 
 dap = sort!(
     BioLab.Table.read(
@@ -104,7 +104,7 @@ for id in 1:size(dap, 1)
 
 end
 
-# --------------------------------------------- #
+# ---- #
 
 dap = sort!(
     BioLab.Table.read(

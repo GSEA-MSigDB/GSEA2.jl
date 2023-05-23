@@ -4,13 +4,13 @@ using BioLab
 
 using GSEA
 
-# --------------------------------------------- #
+# ---- #
 
 TE = joinpath(tempdir(), "GSEA.test")
 
 BioLab.Path.empty(TE)
 
-# --------------------------------------------- #
+# ---- #
 
 SE = joinpath(dirname(@__DIR__), "setting")
 
@@ -24,7 +24,7 @@ TST = joinpath(DA, "target_x_sample_x_number.tsv")
 
 TSM = "feature_x_metric_x_score.tsv"
 
-# --------------------------------------------- #
+# ---- #
 
 se_, fe1___ = GSEA._read_set(ST, [], 33, 36)
 
@@ -40,7 +40,7 @@ se_, fe1___ = GSEA._read_set(ST, ["SHH", "XIST"], 1, 5656)
 
 # @code_warntype GSEA._read_set(ST, ["SHH", "XIST"], 1, 5656)
 
-# --------------------------------------------- #
+# ---- #
 
 na = "data_rank"
 
@@ -54,7 +54,7 @@ BioLab.DataFrame.print(BioLab.Table.read(joinpath(ou, "set_x_sample_x_enrichment
 
 # @code_warntype GSEA.data_rank(se, TSS, ST, ou)
 
-# --------------------------------------------- #
+# ---- #
 
 function print_output(ou)
 
@@ -64,7 +64,7 @@ function print_output(ou)
 
 end
 
-# --------------------------------------------- #
+# ---- #
 
 na = "user_rank"
 
@@ -82,7 +82,7 @@ readdir(joinpath(ou, "plot"))
 
 # @code_warntype GSEA.user_rank(se, me, ST, ou)
 
-# --------------------------------------------- #
+# ---- #
 
 for (nu1_, nu2_) in (
     (collect(1:3), collect(10:10:30)),
@@ -108,7 +108,7 @@ for (nu1_, nu2_) in (
 
 end
 
-# --------------------------------------------- #
+# ---- #
 
 na = "metric_rank"
 
@@ -126,7 +126,7 @@ readdir(joinpath(ou, "plot"))
 
 # @code_warntype GSEA.metric_rank(se, TST, TSS, ST, ou)
 
-# --------------------------------------------- #
+# ---- #
 
 for jl in (
     "small.jl",
