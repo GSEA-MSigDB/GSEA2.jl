@@ -1,6 +1,6 @@
 module GSEA
 
-using Comonicon: @cast, @main
+#using Comonicon: @cast, @main
 
 using ProgressMeter: @showprogress
 
@@ -12,17 +12,17 @@ using BioLab
 
 function _read_set(js, fe_, mi, ma, mif)
 
-    se_fe1_ = BioLab.Dict.read(js)
+    se_fe1_ = BioLab.Dict.read(js, Dict{String, Vector{String}})
 
     se_ = collect(keys(se_fe1_))
 
-    fe1___ = [convert(Vector{String}, fe1_) for fe1_ in values(se_fe1_)]
+    fe1___ = collect(values(se_fe1_))
 
     n = length(se_)
 
     @info "There are $n sets before filtering."
 
-    ke_ = Vector{Bool}(undef, n)
+    ke_ = BitVector(undef, n)
 
     for (id, fe1_) in enumerate(fe1___)
 
@@ -64,59 +64,35 @@ function _use_algorithm(al)
 
         BioLab.FeatureSetEnrichment.KLi()
 
-    elseif al == "kliop"
-
-        BioLab.FeatureSetEnrichment.KLioP()
-
     elseif al == "kliom"
 
         BioLab.FeatureSetEnrichment.KLioM()
 
+    elseif al == "kliop"
+
+        BioLab.FeatureSetEnrichment.KLioP()
+
     else
 
-        error("`algorithm` is not one of the listed in https://github.com/KwatMDPhD/GSEA.jl.")
+        error("Algorithm ($al) is not ks, ksa, kli, kliom, or kliop.")
 
     end
 
 end
 
-using StatsBase: countmap
+function error_bad(an)
 
-function _countmap_string(an_)
+    is_ = BioLab.Bad.is.(an)
 
-    join(("$n $an" for (an, n) in countmap(an_) if 1 < n), ".\n")
+    n = sum(is_)
 
-end
+    if !iszero(n)
 
-function error_duplicate(an_)
+        n_no = BioLab.String.count(n, "bad value")
 
-    if isempty(an_)
+        st = join(unique(view(an, is_)), ".\n")
 
-        error("Collection is empty.")
-
-    end
-
-    if !allunique(an_)
-
-        st = _countmap_string(an_)
-
-        error("Collection has duplicates.\n$st.")
-
-    end
-
-end
-
-function error_bad(an_)
-
-    is_ = BioLab.Bad.is.(an_)
-
-    n_ba = sum(is_)
-
-    if !iszero(n_ba)
-
-        n_no = BioLab.String.count(n_ba, "bad value")
-
-        error("Found $n_no.")
+        error("Found $n_no.\n$st.")
 
     end
 
@@ -127,53 +103,57 @@ Run data-rank (single-sample) GSEA.
 
 # Arguments
 
-  - `feature_x_sample_x_score_tsv`:
-  - `set_features_json`:
   - `output_directory`:
+  - `feature_x_sample_x_score_tsv`:
+  - `set_features_json`: .JSON or directory containing .JSONs.
 
 # Options
 
   - `--minimum-set-size`: 15.
   - `--maximum-set-size`: 500.
-  - `--minimum-set-fraction`: 0.8.
+  - `--minimum-set-fraction`: 0.
   - `--skip-0`: false.
-  - `--algorithm`: "kliom".
+  - `--algorithm`: "ks".
   - `--exponent`: 1.0.
 """
-@cast function data_rank(
+#@cast function data_rank(
+function data_rank(
+    output_directory;
     feature_x_sample_x_score_tsv,
     set_features_json,
-    output_directory;
     minimum_set_size = 15,
     maximum_set_size = 500,
-    minimum_set_fraction = 0.8,
+    minimum_set_fraction = 0,
     skip_0 = false,
-    algorithm = "kliom",
+    algorithm = "ks",
     exponent = 1.0,
 )
 
-    if isdir()
+    BioLab.Error.error_missing(output_directory)
 
-        js_ = Tuple(
-            splitext(ba)[1] for ba in readdir(set_directory) if contains(ba, r"^(?!_).*json$")
-        )
+    # TODO: Remove typing.
+    _naf, fe_::Vector{String}, sa_::Vector{String}, fe_x_sa_x_sc::Matrix{Float64} =
+        BioLab.DataFrame.separate(BioLab.DataFrame.read(feature_x_sample_x_score_tsv))
 
-    else
+    BioLab.Error.error_duplicate(fe_)
 
-        js_ = (set_features_json,)
-
-    end
-
-    _fen, fe_::Vector{String}, sa_::Vector{String}, fe_x_sa_x_sc::Matrix{Float64} =
-        BioLab.DataFrame.separate(BioLab.Table.read(feature_x_sample_x_score_tsv))
-
-    error_duplicate(fe_)
+    error_bad(fe_)
 
     error_bad(fe_x_sa_x_sc)
 
     if skip_0
 
-        replace!(fe_x_sa_x_sc, 0.0 => NaN)
+        replace!(fe_x_sa_x_sc, 0 => NaN)
+
+    end
+
+    if isdir(set_features_json)
+
+        js_ = BioLab.Path.read(set_features_json; join = true, ke_ = (r"^(?!_).*json$"))
+
+    else
+
+        js_ = [set_features_json]
 
     end
 
@@ -181,16 +161,12 @@ Run data-rank (single-sample) GSEA.
 
         @info "Enriching for $js"
 
-        se_, fe1___ = _read_set(
-            set_features_json,
-            fe_,
-            minimum_set_size,
-            maximum_set_size,
-            minimum_set_fraction,
-        )
+        se_, fe1___ = _read_set(js, fe_, minimum_set_size, maximum_set_size, minimum_set_fraction)
 
-        BioLab.Table.write(
-            joinpath(mkpath(output_directory), "$(js)_x_sample_x_enrichment.tsv"),
+        nas = splitext(basename(js))[1]
+
+        BioLab.DataFrame.write(
+            joinpath(output_directory, "$(nas)_x_sample_x_enrichment.tsv"),
             BioLab.DataFrame.make(
                 "Set",
                 se_,
@@ -198,9 +174,7 @@ Run data-rank (single-sample) GSEA.
                 BioLab.FeatureSetEnrichment.enrich(
                     _use_algorithm(algorithm),
                     fe_,
-                    sa_,
                     fe_x_sa_x_sc,
-                    se_,
                     fe1___;
                     ex = exponent,
                 ),
@@ -211,6 +185,7 @@ Run data-rank (single-sample) GSEA.
 
 end
 
+# TODO: Pick up.
 function _write(
     se_,
     en_,
@@ -252,7 +227,7 @@ function _write(
 
         if wr
 
-            BioLab.Table.write(
+            BioLab.DataFrame.write(
                 joinpath(ou, "set_x_index_x_random.tsv"),
                 BioLab.DataFrame.make("Set", se_, [string(id) for id in 1:n_ra], se_x_id_x_ra),
             )
@@ -359,7 +334,7 @@ function _write(
 
     end
 
-    BioLab.Table.write(
+    BioLab.DataFrame.write(
         joinpath(ou, "set_x_statistic_x_number.tsv"),
         BioLab.DataFrame.make(
             "Set",
@@ -482,7 +457,8 @@ Run user-rank (pre-rank) GSEA.
 
   - `--write-set-x-index-x-random-tsv`: false.
 """
-@cast function user_rank(
+#@cast function user_rank(
+function user_rank(
     feature_x_metric_x_score_tsv,
     set_features_json,
     output_directory;
@@ -502,8 +478,8 @@ Run user-rank (pre-rank) GSEA.
     high_text = "High Side",
 )
 
-    _fen, fe_, _me_, fe_x_me_x_sc =
-        BioLab.DataFrame.separate(BioLab.Table.read(feature_x_metric_x_score_tsv))
+    _naf, fe_, _me_, fe_x_me_x_sc =
+        BioLab.DataFrame.separate(BioLab.DataFrame.read(feature_x_metric_x_score_tsv))
 
     error_duplicate(fe_)
 
@@ -612,7 +588,8 @@ Run metric-rank (standard) GSEA.
 
   - `--write-set-x-index-x-random-tsv`: false.
 """
-@cast function metric_rank(
+#@cast function metric_rank(
+function metric_rank(
     target_x_sample_x_number_tsv,
     feature_x_sample_x_score_tsv,
     set_features_json,
@@ -637,14 +614,14 @@ Run metric-rank (standard) GSEA.
 )
 
     _tan, ta_, sat_, ta_x_sa_x_nu =
-        BioLab.DataFrame.separate(BioLab.Table.read(target_x_sample_x_number_tsv))
+        BioLab.DataFrame.separate(BioLab.DataFrame.read(target_x_sample_x_number_tsv))
 
     error_duplicate(ta_)
 
     error_bad(ta_x_sa_x_nu)
 
-    _fen, fe_, saf_, fe_x_sa_x_sc =
-        BioLab.DataFrame.separate(BioLab.Table.read(feature_x_sample_x_score_tsv))
+    _naf, fe_, saf_, fe_x_sa_x_sc =
+        BioLab.DataFrame.separate(BioLab.DataFrame.read(feature_x_sample_x_score_tsv))
 
     error_duplicate(fe_)
 
@@ -669,7 +646,7 @@ Run metric-rank (standard) GSEA.
 
     sc_, fe_ = _comparesort(fu, bo_, fe_x_sa_x_sc, fe_)
 
-    BioLab.Table.write(
+    BioLab.DataFrame.write(
         joinpath(output_directory, "feature_x_metric_x_score.tsv"),
         BioLab.DataFrame.make("Feature", fe_, [metric], hcat(sc_)),
     )
@@ -771,6 +748,6 @@ end
 The new official gene-set-enrichment analysis (GSEA).
 Learn more at https://github.com/KwatMDPhD/GSEA.jl.
 """
-@main
+#@main
 
 end
