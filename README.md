@@ -1,4 +1,4 @@
-The new official gene-set-enrichment analysis (GSEA).
+The ✨ new ✨ gene-set-enrichment analysis (GSEA) 🧬.
 
 💁 Join the [bioinformatics community](https://discord.gg/tKh7fguMrD) to get live help on GSEA (and everything bioinformatics) 🎪 ⌨️ 🔰 💡
 
@@ -56,72 +56,6 @@ head -3 output/*.tsv
 open output/plot/*.html
 ```
 
-## Settings are just a [`.json` file](data/setting)
-
-- `metric` for scoring and ranking features (for `metric-rank`)
-
-  `signal_to_noise_ratio` (coming soon... | `mean_difference` | `median_difference` | `pearson_correlation` | `cosine_distance` | `information_coefficient`)
-
-- `feature_name` (for `metric-rank` and `user-rank`)
-
-  String
-
-- `score_name` (for `metric-rank` and `user-rank`)
-
-  String
-
-- `low_text` (for `metric-rank` and `user-rank`)
-
-  String
-
-- `high_text` (for `metric-rank` and `user-rank`)
-
-  String
-
-- `minimum_set_size` that removes sets smaller than this
-
-  Integer
-
-- `maximum_set_size` that removes sets bigger than this
-
-  Integer
-
-- `exponent` to raise the scores
-
-  Number
-
-- `algorithm` for computing enrichment
-
-  `ks` (_Kolmogorov Smirnov_) | `ksa` (`ks` area) | `kli` | `kliop` | `kliom`
-
-- `number_of_jobs`
-
-  Integer
-
-- `permutation` for computing significance
-
-  `sample` (for `metric-rank`) | `set` (for `metric-rank` and `user-rank`)
-
-- `random_seed` (for `metric-rank` and `user-rank`)
-
-  Integer
-
-- `number_of_permutations` (for `metric-rank` and `user-rank`)
-
-  Integer
-
-- `number_of_sets_to_plot` (for `metric-rank` and `user-rank`)
-
-  Integer
-
-- `more_sets_to_plot` (for `metric-rank` and `user-rank`)
-
-  List of strings (set names)
-
-- `write_set_x_index_x_random_tsv` (for `metric-rank` and `user-rank`)
-
-  Boolean
-
 ## Install
 
 1. Download the latest [release](https://github.com/KwatMDPhD/GSEA.jl/releases/latest) and extract it.
@@ -129,6 +63,8 @@ open output/plot/*.html
 2. Add `gsea/bin` to the path.
 
 3. Test installation
+
+# TODO
 
 We plan to sign `gsea` in the near future. Meanwhile, enable 3rd-party apps on your macOS.
 
