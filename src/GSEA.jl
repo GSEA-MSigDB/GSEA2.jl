@@ -10,7 +10,7 @@ using StatsBase: mean, sample, std
 
 using BioLab
 
-function _read_set(js, it_, mi, ma)
+function _read_set(js, fe_, mi, ma, mif)
 
     se_fe1_ = BioLab.Dict.read(js)
 
@@ -20,19 +20,31 @@ function _read_set(js, it_, mi, ma)
 
     n = length(se_)
 
-    println("🎣 There are $n sets before filtering.")
+    @info "There are $n sets before filtering."
 
     ke_ = Vector{Bool}(undef, n)
 
     for (id, fe1_) in enumerate(fe1___)
 
-        intersect!(fe1_, it_)
+        n1 = length(fe1_)
 
-        ke_[id] = mi <= length(fe1_) <= ma
+        intersect!(fe1_, fe_)
+
+        n2 = length(fe1_)
+
+        ke_[id] = mi <= n2 <= ma && mif <= n2 / n1
 
     end
 
-    println("🍣 $(sum(ke_)) after.")
+    n_ke = sum(ke_)
+
+    if iszero(n_ke)
+
+        error("Selected 0 set.")
+
+    end
+
+    @info "$n_ke after."
 
     se_[ke_], fe1___[ke_]
 
@@ -68,54 +80,134 @@ function _use_algorithm(al)
 
 end
 
-# TODO: Benchmark if the lower-level functions are getting the correct type.
+using StatsBase: countmap
+
+function _countmap_string(an_)
+
+    join(("$n $an" for (an, n) in countmap(an_) if 1 < n), ".\n")
+
+end
+
+function error_duplicate(an_)
+
+    if isempty(an_)
+
+        error("Collection is empty.")
+
+    end
+
+    if !allunique(an_)
+
+        st = _countmap_string(an_)
+
+        error("Collection has duplicates.\n$st.")
+
+    end
+
+end
+
+function error_bad(an_)
+
+    is_ = BioLab.Bad.is.(an_)
+
+    n_ba = sum(is_)
+
+    if !iszero(n_ba)
+
+        n_no = BioLab.String.count(n_ba, "bad value")
+
+        error("Found $n_no.")
+
+    end
+
+end
 
 """
 Run data-rank (single-sample) GSEA.
 
 # Arguments
 
-  - `setting_json`:
   - `feature_x_sample_x_score_tsv`:
   - `set_features_json`:
   - `output_directory`:
+
+# Options
+
+  - `--minimum-set-size`: 15.
+  - `--maximum-set-size`: 500.
+  - `--minimum-set-fraction`: 0.8.
+  - `--skip-0`: false.
+  - `--algorithm`: "kliom".
+  - `--exponent`: 1.0.
 """
 @cast function data_rank(
-    setting_json,
     feature_x_sample_x_score_tsv,
     set_features_json,
-    output_directory,
+    output_directory;
+    minimum_set_size = 15,
+    maximum_set_size = 500,
+    minimum_set_fraction = 0.8,
+    skip_0 = false,
+    algorithm = "kliom",
+    exponent = 1.0,
 )
 
-    ke_ar = BioLab.Dict.read(setting_json)
+    if isdir()
+
+        js_ = Tuple(
+            splitext(ba)[1] for ba in readdir(set_directory) if contains(ba, r"^(?!_).*json$")
+        )
+
+    else
+
+        js_ = (set_features_json,)
+
+    end
 
     _fen, fe_::Vector{String}, sa_::Vector{String}, fe_x_sa_x_sc::Matrix{Float64} =
         BioLab.DataFrame.separate(BioLab.Table.read(feature_x_sample_x_score_tsv))
 
-    BioLab.Array.error_duplicate(fe_)
+    error_duplicate(fe_)
 
-    BioLab.Collection.error_bad(fe_x_sa_x_sc, Real)
+    error_bad(fe_x_sa_x_sc)
 
-    se_, fe1___ =
-        _read_set(set_features_json, fe_, ke_ar["minimum_set_size"], ke_ar["maximum_set_size"])
+    if skip_0
 
-    se_x_sa_x_en = BioLab.FeatureSetEnrichment.enrich(
-        _use_algorithm(ke_ar["algorithm"]),
-        fe_,
-        sa_,
-        fe_x_sa_x_sc,
-        se_,
-        fe1___;
-        ex = ke_ar["exponent"],
-        n_jo = ke_ar["number_of_jobs"],
-    )
+        replace!(fe_x_sa_x_sc, 0.0 => NaN)
 
-    BioLab.Table.write(
-        joinpath(mkpath(output_directory), "set_x_sample_x_enrichment.tsv"),
-        BioLab.DataFrame.make("Set", se_, sa_, se_x_sa_x_en),
-    )
+    end
 
-    nothing
+    for js in js_
+
+        @info "Enriching for $js"
+
+        se_, fe1___ = _read_set(
+            set_features_json,
+            fe_,
+            minimum_set_size,
+            maximum_set_size,
+            minimum_set_fraction,
+        )
+
+        BioLab.Table.write(
+            joinpath(mkpath(output_directory), "$(js)_x_sample_x_enrichment.tsv"),
+            BioLab.DataFrame.make(
+                "Set",
+                se_,
+                sa_,
+                BioLab.FeatureSetEnrichment.enrich(
+                    _use_algorithm(algorithm),
+                    fe_,
+                    sa_,
+                    fe_x_sa_x_sc,
+                    se_,
+                    fe1___;
+                    ex = exponent,
+                ),
+            ),
+        )
+
+    end
 
 end
 
@@ -245,7 +337,7 @@ function _write(
 
         end
 
-        nep_, nea_ = BioLab.Significance.get_p_value_and_adjust(
+        nep_, nea_ = BioLab.Significance.get_p_valueadjust(
             BioLab.Significance.get_p_value_for_less,
             enn_[nei_],
             nen_,
@@ -255,7 +347,7 @@ function _write(
 
         se_x_st_x_nu[nei_, 4] = nea_
 
-        pop_, poa_ = BioLab.Significance.get_p_value_and_adjust(
+        pop_, poa_ = BioLab.Significance.get_p_valueadjust(
             BioLab.Significance.get_p_value_for_more,
             enn_[poi_],
             pon_,
@@ -327,8 +419,6 @@ function _write(
 
     end
 
-    nothing
-
 end
 
 function user_rank(al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, ra, n_pe, n_pl, pl_, ou, wr)
@@ -368,52 +458,81 @@ Run user-rank (pre-rank) GSEA.
 
 # Arguments
 
-  - `setting_json`:
   - `feature_x_metric_x_score_tsv`:
   - `set_features_json`:
   - `output_directory`:
+
+# Options
+
+  - `--minimum-set-size`: 15.
+  - `--maximum-set-size`: 500.
+  - `--minimum-set-fraction`: 0.8.
+  - `--algorithm`: "kliom".
+  - `--exponent`: 1.0.
+  - `--random-seed`: 20150603.
+  - `--number-of-permutations`: 100.
+  - `--number-of-sets-to-plot`: 4.
+  - `--more-sets-to-plot`: [].
+  - `--feature-name`: "Gene".
+  - `--score-name`: "User-Defined Score".
+  - `--low-text`: "Low Side".
+  - `--high-text`: "High Side".
+
+# Flags
+
+  - `--write-set-x-index-x-random-tsv`: false.
 """
 @cast function user_rank(
-    setting_json,
     feature_x_metric_x_score_tsv,
     set_features_json,
-    output_directory,
+    output_directory;
+    minimum_set_size = 15,
+    maximum_set_size = 500,
+    minimum_set_fraction = 0.8,
+    algorithm = "kliom",
+    exponent = 1.0,
+    random_seed = 20150603,
+    number_of_permutations = 100,
+    write_set_x_index_x_random_tsv = false,
+    number_of_sets_to_plot = 4,
+    more_sets_to_plot = Vector{String}(),
+    feature_name = "Gene",
+    score_name = "User-Defined Score",
+    low_text = "Low Side",
+    high_text = "High Side",
 )
-
-    ke_ar = BioLab.Dict.read(setting_json)
 
     _fen, fe_, _me_, fe_x_me_x_sc =
         BioLab.DataFrame.separate(BioLab.Table.read(feature_x_metric_x_score_tsv))
 
-    BioLab.Array.error_duplicate(fe_)
+    error_duplicate(fe_)
 
-    # TODO
-    BioLab.Collection.error_bad(fe_x_me_x_sc[:, [1]], Real)
+    error_bad(fe_x_me_x_sc[:, [1]])
 
     sc_ = fe_x_me_x_sc[:, 1]
 
     sc_, fe_ = BioLab.Collection.sort_like((sc_, fe_); ic = false)
 
     se_, fe1___ =
-        _read_set(set_features_json, fe_, ke_ar["minimum_set_size"], ke_ar["maximum_set_size"])
+        _read_set(set_features_json, fe_, minimum_set_size, maximum_set_size, minimum_set_fraction)
 
     user_rank(
-        _use_algorithm(ke_ar["algorithm"]),
+        _use_algorithm(algorithm),
         fe_,
         sc_,
         se_,
         fe1___,
-        ke_ar["exponent"],
-        ke_ar["feature_name"],
-        ke_ar["score_name"],
-        ke_ar["low_text"],
-        ke_ar["high_text"],
-        ke_ar["random_seed"],
-        ke_ar["number_of_permutations"],
-        ke_ar["number_of_sets_to_plot"],
-        ke_ar["more_sets_to_plot"],
+        exponent,
+        feature_name,
+        score_name,
+        low_text,
+        high_text,
+        random_seed,
+        number_of_permutations,
+        number_of_sets_to_plot,
+        more_sets_to_plot,
         output_directory,
-        ke_ar["write_set_x_index_x_random_tsv"],
+        write_set_x_index_x_random_tsv,
     )
 
 end
@@ -450,7 +569,7 @@ function _get_signal_to_noise_ratio(nu1_, nu2_)
 
 end
 
-function _compare_and_sort(fu, bo_, fe_x_sa_x_sc, fe_)
+function _comparesort(fu, bo_, fe_x_sa_x_sc, fe_)
 
     BioLab.Collection.sort_like(
         (BioLab.FeatureXSample.target(fu, bo_, fe_x_sa_x_sc), fe_);
@@ -464,46 +583,81 @@ Run metric-rank (standard) GSEA.
 
 # Arguments
 
-  - `setting_json`:
   - `target_x_sample_x_number_tsv`:
   - `feature_x_sample_x_score_tsv`:
   - `set_features_json`:
   - `output_directory`:
+
+# Options
+
+# Options
+
+  - `--minimum-set-size`: 15.
+  - `--maximum-set-size`: 500.
+  - `--minimum-set-fraction`: 0.8.
+  - `--metric`: "signal_to_noise_ratio".
+  - `--algorithm`: "kliom".
+  - `--exponent`: 1.0.
+  - `--permutation`: "sample".
+  - `--random-seed`: 20150603.
+  - `--number-of-permutations`: 100.
+  - `--number-of-sets-to-plot`: 4.
+  - `--more-sets-to-plot`: [].
+  - `--feature-name`: "Gene".
+  - `--score-name`: "User-Defined Score".
+  - `--low-text`: "Low Side".
+  - `--high-text`: "High Side".
+
+# Flags
+
+  - `--write-set-x-index-x-random-tsv`: false.
 """
 @cast function metric_rank(
-    setting_json,
     target_x_sample_x_number_tsv,
     feature_x_sample_x_score_tsv,
     set_features_json,
     output_directory;
+    minimum_set_size = 15,
+    maximum_set_size = 500,
+    minimum_set_fraction = 0.8,
+    metric = "signal_to_noise_ratio",
+    algorithm = "kliom",
+    exponent = 1.0,
+    permutation = "sample",
     feature2_x_index_x_random = nothing,
+    random_seed = 20150603,
+    number_of_permutations = 100,
+    write_set_x_index_x_random_tsv = false,
+    number_of_sets_to_plot = 4,
+    more_sets_to_plot = Vector{String}(),
+    feature_name = "Gene",
+    score_name = "User-Defined Score",
+    low_text = "Low Side",
+    high_text = "High Side",
 )
-
-    ke_ar = BioLab.Dict.read(setting_json)
 
     _tan, ta_, sat_, ta_x_sa_x_nu =
         BioLab.DataFrame.separate(BioLab.Table.read(target_x_sample_x_number_tsv))
 
-    BioLab.Array.error_duplicate(ta_)
+    error_duplicate(ta_)
 
-    BioLab.Collection.error_bad(ta_x_sa_x_nu, Real)
+    error_bad(ta_x_sa_x_nu)
 
     _fen, fe_, saf_, fe_x_sa_x_sc =
         BioLab.DataFrame.separate(BioLab.Table.read(feature_x_sample_x_score_tsv))
 
-    BioLab.Array.error_duplicate(fe_)
+    error_duplicate(fe_)
 
-    BioLab.Collection.error_bad(fe_x_sa_x_sc, Real)
+    error_bad(fe_x_sa_x_sc)
 
+    @error "" sat_ saf_ fe_x_sa_x_sc
     fe_x_sa_x_sc = fe_x_sa_x_sc[:, indexin(sat_, saf_)]
 
     mkpath(output_directory)
 
     bo_ = [nu == 0 for nu in ta_x_sa_x_nu[1, :]]
 
-    me = ke_ar["metric"]
-
-    if me == "signal_to_noise_ratio"
+    if metric == "signal_to_noise_ratio"
 
         fu = _get_signal_to_noise_ratio
 
@@ -513,71 +667,53 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    sc_, fe_ = _compare_and_sort(fu, bo_, fe_x_sa_x_sc, fe_)
+    sc_, fe_ = _comparesort(fu, bo_, fe_x_sa_x_sc, fe_)
 
     BioLab.Table.write(
         joinpath(output_directory, "feature_x_metric_x_score.tsv"),
-        BioLab.DataFrame.make("Feature", fe_, [me], hcat(sc_)),
+        BioLab.DataFrame.make("Feature", fe_, [metric], hcat(sc_)),
     )
 
     se_, fe1___ =
-        _read_set(set_features_json, fe_, ke_ar["minimum_set_size"], ke_ar["maximum_set_size"])
+        _read_set(set_features_json, fe_, minimum_set_size, maximum_set_size, minimum_set_fraction)
 
-    al = _use_algorithm(ke_ar["algorithm"])
+    if permutation == "sample"
 
-    ex = ke_ar["exponent"]
+        en_ = BioLab.FeatureSetEnrichment.enrich(algorithm, fe_, sc_, fe1___; exponent)
 
-    fe = ke_ar["feature_name"]
-
-    sc = ke_ar["score_name"]
-
-    lo = ke_ar["low_text"]
-
-    hi = ke_ar["high_text"]
-
-    pe = ke_ar["permutation"]
-
-    ra = ke_ar["random_seed"]
-
-    n_pe = ke_ar["number_of_permutations"]
-
-    n_pl = ke_ar["number_of_sets_to_plot"]
-
-    pl_ = ke_ar["more_sets_to_plot"]
-
-    wr = ke_ar["write_set_x_index_x_random_tsv"]
-
-    if pe == "sample"
-
-        en_ = BioLab.FeatureSetEnrichment.enrich(al, fe_, sc_, fe1___; ex)
-
-        se_x_id_x_ra = Matrix{Float64}(undef, length(se_), n_pe)
+        se_x_id_x_ra = Matrix{Float64}(undef, length(se_), number_of_permutations)
 
         if !isnothing(feature2_x_index_x_random)
 
             _fe2n, fe2_, _id_, fe2_x_id_x_ra = BioLab.DataFrame.separate(feature2_x_index_x_random)
 
-            println("🎰 Using predefined $n_pe $pe permutations to compute significance")
+            println(
+                "🎰 Using predefined $number_of_permutations $permutation permutations to compute significance",
+            )
 
-            @showprogress for id in 1:n_pe
+            @showprogress for id in 1:number_of_permutations
 
                 ra_, fer_ = BioLab.Collection.sort_like((fe2_x_id_x_ra[:, id], fe2_); ic = false)
 
-                se_x_id_x_ra[:, id] = BioLab.FeatureSetEnrichment.enrich(al, fer_, ra_, fe1___; ex)
+                se_x_id_x_ra[:, id] =
+                    BioLab.FeatureSetEnrichment.enrich(algorithm, fer_, ra_, fe1___; exponent)
 
             end
 
-        elseif 0 < n_pe
+        elseif 0 < number_of_permutations
 
-            println("🎰 Permuting $(pe)s $n_pe times to compute significance")
+            println(
+                "🎰 Permuting $(permutation)s $number_of_permutations times to compute significance",
+            )
 
-            seed!(ra)
+            seed!(random_seed)
 
-            @showprogress for id in 1:n_pe
+            @showprogress for id in 1:number_of_permutations
 
-                ra_, fer_ = _compare_and_sort(fu, shuffle!(bo_), fe_x_sa_x_sc, fe_)
+                ra_, fer_ = _comparesort(fu, shuffle!(bo_), fe_x_sa_x_sc, fe_)
 
-                se_x_id_x_ra[:, id] = BioLab.FeatureSetEnrichment.enrich(al, fer_, ra_, fe1___; ex)
+                se_x_id_x_ra[:, id] =
+                    BioLab.FeatureSetEnrichment.enrich(algorithm, fer_, ra_, fe1___; exponent)
 
             end
 
@@ -587,40 +723,40 @@ Run metric-rank (standard) GSEA.
             se_,
             en_,
             se_x_id_x_ra,
-            al,
+            algorithm,
             fe_,
             sc_,
             fe1___,
-            ex,
-            fe,
-            sc,
-            lo,
-            hi,
-            n_pl,
-            pl_,
+            exponent,
+            feature_name,
+            score_name,
+            low_text,
+            high_text,
+            number_of_sets_to_plot,
+            more_sets_to_plot,
             output_directory,
-            wr,
+            write_set_x_index_x_random_tsv,
         )
 
-    elseif pe == "set"
+    elseif permutation == "set"
 
         user_rank(
-            al,
+            algorithm,
             fe_,
             sc_,
             se_,
             fe1___,
-            ex,
-            fe,
-            sc,
-            lo,
-            hi,
-            ra,
-            n_pe,
-            n_pl,
-            pl_,
+            exponent,
+            feature_name,
+            score_name,
+            low_text,
+            high_text,
+            random_seed,
+            number_of_permutations,
+            number_of_sets_to_plot,
+            more_sets_to_plot,
             output_directory,
-            wr,
+            write_set_x_index_x_random_tsv,
         )
 
     else
@@ -632,7 +768,8 @@ Run metric-rank (standard) GSEA.
 end
 
 """
-🧬 The ✨ new ✨ (Gene-) Set Enrichment Analysis. 📍 Learn more at https://github.com/KwatMDPhD/GSEA.jl.
+The new official gene-set-enrichment analysis (GSEA).
+Learn more at https://github.com/KwatMDPhD/GSEA.jl.
 """
 @main
 

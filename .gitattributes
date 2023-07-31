@@ -1,3 +1,0 @@
-test/outer_loop/python/txt/KS_SUP[[:space:]]example[[:space:]]mean[[:space:]]scaling_rand_perm_gene_scores.txt filter=lfs diff=lfs merge=lfs -text
-test/outer_loop/python/txt/KS_SUP[[:space:]]example[[:space:]]mean[[:space:]]scaling_norm_gene_set_null_dists.txt filter=lfs diff=lfs merge=lfs -text
-test/outer_loop/output/set_x_index_x_random.tsv filter=lfs diff=lfs merge=lfs -text

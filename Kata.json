@@ -1,4 +1,0 @@
-{
-  "update": "julia --project --eval 'using Pkg; Pkg.instantiate(); Pkg.update()'",
-  "run": "julia --project --eval 'using Pkg; Pkg.test()'"
-}

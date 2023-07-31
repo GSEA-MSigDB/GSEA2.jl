@@ -1,4 +1,4 @@
-🧬 The ✨ new (_not-yet-official_) ✨ (Gene-) Set Enrichment Analysis.
+The new official gene-set-enrichment analysis (GSEA).
 
 💁 Join the [bioinformatics community](https://discord.gg/tKh7fguMrD) to get live help on GSEA (and everything bioinformatics) 🎪 ⌨️ 🔰 💡
 
@@ -27,7 +27,7 @@ gsea metric-rank
 #### 1. Go to the directory with the example
 
 ```bash
-cd test/sarcopenia
+cd data/sarcopenia
 
 ls -l
 ```
@@ -56,7 +56,7 @@ head -3 output/*.tsv
 open output/plot/*.html
 ```
 
-## Settings are just a [`.json` file](setting)
+## Settings are just a [`.json` file](data/setting)
 
 - `metric` for scoring and ranking features (for `metric-rank`)
 
@@ -124,7 +124,7 @@ open output/plot/*.html
 
 ## Install
 
-1. Download the latest [release](https://github.com/KwatMDPhD/GSEA.jl/releases/latest) and decompress it.
+1. Download the latest [release](https://github.com/KwatMDPhD/GSEA.jl/releases/latest) and extract it.
 
 2. Add `gsea/bin` to the path.
 
@@ -144,13 +144,11 @@ If installation is unavailable or fails, try building.
 
 #### 1. Download this repository
 
-Install `git-lfs`.
-
 ```bash
 git clone https://github.com/KwatMDPhD/GSEA.jl
 ```
 
-#### 2. Download dependencies
+#### 2. Instantiate
 
 ```bash
 cd GSEA.jl &&
@@ -158,13 +156,7 @@ cd GSEA.jl &&
 julia --project --eval "using Pkg; Pkg.instantiate()"
 ```
 
-#### 3. Test before building
-
-```bash
-julia --project --eval "using Pkg; Pkg.test()"
-```
-
-#### 4. Build
+#### 3. Build
 
 ```bash
 julia --project deps/build.jl app tarball
@@ -174,7 +166,7 @@ julia --project deps/build.jl app tarball
 
 Add `build/gsea/bin` to the path.
 
-#### 5. Test build
+#### 4. Test
 
 ```bash
 gsea --help
@@ -184,8 +176,4 @@ gsea --help
 
 ---
 
-## 👋 🤠 Howdy
-
-To report a bug, request a feature, or leave a comment, just [submit an issue](https://github.com/KwatMDPhD/GSEA.jl/issues/new/choose).
-
-Powered by https://github.com/KwatMDPhD/Kata.jl 🌝
+Powered by https://github.com/KwatMDPhD/Kata.jl 🥋.

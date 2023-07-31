@@ -1,7 +1,0 @@
-{
-  "minimum_set_size": 15,
-  "maximum_set_size": 500,
-  "exponent": 1.0,
-  "algorithm": "kliom",
-  "number_of_jobs": 1
-}
