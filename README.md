@@ -64,8 +64,6 @@ open output/plot/*.html
 
 3. Test installation
 
-# TODO
-
 We plan to sign `gsea` in the near future. Meanwhile, enable 3rd-party apps on your macOS.
 
 ```bash
