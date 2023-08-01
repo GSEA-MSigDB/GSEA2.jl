@@ -1,6 +1,6 @@
 module GSEA
 
-#using Comonicon: @cast, @main
+using Comonicon: @cast, @main
 
 using ProgressMeter: @showprogress
 
@@ -50,7 +50,7 @@ function _read_set(js, fe_, mi, ma, mif)
 
 end
 
-function _use_algorithm(al)
+function _set_algorithm(al)
 
     if al == "ks"
 
@@ -74,13 +74,13 @@ function _use_algorithm(al)
 
     else
 
-        error("Algorithm ($al) is not ks, ksa, kli, kliom, or kliop.")
+        error("Algorithm $al is not supported.")
 
     end
 
 end
 
-function error_bad(an)
+function _error_bad(an)
 
     is_ = BioLab.Bad.is.(an)
 
@@ -114,19 +114,20 @@ Run data-rank (single-sample) GSEA.
   - `--minimum-set-fraction`: 0.
   - `--skip-0`: false.
   - `--algorithm`: "ks".
-  - `--exponent`: 1.0.
+  - `--post-skip-minimum-set-size`: 1.
+  - `--exponent`: 1.
 """
-#@cast function data_rank(
-function data_rank(
-    output_directory;
+@cast function data_rank(
+    output_directory,
     feature_x_sample_x_score_tsv,
-    set_features_json,
+    set_features_json;
     minimum_set_size = 15,
     maximum_set_size = 500,
     minimum_set_fraction = 0,
     skip_0 = false,
     algorithm = "ks",
-    exponent = 1.0,
+    post_skip_minimum_set_size = 1,
+    exponent = 1,
 )
 
     BioLab.Error.error_missing(output_directory)
@@ -137,9 +138,9 @@ function data_rank(
 
     BioLab.Error.error_duplicate(fe_)
 
-    error_bad(fe_)
+    _error_bad(fe_)
 
-    error_bad(fe_x_sa_x_sc)
+    _error_bad(fe_x_sa_x_sc)
 
     if skip_0
 
@@ -157,6 +158,8 @@ function data_rank(
 
     end
 
+    al = _set_algorithm(algorithm)
+
     for js in js_
 
         @info "Enriching for $js"
@@ -172,10 +175,11 @@ function data_rank(
                 se_,
                 sa_,
                 BioLab.FeatureSetEnrichment.enrich(
-                    _use_algorithm(algorithm),
+                    al,
                     fe_,
                     fe_x_sa_x_sc,
                     fe1___;
+                    n = post_skip_minimum_set_size,
                     ex = exponent,
                 ),
             ),
@@ -185,228 +189,187 @@ function data_rank(
 
 end
 
-# TODO: Pick up.
 function _write(
+    ou,
+    wr,
     se_,
     en_,
     se_x_id_x_ra,
+    n_pl,
+    pl_,
     al,
     fe_,
     sc_,
     fe1___,
     ex,
-    fe,
-    sc,
-    lo,
-    hi,
-    n_pl,
-    pl_,
-    ou,
-    wr,
+    naf,
+    nas,
+    nal,
+    nah,
 )
-
-    id_ = sortperm(en_)
-
-    en_ = en_[id_]
-
-    se_ = se_[id_]
-
-    se_x_id_x_ra = se_x_id_x_ra[id_, :]
 
     n_se = length(se_)
 
     se_x_st_x_nu = fill(NaN, n_se, 4)
 
+    id_ = sortperm(en_)
+
+    en_ = view(en_, id_)
+
+    se_ = view(se_, id_)
+
+    se_x_id_x_ra = view(se_x_id_x_ra, id_, :)
+
     se_x_st_x_nu[:, 1] = en_
 
     n_ra = size(se_x_id_x_ra, 2)
 
-    mkpath(ou)
+    if wr
 
-    if !isempty(se_x_id_x_ra)
-
-        if wr
-
-            BioLab.DataFrame.write(
-                joinpath(ou, "set_x_index_x_random.tsv"),
-                BioLab.DataFrame.make("Set", se_, [string(id) for id in 1:n_ra], se_x_id_x_ra),
-            )
-
-        end
-
-        nem_ = Vector{Float64}(undef, n_se)
-
-        pom_ = Vector{Float64}(undef, n_se)
-
-        for id in 1:n_se
-
-            ne_ = Vector{Float64}()
-
-            po_ = Vector{Float64}()
-
-            for ra in se_x_id_x_ra[id, :]
-
-                if ra < 0.0
-
-                    push!(ne_, ra)
-
-                else
-
-                    push!(po_, ra)
-
-                end
-
-            end
-
-            nem_[id] = mean(ne_)
-
-            pom_[id] = mean(po_)
-
-        end
-
-        nei_ = 1:findlast(en < 0.0 for en in en_)
-
-        poi_ = (nei_[end] + 1):n_se
-
-        # TODO: Benchmark against `vcat`.
-
-        enn_ = Vector{Float64}(undef, n_se)
-
-        for id in nei_
-
-            enn_[id] = -en_[id] / nem_[id]
-
-        end
-
-        for id in poi_
-
-            enn_[id] = en_[id] / pom_[id]
-
-        end
-
-        se_x_st_x_nu[:, 2] = enn_
-
-        nen_ = Vector{Float64}()
-
-        pon_ = Vector{Float64}()
-
-        # TODO: Benchmark iteration order.
-
-        for id2 in 1:n_ra
-
-            for id1 in 1:n_se
-
-                ra = se_x_id_x_ra[id1, id2]
-
-                if ra < 0.0
-
-                    push!(nen_, -ra / nem_[id1])
-
-                elseif 0.0 < ra
-
-                    push!(pon_, ra / pom_[id1])
-
-                end
-
-            end
-
-        end
-
-        nep_, nea_ = BioLab.Significance.get_p_valueadjust(
-            BioLab.Significance.get_p_value_for_less,
-            enn_[nei_],
-            nen_,
+        BioLab.DataFrame.write(
+            joinpath(ou, "set_x_index_x_random.tsv"),
+            BioLab.DataFrame.make("Set", se_, string.(1:n_ra), se_x_id_x_ra),
         )
-
-        se_x_st_x_nu[nei_, 3] = nep_
-
-        se_x_st_x_nu[nei_, 4] = nea_
-
-        pop_, poa_ = BioLab.Significance.get_p_valueadjust(
-            BioLab.Significance.get_p_value_for_more,
-            enn_[poi_],
-            pon_,
-        )
-
-        se_x_st_x_nu[poi_, 3] = pop_
-
-        se_x_st_x_nu[poi_, 4] = poa_
 
     end
+
+    nem_ = Vector{Float64}(undef, n_se)
+
+    pom_ = Vector{Float64}(undef, n_se)
+
+    for id in 1:n_se
+
+        ne_ = Vector{Float64}()
+
+        po_ = Vector{Float64}()
+
+        for ra in view(se_x_id_x_ra, id, :)
+
+            if ra < 0
+
+                push!(ne_, ra)
+
+            else
+
+                push!(po_, ra)
+
+            end
+
+        end
+
+        nem_[id] = mean(ne_)
+
+        pom_[id] = mean(po_)
+
+    end
+
+    nei_ = 1:findlast(<(0), en_)
+
+    poi_ = (nei_[end] + 1):n_se
+
+    enn_ = Vector{Float64}(undef, n_se)
+
+    for id in nei_
+
+        enn_[id] = -en_[id] / nem_[id]
+
+    end
+
+    for id in poi_
+
+        enn_[id] = en_[id] / pom_[id]
+
+    end
+
+    se_x_st_x_nu[:, 2] = enn_
+
+    nen_ = Vector{Float64}()
+
+    pon_ = Vector{Float64}()
+
+    for id2 in 1:n_ra, id1 in 1:n_se
+
+        ra = se_x_id_x_ra[id1, id2]
+
+        if ra < 0
+
+            push!(nen_, -ra / nem_[id1])
+
+        else
+
+            push!(pon_, ra / pom_[id1])
+
+        end
+
+    end
+
+    nep_, nea_ = BioLab.Significance.get_p_value_adjust(
+        BioLab.Significance.get_p_value_for_less,
+        view(enn_, nei_),
+        nen_,
+    )
+
+    pop_, poa_ = BioLab.Significance.get_p_value_adjust(
+        BioLab.Significance.get_p_value_for_more,
+        view(enn_, poi_),
+        pon_,
+    )
+
+    se_x_st_x_nu[nei_, 3] = nep_
+
+    se_x_st_x_nu[poi_, 3] = pop_
+
+    se_x_st_x_nu[nei_, 4] = nea_
+
+    se_x_st_x_nu[poi_, 4] = poa_
 
     BioLab.DataFrame.write(
         joinpath(ou, "set_x_statistic_x_number.tsv"),
         BioLab.DataFrame.make(
             "Set",
             se_,
-            ["Enrichment", "Normalized Enrichment", "P Value", "Adjusted P Value"],
+            ["Enrichment", "Normalized Enrichment", "P-Value", "Adjusted P-Value"],
             se_x_st_x_nu,
         ),
     )
 
-    n_pl = min(n_pl, n_se)
-
-    for id in 1:n_pl
+    for id in unique(vcat(BioLab.Rank.get_extreme(en_, n_pl), indexin(pl_, se_)))
 
         se = se_[id]
 
-        en = en_[id]
+        title_text = "$id $se"
 
-        if en < 0 && !(se in pl_)
+        pr = BioLab.Path.clean(title_text)
 
-            push!(pl_, se)
-
-        end
-
-    end
-
-    for id in n_se:-1:(n_se - n_pl + 1)
-
-        se = se_[id]
-
-        en = en_[id]
-
-        if 0 < en && !(se in pl_)
-
-            push!(pl_, se)
-
-        end
-
-    end
-
-    oup = mkpath(joinpath(ou, "plot"))
-
-    for (se, id) in zip(pl_, indexin(pl_, se_))
-
-        BioLab.FeatureSetEnrichment.enrich(
+        BioLab.FeatureSetEnrichment.plot(
+            joinpath(ou, "$pr.html"),
             al,
             fe_,
             sc_,
             fe1___[id];
             ex,
-            title_text = se,
-            fe,
-            sc,
-            lo,
-            hi,
-            ht = joinpath(oup, "$(BioLab.Path.clean(se)).html"),
+            title_text,
+            naf,
+            nas,
+            nal,
+            nah,
         )
 
     end
 
 end
 
-function user_rank(al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, ra, n_pe, n_pl, pl_, ou, wr)
+function _enrich_permute_set(al, fe_, sc_, fe1___, ex, n_pe, ra)
 
     en_ = BioLab.FeatureSetEnrichment.enrich(al, fe_, sc_, fe1___; ex)
 
-    se_x_id_x_ra = Matrix{Float64}(undef, length(se_), n_pe)
+    se_x_id_x_ra = Matrix{Float64}(undef, length(fe1___), n_pe)
 
     if 0 < n_pe
 
-        println("Permuting sets to compute significance")
+        @info "Permuting sets to compute significance"
 
-        si_ = [length(fe1_) for fe1_ in fe1___]
+        le_ = length.(fe1___)
 
         seed!(ra)
 
@@ -416,7 +379,7 @@ function user_rank(al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, ra, n_pe, n_pl
                 al,
                 fe_,
                 sc_,
-                [sample(fe_, si; replace = false) for si in si_];
+                [sample(fe_, le; replace = false) for le in le_];
                 ex,
             )
 
@@ -424,7 +387,7 @@ function user_rank(al, fe_, sc_, se_, fe1___, ex, fe, sc, lo, hi, ra, n_pe, n_pl
 
     end
 
-    _write(se_, en_, se_x_id_x_ra, al, fe_, sc_, fe1___, ex, fe, sc, lo, hi, n_pl, pl_, ou, wr)
+    en_, se_x_id_x_ra
 
 end
 
@@ -433,17 +396,17 @@ Run user-rank (pre-rank) GSEA.
 
 # Arguments
 
-  - `feature_x_metric_x_score_tsv`:
-  - `set_features_json`:
   - `output_directory`:
+  - `feature_x_metric_x_score_tsv`:
+  - `set_features_json`: .JSON or directory containing .JSONs.
 
 # Options
 
   - `--minimum-set-size`: 15.
   - `--maximum-set-size`: 500.
-  - `--minimum-set-fraction`: 0.8.
-  - `--algorithm`: "kliom".
-  - `--exponent`: 1.0.
+  - `--minimum-set-fraction`: 0.
+  - `--algorithm`: "ks".
+  - `--exponent`: 1.
   - `--random-seed`: 20150603.
   - `--number-of-permutations`: 100.
   - `--number-of-sets-to-plot`: 4.
@@ -457,16 +420,15 @@ Run user-rank (pre-rank) GSEA.
 
   - `--write-set-x-index-x-random-tsv`: false.
 """
-#@cast function user_rank(
-function user_rank(
+@cast function user_rank(
+    output_directory,
     feature_x_metric_x_score_tsv,
-    set_features_json,
-    output_directory;
+    set_features_json;
     minimum_set_size = 15,
     maximum_set_size = 500,
-    minimum_set_fraction = 0.8,
-    algorithm = "kliom",
-    exponent = 1.0,
+    minimum_set_fraction = 0,
+    algorithm = "ks",
+    exponent = 1,
     random_seed = 20150603,
     number_of_permutations = 100,
     write_set_x_index_x_random_tsv = false,
@@ -478,37 +440,50 @@ function user_rank(
     high_text = "High Side",
 )
 
+    BioLab.Error.error_missing(output_directory)
+
     _naf, fe_, _me_, fe_x_me_x_sc =
         BioLab.DataFrame.separate(BioLab.DataFrame.read(feature_x_metric_x_score_tsv))
 
-    error_duplicate(fe_)
+    BioLab.Error.error_duplicate(fe_)
 
-    error_bad(fe_x_me_x_sc[:, [1]])
+    _error_bad(fe_)
 
-    sc_ = fe_x_me_x_sc[:, 1]
+    sc_ = view(fe_x_me_x_sc, :, 1)
 
-    sc_, fe_ = BioLab.Collection.sort_like((sc_, fe_); ic = false)
+    _error_bad(sc_)
+
+    id_ = sortperm(sc_; rev = true)
+
+    sc_ = view(sc_, id_)
+
+    fe_ = view(fe_, id_)
 
     se_, fe1___ =
         _read_set(set_features_json, fe_, minimum_set_size, maximum_set_size, minimum_set_fraction)
 
-    user_rank(
-        _use_algorithm(algorithm),
+    al = _set_algorithm(algorithm)
+
+    en_, se_x_id_x_ra =
+        _enrich_permute_set(al, fe_, sc_, fe1___, exponent, number_of_permutations, random_seed)
+
+    _write(
+        output_directory,
+        write_set_x_index_x_random_tsv,
+        se_,
+        en_,
+        se_x_id_x_ra,
+        number_of_sets_to_plot,
+        more_sets_to_plot,
+        al,
         fe_,
         sc_,
-        se_,
         fe1___,
         exponent,
         feature_name,
         score_name,
         low_text,
         high_text,
-        random_seed,
-        number_of_permutations,
-        number_of_sets_to_plot,
-        more_sets_to_plot,
-        output_directory,
-        write_set_x_index_x_random_tsv,
     )
 
 end
@@ -517,21 +492,19 @@ function _get_standard_deviation(nu_, me)
 
     fr = 0.2
 
-    if me == 0.0
+    if iszero(me)
 
-        fr
-
-    else
-
-        if me < 0.0
-
-            me = -me
-
-        end
-
-        max(me * fr, std(nu_; corrected = true))
+        return fr
 
     end
+
+    if me < 0
+
+        me = -me
+
+    end
+
+    max(me * fr, std(nu_; corrected = true))
 
 end
 
@@ -545,12 +518,13 @@ function _get_signal_to_noise_ratio(nu1_, nu2_)
 
 end
 
-function _comparesort(fu, bo_, fe_x_sa_x_sc, fe_)
+function _apply_sort(fu, is_, fe_x_sa_x_sc, fe_)
 
-    BioLab.Collection.sort_like(
-        (BioLab.FeatureXSample.target(fu, bo_, fe_x_sa_x_sc), fe_);
-        ic = false,
-    )
+    sc_ = fu.(eachrow(view(fe_x_sa_x_sc, :, .!is_)), eachrow(view(fe_x_sa_x_sc, :, is_)))
+
+    id_ = sortperm(sc_; rev = true)
+
+    view(sc_, id_), view(fe_, id_)
 
 end
 
@@ -559,22 +533,21 @@ Run metric-rank (standard) GSEA.
 
 # Arguments
 
+  - `output_directory`:
   - `target_x_sample_x_number_tsv`:
   - `feature_x_sample_x_score_tsv`:
-  - `set_features_json`:
-  - `output_directory`:
-
-# Options
+  - `set_features_json`: .JSON or directory containing .JSONs.
 
 # Options
 
   - `--minimum-set-size`: 15.
   - `--maximum-set-size`: 500.
-  - `--minimum-set-fraction`: 0.8.
+  - `--minimum-set-fraction`: 0.
   - `--metric`: "signal_to_noise_ratio".
-  - `--algorithm`: "kliom".
-  - `--exponent`: 1.0.
+  - `--algorithm`: "ks".
+  - `--exponent`: 1.
   - `--permutation`: "sample".
+  - `--feature-x-index-x-random-tsv`: "".
   - `--random-seed`: 20150603.
   - `--number-of-permutations`: 100.
   - `--number-of-sets-to-plot`: 4.
@@ -588,20 +561,19 @@ Run metric-rank (standard) GSEA.
 
   - `--write-set-x-index-x-random-tsv`: false.
 """
-#@cast function metric_rank(
-function metric_rank(
+@cast function metric_rank(
+    output_directory,
     target_x_sample_x_number_tsv,
     feature_x_sample_x_score_tsv,
-    set_features_json,
-    output_directory;
+    set_features_json;
     minimum_set_size = 15,
     maximum_set_size = 500,
-    minimum_set_fraction = 0.8,
+    minimum_set_fraction = 0,
     metric = "signal_to_noise_ratio",
-    algorithm = "kliom",
-    exponent = 1.0,
+    algorithm = "ks",
+    exponent = 1,
     permutation = "sample",
-    feature2_x_index_x_random = nothing,
+    feature_x_index_x_random_tsv = "",
     random_seed = 20150603,
     number_of_permutations = 100,
     write_set_x_index_x_random_tsv = false,
@@ -613,26 +585,23 @@ function metric_rank(
     high_text = "High Side",
 )
 
-    _tan, ta_, sat_, ta_x_sa_x_nu =
+    BioLab.Error.error_missing(output_directory)
+
+    _nat, ta_, sat_, ta_x_sa_x_nu =
         BioLab.DataFrame.separate(BioLab.DataFrame.read(target_x_sample_x_number_tsv))
 
-    error_duplicate(ta_)
+    BioLab.Error.error_duplicate(ta_)
 
-    error_bad(ta_x_sa_x_nu)
+    _error_bad(ta_x_sa_x_nu)
 
     _naf, fe_, saf_, fe_x_sa_x_sc =
         BioLab.DataFrame.separate(BioLab.DataFrame.read(feature_x_sample_x_score_tsv))
 
-    error_duplicate(fe_)
+    BioLab.Error.error_duplicate(fe_)
 
-    error_bad(fe_x_sa_x_sc)
+    _error_bad(fe_x_sa_x_sc)
 
-    @error "" sat_ saf_ fe_x_sa_x_sc
-    fe_x_sa_x_sc = fe_x_sa_x_sc[:, indexin(sat_, saf_)]
-
-    mkpath(output_directory)
-
-    bo_ = [nu == 0 for nu in ta_x_sa_x_nu[1, :]]
+    fe_x_sa_x_sc = view(fe_x_sa_x_sc, :, indexin(sat_, saf_))
 
     if metric == "signal_to_noise_ratio"
 
@@ -640,11 +609,13 @@ function metric_rank(
 
     else
 
-        error("`metric` is not one of the listed in https://github.com/KwatMDPhD/GSEA.jl.")
+        error("Metric $metric is not supported.")
 
     end
 
-    sc_, fe_ = _comparesort(fu, bo_, fe_x_sa_x_sc, fe_)
+    is_ = iszero.(view(ta_x_sa_x_nu, 1, :))
+
+    sc_, fe_ = _apply_sort(fu, is_, fe_x_sa_x_sc, fe_)
 
     BioLab.DataFrame.write(
         joinpath(output_directory, "feature_x_metric_x_score.tsv"),
@@ -654,53 +625,62 @@ function metric_rank(
     se_, fe1___ =
         _read_set(set_features_json, fe_, minimum_set_size, maximum_set_size, minimum_set_fraction)
 
+    al = _set_algorithm(algorithm)
+
     if permutation == "sample"
 
-        en_ = BioLab.FeatureSetEnrichment.enrich(algorithm, fe_, sc_, fe1___; exponent)
+        en_ = BioLab.FeatureSetEnrichment.enrich(al, fe_, sc_, fe1___; ex = exponent)
 
-        se_x_id_x_ra = Matrix{Float64}(undef, length(se_), number_of_permutations)
+        se_x_id_x_ra = Matrix{Float64}(undef, length(fe1___), number_of_permutations)
 
-        if !isnothing(feature2_x_index_x_random)
+        if !isempty(feature_x_index_x_random_tsv)
 
-            _fe2n, fe2_, _id_, fe2_x_id_x_ra = BioLab.DataFrame.separate(feature2_x_index_x_random)
+            _naf2, fe2_, _id_, fe2_x_id_x_ra =
+                BioLab.DataFrame.separate(BioLab.DataFrame.read(feature_x_index_x_random_tsv))
 
-            println(
-                "🎰 Using predefined $number_of_permutations $permutation permutations to compute significance",
-            )
-
+            @info "Using predefined $number_of_permutations sample-permutation scores to compute significance",
             @showprogress for id in 1:number_of_permutations
 
-                ra_, fer_ = BioLab.Collection.sort_like((fe2_x_id_x_ra[:, id], fe2_); ic = false)
+                ra_ = fe2_x_id_x_ra[:, id]
 
-                se_x_id_x_ra[:, id] =
-                    BioLab.FeatureSetEnrichment.enrich(algorithm, fer_, ra_, fe1___; exponent)
+                id_ = sortperm(ra_; rev = true)
+
+                se_x_id_x_ra[:, id] = BioLab.FeatureSetEnrichment.enrich(
+                    al,
+                    view(fe2_, id_),
+                    view(ra_, id_),
+                    fe1___;
+                    ex = exponent,
+                )
 
             end
 
         elseif 0 < number_of_permutations
 
-            println(
-                "🎰 Permuting $(permutation)s $number_of_permutations times to compute significance",
-            )
+            @info "Permuting samples to compute significance"
 
             seed!(random_seed)
 
             @showprogress for id in 1:number_of_permutations
 
-                ra_, fer_ = _comparesort(fu, shuffle!(bo_), fe_x_sa_x_sc, fe_)
+                ra_, fe2_ = _apply_sort(fu, shuffle!(is_), fe_x_sa_x_sc, fe_)
 
                 se_x_id_x_ra[:, id] =
-                    BioLab.FeatureSetEnrichment.enrich(algorithm, fer_, ra_, fe1___; exponent)
+                    BioLab.FeatureSetEnrichment.enrich(al, fe2_, ra_, fe1___; ex = exponent)
 
             end
 
         end
 
         _write(
+            output_directory,
+            write_set_x_index_x_random_tsv,
             se_,
             en_,
             se_x_id_x_ra,
-            algorithm,
+            number_of_sets_to_plot,
+            more_sets_to_plot,
+            al,
             fe_,
             sc_,
             fe1___,
@@ -709,36 +689,42 @@ function metric_rank(
             score_name,
             low_text,
             high_text,
-            number_of_sets_to_plot,
-            more_sets_to_plot,
-            output_directory,
-            write_set_x_index_x_random_tsv,
         )
 
     elseif permutation == "set"
 
-        user_rank(
-            algorithm,
+        en_, se_x_id_x_ra = _enrich_permute_set(
+            al,
             fe_,
             sc_,
+            fe1___,
+            exponent,
+            number_of_permutations,
+            random_seed,
+        )
+
+        _write(
+            output_directory,
+            write_set_x_index_x_random_tsv,
             se_,
+            en_,
+            se_x_id_x_ra,
+            number_of_sets_to_plot,
+            more_sets_to_plot,
+            al,
+            fe_,
+            sc_,
             fe1___,
             exponent,
             feature_name,
             score_name,
             low_text,
             high_text,
-            random_seed,
-            number_of_permutations,
-            number_of_sets_to_plot,
-            more_sets_to_plot,
-            output_directory,
-            write_set_x_index_x_random_tsv,
         )
 
     else
 
-        error("`permutation` is not one of the listed in https://github.com/KwatMDPhD/GSEA.jl.")
+        error("Permutation $permutation is not supported.")
 
     end
 
@@ -748,6 +734,6 @@ end
 The new official gene-set-enrichment analysis (GSEA).
 Learn more at https://github.com/KwatMDPhD/GSEA.jl.
 """
-#@main
+@main
 
 end
