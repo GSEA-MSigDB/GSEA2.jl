@@ -49,7 +49,7 @@ const OUD = BioLab.Path.make_directory(joinpath(TE, "data_rank"))
 GSEA.data_rank(OUD, TSF, SE)
 
 const SET_FEATURES_X_SAMPLE_X_ENRICHMENT =
-    BioLab.DataFrame.read(joinpath(OUD, "set_features_x_sample_x_enrichment.tsv"))
+    BioLab.DataFrame.read(joinpath(OUD, "set_x_sample_x_enrichment.tsv"))
 
 @test size(SET_FEATURES_X_SAMPLE_X_ENRICHMENT) == (8, 10)
 

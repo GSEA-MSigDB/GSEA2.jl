@@ -156,7 +156,7 @@ Convert `.cls` and `.gct` to `.tsv`s.
 end
 
 """
-Convert one or more `.gmt`s to `.json`.
+Convert one or more `.gmt`s to a `.json`.
 
 # Arguments
 
@@ -176,12 +176,11 @@ Run data-rank (single-sample) GSEA.
 
   - `output_directory`:
   - `feature_x_sample_x_score_tsv`:
-  - `set_features_json`: `.json` or directory containing `.json`s.
+  - `set_features_json`:
 
 # Options
 
   - `--skip-0`: = false.
-
   - `--normalization-dimension`: = 0.
   - `--normalization-standard-deviation`: = 4.
   - `--minimum-set-size`: = 15.
@@ -233,54 +232,37 @@ Run data-rank (single-sample) GSEA.
 
     end
 
-    if isdir(set_features_json)
-
-        js_ = BioLab.Path.read(set_features_json; join = true, ke_ = (r"^(?!_).*json$"))
-
-    else
-
-        js_ = [set_features_json]
-
-    end
-
     al = _set_algorithm(algorithm)
 
-    for js in js_
+    se_, fe1___ =
+        _read_set(set_features_json, fe_, minimum_set_size, maximum_set_size, minimum_set_fraction)
 
-        @info "Enriching for $js"
+    se_x_sa_x_en = BioLab.FeatureSetEnrichment.enrich(
+        al,
+        fe_,
+        fe_x_sa_x_sc,
+        fe1___;
+        mi = post_skip_minimum_set_size,
+        ex = exponent,
+    )
 
-        se_, fe1___ = _read_set(js, fe_, minimum_set_size, maximum_set_size, minimum_set_fraction)
+    BioLab.DataFrame.write(
+        joinpath(output_directory, "set_x_sample_x_enrichment.tsv"),
+        BioLab.DataFrame.make("Set", se_, sa_, se_x_sa_x_en),
+    )
 
-        nas = splitext(basename(js))[1]
-
-        se_x_sa_x_en = BioLab.FeatureSetEnrichment.enrich(
-            al,
-            fe_,
-            fe_x_sa_x_sc,
-            fe1___;
-            mi = post_skip_minimum_set_size,
-            ex = exponent,
-        )
-
-        BioLab.DataFrame.write(
-            joinpath(output_directory, "$(nas)_x_sample_x_enrichment.tsv"),
-            BioLab.DataFrame.make("Set", se_, sa_, se_x_sa_x_en),
-        )
-
-        BioLab.FeatureSetEnrichment.plot(
-            output_directory,
-            al,
-            fe_,
-            fe_x_sa_x_sc,
-            fe1___,
-            "Sample",
-            se_,
-            sa_,
-            se_x_sa_x_en;
-            ex = exponent,
-        )
-
-    end
+    BioLab.FeatureSetEnrichment.plot(
+        output_directory,
+        al,
+        fe_,
+        fe_x_sa_x_sc,
+        fe1___,
+        "Sample",
+        se_,
+        sa_,
+        se_x_sa_x_en;
+        ex = exponent,
+    )
 
     output_directory
 
@@ -499,12 +481,11 @@ Run user-rank (pre-rank) GSEA.
 
   - `output_directory`:
   - `feature_x_metric_x_score_tsv`:
-  - `set_features_json`: `.json` or directory containing `.json`s.
+  - `set_features_json`:
 
 # Options
 
   - `--minimum-set-size`: = 15.
-
   - `--maximum-set-size`: = 500.
   - `--minimum-set-fraction`: = 0.
   - `--algorithm`: = "ks".
@@ -638,7 +619,7 @@ Run metric-rank (standard) GSEA.
   - `output_directory`:
   - `target_x_sample_x_number_tsv`:
   - `feature_x_sample_x_score_tsv`:
-  - `set_features_json`: `.json` or directory containing `.json`s.
+  - `set_features_json`:
 
 # Options
 

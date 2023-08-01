@@ -2,22 +2,34 @@ The official command-line program for the gene-set-enrichment analysis (GSEA) ðŸ
 
 ## Use `gsea` command-line interface
 
-#### Run standard GSEA
+#### Run metric-rank (standard) GSEA
 
 ```bash
 gsea metric-rank
 ```
 
-#### Run pre-rank GSEA
+#### Run user-rank (pre-rank) GSEA
 
 ```bash
 gsea user-rank
 ```
 
-#### Run single-sample GSEA
+#### Run data-rank (single-sample) GSEA
 
 ```bash
 gsea data-rank
+```
+
+#### Convert `.cls` and `.gct` to `.tsv`s
+
+```bash
+gsea convert-cls-gct
+```
+
+#### Convert one or more `.gmt`s to a `.json`
+
+```bash
+gsea convert-gmt
 ```
 
 ## Try with an example data
