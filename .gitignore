@@ -35,4 +35,4 @@ build/
 
 *-application-*-julia-*-*-*.tar.gz
 
-data/
+benchmark/
