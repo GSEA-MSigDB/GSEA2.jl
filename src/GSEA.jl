@@ -132,8 +132,7 @@ Run data-rank (single-sample) GSEA.
 
     BioLab.Error.error_missing(output_directory)
 
-    # TODO: Remove typing.
-    _naf, fe_::Vector{String}, sa_::Vector{String}, fe_x_sa_x_sc::Matrix{Float64} =
+    _naf, fe_, sa_, fe_x_sa_x_sc =
         BioLab.DataFrame.separate(BioLab.DataFrame.read(feature_x_sample_x_score_tsv))
 
     BioLab.Error.error_duplicate(fe_)
@@ -219,6 +218,8 @@ function _write(
     se_ = view(se_, id_)
 
     se_x_id_x_ra = view(se_x_id_x_ra, id_, :)
+
+    fe1___ = view(fe1___, id_)
 
     se_x_st_x_nu[:, 1] = en_
 

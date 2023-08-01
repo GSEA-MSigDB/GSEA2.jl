@@ -91,6 +91,22 @@ const SET_X_STATISTIC_X_NUMBERU =
 
 @test size(SET_X_STATISTIC_X_NUMBERU) == (50, 5)
 
+@test names(SET_X_STATISTIC_X_NUMBERU) ==
+      ["Set", "Enrichment", "Normalized Enrichment", "P-Value", "Adjusted P-Value"]
+
+for (id, re) in (
+    (1, ["HALLMARK_PANCREAS_BETA_CELLS", -0.35266, -1.36616, 0.0200837]),
+    (2, ["HALLMARK_PROTEIN_SECRETION", -0.272096, -1.25207, 0.0686192]),
+    (49, ["HALLMARK_MYC_TARGETS_V1", 0.603356, 2.73998, 0.000262812]),
+    (50, ["HALLMARK_MYC_TARGETS_V2", 0.866579, 3.36557, 0.000262812]),
+)
+
+    @test SET_X_STATISTIC_X_NUMBERU[id, 1] == re[1]
+
+    @test isapprox(collect(SET_X_STATISTIC_X_NUMBERU[id, 2:length(re)]), re[2:end]; atol = 1e-5)
+
+end
+
 @test length(BioLab.Path.read(OUU; ke_ = (r"html$",))) == 6
 
 # ---- #
