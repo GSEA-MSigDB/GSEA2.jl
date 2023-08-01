@@ -39,17 +39,19 @@ mkdir ~/Downloads/gsea_output
 #### 3. Run GSEA
 
 ```bash
-gsea metric-rank target_x_sample_x_number.tsv feature_x_sample_x_number.tsv set_features.json ~/Downloads/gsea_output
-
-ls -l ~/Downloads/gsea_output
+gsea metric-rank ~/Downloads/gsea_output target_x_sample_x_number.tsv feature_x_sample_x_number.tsv set_features.json
 ```
 
 #### 4. Look at the results
 
 ```bash
-head -3 ~/Downloads/gsea_output/*.tsv
+cd ~/Downloads/gsea_output
 
-open ~/Downloads/gsea_output/*.html
+ls -l
+
+head -3 *.tsv
+
+open *.html
 ```
 
 ## Install
