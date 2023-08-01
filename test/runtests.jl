@@ -171,7 +171,3 @@ GSEA.metric_rank(
 )
 
 @test length(BioLab.Path.read(OUMS; ke_ = (r"html$",))) == 2
-
-# ---- #
-
-include("outer_loop.jl")

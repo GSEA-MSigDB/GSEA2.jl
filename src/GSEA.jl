@@ -10,6 +10,30 @@ using StatsBase: mean, sample, std
 
 using BioLab
 
+function _normalize_with_0_clamp!(ma, di, st)
+
+    if di == 1
+
+        fu = eachrow
+
+    elseif di == 2
+
+        fu = eachcol
+
+    else
+
+        error("Dimension $di is not 1 or 2.")
+
+    end
+
+    @info "Normalizing dimension $di with standard deviation $st"
+
+    foreach(BioLab.Normalization.normalize_with_0!, fu(ma))
+
+    clamp!(ma, -st, st)
+
+end
+
 function _read_set(js, fe_, mi, ma, mif)
 
     se_fe1_ = BioLab.Dict.read(js, Dict{String, Vector{String}})
@@ -80,21 +104,68 @@ function _set_algorithm(al)
 
 end
 
-function _error_bad(an)
+"""
+Convert `.cls` and `.gct` to `.tsv`s.
 
-    is_ = BioLab.Bad.is.(an)
+# Arguments
 
-    n = sum(is_)
+  - `target_x_sample_x_number_tsv`: Output target `.tsv`.
+  - `feature_x_sample_x_score_tsv`: Output feature `.tsv`.
+  - `cls`: Input `.cls`.
+  - `gct`: Input `.gct`.
+"""
+@cast function convert_cls_gct(
+    target_x_sample_x_number_tsv,
+    feature_x_sample_x_score_tsv,
+    cls,
+    gct,
+)
 
-    if !iszero(n)
+    _nat, ta_, _sa_, ta_x_sa_x_nu = BioLab.DataFrame.separate(BioLab.CLS.read(cls))
 
-        n_no = BioLab.String.count(n, "bad value")
+    BioLab.Error.error_bad(ta_)
 
-        st = join(unique(view(an, is_)), ".\n")
+    BioLab.Error.error_bad(ta_x_sa_x_nu)
 
-        error("Found $n_no.\n$st.")
+    _naf, fe_, sa_, fe_x_sa_x_nu = BioLab.DataFrame.separate(BioLab.GCT.read(gct))
+
+    BioLab.Error.error_duplicate(fe_)
+
+    BioLab.Error.error_bad(fe_)
+
+    BioLab.Error.error_bad(fe_x_sa_x_nu)
+
+    if length(_sa_) != length(sa_)
+
+        error("Sample (column) lengths differ.")
 
     end
+
+    BioLab.DataFrame.write(
+        target_x_sample_x_number_tsv,
+        BioLab.DataFrame.make("Target", ta_, sa_, ta_x_sa_x_nu .- 1),
+    )
+
+    BioLab.DataFrame.write(
+        feature_x_sample_x_score_tsv,
+        BioLab.DataFrame.make("Feature", fe_, sa_, fe_x_sa_x_nu),
+    )
+
+    target_x_sample_x_number_tsv, feature_x_sample_x_score_tsv
+
+end
+
+"""
+Convert one or more `.gmt`s to `.json`.
+
+# Arguments
+
+  - `set_features_json`: Output `.json`.
+  - `gmt_`: Input `.gmt`s.
+"""
+@cast function convert_gmt(set_features_json, gmt_...)
+
+    BioLab.Dict.write(set_features_json, merge((BioLab.GMT.read(gmt) for gmt in gmt_)...))
 
 end
 
@@ -105,26 +176,31 @@ Run data-rank (single-sample) GSEA.
 
   - `output_directory`:
   - `feature_x_sample_x_score_tsv`:
-  - `set_features_json`: .JSON or directory containing .JSONs.
+  - `set_features_json`: `.json` or directory containing `.json`s.
 
 # Options
 
-  - `--minimum-set-size`: 15.
-  - `--maximum-set-size`: 500.
-  - `--minimum-set-fraction`: 0.
-  - `--skip-0`: false.
-  - `--algorithm`: "ks".
-  - `--post-skip-minimum-set-size`: 1.
-  - `--exponent`: 1.
+  - `--skip-0`: = false.
+
+  - `--normalization-dimension`: = 0.
+  - `--normalization-standard-deviation`: = 4.
+  - `--minimum-set-size`: = 15.
+  - `--maximum-set-size`: = 500.
+  - `--minimum-set-fraction`: = 0.
+  - `--algorithm`: = "ks".
+  - `--post-skip-minimum-set-size`: = 1.
+  - `--exponent`: = 1.
 """
 @cast function data_rank(
     output_directory,
     feature_x_sample_x_score_tsv,
     set_features_json;
+    skip_0 = false,
+    normalization_dimension = 0,
+    normalization_standard_deviation = 4,
     minimum_set_size = 15,
     maximum_set_size = 500,
     minimum_set_fraction = 0,
-    skip_0 = false,
     algorithm = "ks",
     post_skip_minimum_set_size = 1,
     exponent = 1,
@@ -137,13 +213,23 @@ Run data-rank (single-sample) GSEA.
 
     BioLab.Error.error_duplicate(fe_)
 
-    _error_bad(fe_)
+    BioLab.Error.error_bad(fe_)
 
-    _error_bad(fe_x_sa_x_sc)
+    BioLab.Error.error_bad(fe_x_sa_x_sc)
 
     if skip_0
 
         replace!(fe_x_sa_x_sc, 0 => NaN)
+
+    end
+
+    if !iszero(normalization_dimension)
+
+        _normalize_with_0_clamp!(
+            fe_x_sa_x_sc,
+            normalization_dimension,
+            normalization_standard_deviation,
+        )
 
     end
 
@@ -167,24 +253,36 @@ Run data-rank (single-sample) GSEA.
 
         nas = splitext(basename(js))[1]
 
+        se_x_sa_x_en = BioLab.FeatureSetEnrichment.enrich(
+            al,
+            fe_,
+            fe_x_sa_x_sc,
+            fe1___;
+            mi = post_skip_minimum_set_size,
+            ex = exponent,
+        )
+
         BioLab.DataFrame.write(
             joinpath(output_directory, "$(nas)_x_sample_x_enrichment.tsv"),
-            BioLab.DataFrame.make(
-                "Set",
-                se_,
-                sa_,
-                BioLab.FeatureSetEnrichment.enrich(
-                    al,
-                    fe_,
-                    fe_x_sa_x_sc,
-                    fe1___;
-                    mi = post_skip_minimum_set_size,
-                    ex = exponent,
-                ),
-            ),
+            BioLab.DataFrame.make("Set", se_, sa_, se_x_sa_x_en),
+        )
+
+        BioLab.FeatureSetEnrichment.plot(
+            output_directory,
+            al,
+            fe_,
+            fe_x_sa_x_sc,
+            fe1___,
+            "Sample",
+            se_,
+            sa_,
+            se_x_sa_x_en;
+            ex = exponent,
         )
 
     end
+
+    output_directory
 
 end
 
@@ -358,6 +456,8 @@ function _write(
 
     end
 
+    ou
+
 end
 
 function _enrich_permute_set(al, fe_, sc_, fe1___, ex, n_pe, ra)
@@ -399,27 +499,28 @@ Run user-rank (pre-rank) GSEA.
 
   - `output_directory`:
   - `feature_x_metric_x_score_tsv`:
-  - `set_features_json`: .JSON or directory containing .JSONs.
+  - `set_features_json`: `.json` or directory containing `.json`s.
 
 # Options
 
-  - `--minimum-set-size`: 15.
-  - `--maximum-set-size`: 500.
-  - `--minimum-set-fraction`: 0.
-  - `--algorithm`: "ks".
-  - `--exponent`: 1.
-  - `--random-seed`: 20150603.
-  - `--number-of-permutations`: 100.
-  - `--number-of-sets-to-plot`: 4.
-  - `--more-sets-to-plot`: [].
-  - `--feature-name`: "Gene".
-  - `--score-name`: "User-Defined Score".
-  - `--low-text`: "Low Side".
-  - `--high-text`: "High Side".
+  - `--minimum-set-size`: = 15.
+
+  - `--maximum-set-size`: = 500.
+  - `--minimum-set-fraction`: = 0.
+  - `--algorithm`: = "ks".
+  - `--exponent`: = 1.
+  - `--number-of-permutations`: = 100.
+  - `--random-seed`: = 20150603.
+  - `--number-of-sets-to-plot`: = 4.
+  - `--more-sets-to-plot`: = Vector{String}().
+  - `--feature-name`: = "Gene".
+  - `--score-name`: = "User-Defined Score".
+  - `--low-text`: = "Low Side".
+  - `--high-text`: = "High Side".
 
 # Flags
 
-  - `--write-set-x-index-x-random-tsv`: false.
+  - `--write-set-x-index-x-random-tsv`: = false.
 """
 @cast function user_rank(
     output_directory,
@@ -430,8 +531,8 @@ Run user-rank (pre-rank) GSEA.
     minimum_set_fraction = 0,
     algorithm = "ks",
     exponent = 1,
-    random_seed = 20150603,
     number_of_permutations = 100,
+    random_seed = 20150603,
     write_set_x_index_x_random_tsv = false,
     number_of_sets_to_plot = 4,
     more_sets_to_plot = Vector{String}(),
@@ -448,11 +549,11 @@ Run user-rank (pre-rank) GSEA.
 
     BioLab.Error.error_duplicate(fe_)
 
-    _error_bad(fe_)
+    BioLab.Error.error_bad(fe_)
 
     sc_ = view(fe_x_me_x_sc, :, 1)
 
-    _error_bad(sc_)
+    BioLab.Error.error_bad(sc_)
 
     id_ = sortperm(sc_; rev = true)
 
@@ -537,30 +638,32 @@ Run metric-rank (standard) GSEA.
   - `output_directory`:
   - `target_x_sample_x_number_tsv`:
   - `feature_x_sample_x_score_tsv`:
-  - `set_features_json`: .JSON or directory containing .JSONs.
+  - `set_features_json`: `.json` or directory containing `.json`s.
 
 # Options
 
-  - `--minimum-set-size`: 15.
-  - `--maximum-set-size`: 500.
-  - `--minimum-set-fraction`: 0.
-  - `--metric`: "signal_to_noise_ratio".
-  - `--algorithm`: "ks".
-  - `--exponent`: 1.
-  - `--permutation`: "sample".
-  - `--feature-x-index-x-random-tsv`: "".
-  - `--random-seed`: 20150603.
-  - `--number-of-permutations`: 100.
-  - `--number-of-sets-to-plot`: 4.
-  - `--more-sets-to-plot`: [].
-  - `--feature-name`: "Gene".
-  - `--score-name`: "User-Defined Score".
-  - `--low-text`: "Low Side".
-  - `--high-text`: "High Side".
+  - `--minimum-set-size`: = 15.
+  - `--maximum-set-size`: = 500.
+  - `--minimum-set-fraction`: = 0.
+  - `--normalization-dimension`: = 0.
+  - `--normalization-standard-deviation`: = 4.
+  - `--metric`: = "signal_to_noise_ratio".
+  - `--algorithm`: = "ks".
+  - `--exponent`: = 1.
+  - `--permutation`: = "sample".
+  - `--number-of-permutations`: = 100.
+  - `--random-seed`: = 20150603.
+  - `--feature-x-index-x-random-tsv`: = "".
+  - `--number-of-sets-to-plot`: = 4.
+  - `--more-sets-to-plot`: = Vector{String}().
+  - `--feature-name`: = "Gene".
+  - `--score-name`: = "Signal-to-Noise Ratio".
+  - `--low-text`: = "Low Side".
+  - `--high-text`: = "High Side".
 
 # Flags
 
-  - `--write-set-x-index-x-random-tsv`: false.
+  - `--write-set-x-index-x-random-tsv`: = false.
 """
 @cast function metric_rank(
     output_directory,
@@ -570,18 +673,20 @@ Run metric-rank (standard) GSEA.
     minimum_set_size = 15,
     maximum_set_size = 500,
     minimum_set_fraction = 0,
+    normalization_dimension = 0,
+    normalization_standard_deviation = 4,
     metric = "signal_to_noise_ratio",
     algorithm = "ks",
     exponent = 1,
     permutation = "sample",
-    feature_x_index_x_random_tsv = "",
-    random_seed = 20150603,
     number_of_permutations = 100,
+    random_seed = 20150603,
     write_set_x_index_x_random_tsv = false,
+    feature_x_index_x_random_tsv = "",
     number_of_sets_to_plot = 4,
     more_sets_to_plot = Vector{String}(),
     feature_name = "Gene",
-    score_name = "User-Defined Score",
+    score_name = "Signal-to-Noise Ratio",
     low_text = "Low Side",
     high_text = "High Side",
 )
@@ -593,14 +698,28 @@ Run metric-rank (standard) GSEA.
 
     BioLab.Error.error_duplicate(ta_)
 
-    _error_bad(ta_x_sa_x_nu)
+    BioLab.Error.error_bad(ta_)
+
+    BioLab.Error.error_bad(ta_x_sa_x_nu)
 
     _naf, fe_, saf_, fe_x_sa_x_sc =
         BioLab.DataFrame.separate(BioLab.DataFrame.read(feature_x_sample_x_score_tsv))
 
     BioLab.Error.error_duplicate(fe_)
 
-    _error_bad(fe_x_sa_x_sc)
+    BioLab.Error.error_bad(fe_)
+
+    BioLab.Error.error_bad(fe_x_sa_x_sc)
+
+    if !iszero(normalization_dimension)
+
+        _normalize_with_0_clamp!(
+            fe_x_sa_x_sc,
+            normalization_dimension,
+            normalization_standard_deviation,
+        )
+
+    end
 
     fe_x_sa_x_sc = view(fe_x_sa_x_sc, :, indexin(sat_, saf_))
 
