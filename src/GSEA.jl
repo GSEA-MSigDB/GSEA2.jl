@@ -731,8 +731,7 @@ Run metric-rank (standard) GSEA.
 end
 
 """
-The new official gene-set-enrichment analysis (GSEA).
-Learn more at https://github.com/KwatMDPhD/GSEA.jl.
+The official command-line program for the gene-set-enrichment analysis (GSEA). Learn more at https://github.com/KwatMDPhD/GSEA.jl.
 """
 @main
 

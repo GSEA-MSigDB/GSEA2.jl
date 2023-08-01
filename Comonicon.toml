@@ -1,5 +1,3 @@
-name = "gsea"
-
 [install]
 completion=true
 

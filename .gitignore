@@ -35,5 +35,4 @@ build/
 
 *-application-*-julia-*-*-*.tar.gz
 
-test/
 data/

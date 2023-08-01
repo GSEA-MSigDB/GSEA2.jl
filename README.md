@@ -1,13 +1,11 @@
-The ✨ new ✨ gene-set-enrichment analysis (GSEA) 🧬.
-
-💁 Join the [bioinformatics community](https://discord.gg/tKh7fguMrD) to get live help on GSEA (and everything bioinformatics) 🎪 ⌨️ 🔰 💡
+The official command-line program for the gene-set-enrichment analysis (GSEA) 🧬.
 
 ## Use `gsea` command-line interface
 
-#### Run single-sample GSEA
+#### Run standard GSEA
 
 ```bash
-gsea data-rank
+gsea metric-rank
 ```
 
 #### Run pre-rank GSEA
@@ -16,18 +14,18 @@ gsea data-rank
 gsea user-rank
 ```
 
-#### Run standard GSEA
+#### Run single-sample GSEA
 
 ```bash
-gsea metric-rank
+gsea data-rank
 ```
 
 ## Try with an example data
 
-#### 1. Go to the directory with the example
+#### 1. Go to the example directory
 
 ```bash
-cd data/sarcopenia
+cd example/sarcopenia
 
 ls -l
 ```
@@ -35,25 +33,23 @@ ls -l
 #### 2. Make a directory for saving outputs
 
 ```bash
-rm -rf output
-
-mkdir output
+mkdir ~/Downloads/gsea_output
 ```
 
-#### 3. Run standard GSEA
+#### 3. Run GSEA
 
 ```bash
-gsea metric-rank setting.json target_x_sample_x_number.tsv feature_x_sample_x_number.tsv set_features.json output
+gsea metric-rank target_x_sample_x_number.tsv feature_x_sample_x_number.tsv set_features.json ~/Downloads/gsea_output
 
-ls -l output
+ls -l ~/Downloads/gsea_output
 ```
 
 #### 4. Look at the results
 
 ```bash
-head -3 output/*.tsv
+head -3 ~/Downloads/gsea_output/*.tsv
 
-open output/plot/*.html
+open ~/Downloads/gsea_output/*.html
 ```
 
 ## Install
