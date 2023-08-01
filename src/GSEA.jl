@@ -179,7 +179,7 @@ Run data-rank (single-sample) GSEA.
                     fe_,
                     fe_x_sa_x_sc,
                     fe1___;
-                    n = post_skip_minimum_set_size,
+                    mi = post_skip_minimum_set_size,
                     ex = exponent,
                 ),
             ),

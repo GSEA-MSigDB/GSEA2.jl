@@ -3,6 +3,6 @@
   "call": {
     "update": "julia --project --eval 'using Pkg; Pkg.update()'",
     "run": "julia --project --eval 'using Pkg; Pkg.test()'",
-    "build": "julia --project deps/build.jl app tarball"
+    "build": "rm -fr build && julia --project deps/build.jl app tarball"
   }
 }
