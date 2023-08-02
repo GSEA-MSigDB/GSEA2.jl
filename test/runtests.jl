@@ -75,7 +75,7 @@ const OUU = GSEA.user_rank(
     TSM,
     SE;
     number_of_sets_to_plot = 2,
-    more_sets_to_plot = "ALIEN HALLMARK_MYC_TARGETS_V1 HALLMARK_UV_RESPONSE_DN HALLMARK_UV_RESPONSE_UP",
+    more_sets_to_plot = "HALLMARK_MYC_TARGETS_V1 HALLMARK_UV_RESPONSE_DN HALLMARK_UV_RESPONSE_UP ALIEN",
 )
 
 const SET_X_STATISTIC_X_NUMBERU =
