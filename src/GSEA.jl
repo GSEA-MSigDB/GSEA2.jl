@@ -98,7 +98,7 @@ function _set_algorithm(al)
 
     else
 
-        error("Algorithm $al is not supported.")
+        error("Algorithm $al is not ks, ksa, kli, kliom, or kliop.")
 
     end
 
@@ -276,7 +276,7 @@ function _write(
     wr,
     se_,
     en_,
-    se_x_id_x_ra,
+    se_x_id_x_en,
     n_pl,
     pl_,
     al,
@@ -300,19 +300,19 @@ function _write(
 
     se_ = view(se_, id_)
 
-    se_x_id_x_ra = view(se_x_id_x_ra, id_, :)
+    se_x_id_x_en = view(se_x_id_x_en, id_, :)
 
     fe1___ = view(fe1___, id_)
 
     se_x_st_x_nu[:, 1] = en_
 
-    n_ra = size(se_x_id_x_ra, 2)
+    n_id = size(se_x_id_x_en, 2)
 
     if wr
 
         BioLab.DataFrame.write(
-            joinpath(ou, "set_x_index_x_random.tsv"),
-            BioLab.DataFrame.make("Set", se_, string.(1:n_ra), se_x_id_x_ra),
+            joinpath(ou, "set_x_index_x_enrichment.tsv"),
+            BioLab.DataFrame.make("Set", se_, string.(1:n_id), se_x_id_x_en),
         )
 
     end
@@ -327,15 +327,15 @@ function _write(
 
         po_ = Vector{Float64}()
 
-        for ra in view(se_x_id_x_ra, id, :)
+        for en in view(se_x_id_x_en, id, :)
 
-            if ra < 0
+            if en < 0
 
-                push!(ne_, ra)
+                push!(ne_, en)
 
             else
 
-                push!(po_, ra)
+                push!(po_, en)
 
             end
 
@@ -371,17 +371,17 @@ function _write(
 
     pon_ = Vector{Float64}()
 
-    for id2 in 1:n_ra, id1 in 1:n_se
+    for id2 in 1:n_id, id1 in 1:n_se
 
-        ra = se_x_id_x_ra[id1, id2]
+        en = se_x_id_x_en[id1, id2]
 
-        if ra < 0
+        if en < 0
 
-            push!(nen_, -ra / nem_[id1])
+            push!(nen_, -en / nem_[id1])
 
         else
 
-            push!(pon_, ra / pom_[id1])
+            push!(pon_, en / pom_[id1])
 
         end
 
@@ -451,11 +451,9 @@ function _write(
 
 end
 
-function _enrich_permute_set(al, fe_, sc_, fe1___, ex, n_pe, ra)
+function _permute_set(n_pe, ra, al, fe_, sc_, fe1___, ex)
 
-    en_ = BioLab.FeatureSetEnrichment.enrich(al, fe_, sc_, fe1___; ex)
-
-    se_x_id_x_ra = Matrix{Float64}(undef, length(fe1___), n_pe)
+    se_x_id_x_en = Matrix{Float64}(undef, length(fe1___), n_pe)
 
     if 0 < n_pe
 
@@ -467,7 +465,7 @@ function _enrich_permute_set(al, fe_, sc_, fe1___, ex, n_pe, ra)
 
         @showprogress for id in 1:n_pe
 
-            se_x_id_x_ra[:, id] = BioLab.FeatureSetEnrichment.enrich(
+            se_x_id_x_en[:, id] = BioLab.FeatureSetEnrichment.enrich(
                 al,
                 fe_,
                 sc_,
@@ -479,7 +477,38 @@ function _enrich_permute_set(al, fe_, sc_, fe1___, ex, n_pe, ra)
 
     end
 
-    en_, se_x_id_x_ra
+    se_x_id_x_en
+
+end
+
+function _use_permutation(permutation, al, fe_, fe1___, ex)
+
+    feature_x_index_x_score = BioLab.DataFrame.read(permutation)
+
+    fe_x_id_x_sc = view(
+        Matrix(feature_x_index_x_score[!, 2:end]),
+        indexin(fe_, feature_x_index_x_score[!, 1]),
+        :,
+    )
+
+    n_pe = size(fe_x_id_x_sc, 2)
+
+    se_x_id_x_en = Matrix{Float64}(undef, length(fe1___), n_pe)
+
+    @info "Using predefined $n_pe scores to compute significance"
+
+    @showprogress for id in 1:n_pe
+
+        ra_ = fe_x_id_x_sc[:, id]
+
+        id_ = sortperm(ra_; rev = true)
+
+        se_x_id_x_en[:, id] =
+            BioLab.FeatureSetEnrichment.enrich(al, view(fe_, id_), view(ra_, id_), fe1___; ex)
+
+    end
+
+    se_x_id_x_en
 
 end
 
@@ -499,6 +528,7 @@ Run user-rank (pre-rank) GSEA.
   - `--minimum-set-fraction`: = 0.
   - `--algorithm`: = "ks". "ks" | "ksa" | "kli" | "kliom" | "kliop".
   - `--exponent`: = 1.
+  - `--permutation`: = "set". "set" | feature_x_index_x_score.tsv.
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
   - `--number-of-sets-to-plot`: = 4.
@@ -510,7 +540,7 @@ Run user-rank (pre-rank) GSEA.
 
 # Flags
 
-  - `--write-set-x-index-x-random-tsv`: = false.
+  - `--write-set-x-index-x-enrichment-tsv`: = false.
 """
 @cast function user_rank(
     output_directory,
@@ -521,9 +551,10 @@ Run user-rank (pre-rank) GSEA.
     minimum_set_fraction::Float64 = 0.0,
     algorithm = "ks",
     exponent::Float64 = 1.0,
+    permutation = "set",
     number_of_permutations::Int = 100,
     random_seed::Int = 20150603,
-    write_set_x_index_x_random_tsv::Bool = false,
+    write_set_x_index_x_enrichment_tsv::Bool = false,
     number_of_sets_to_plot::Int = 4,
     more_sets_to_plot = "",
     feature_name = "Gene",
@@ -534,14 +565,15 @@ Run user-rank (pre-rank) GSEA.
 
     BioLab.Error.error_missing(output_directory)
 
-    _naf, fe_, _me_, fe_x_me_x_sc =
-        BioLab.DataFrame.separate(BioLab.DataFrame.read(feature_x_metric_x_score_tsv))
+    feature_x_metric_x_score = BioLab.DataFrame.read(feature_x_metric_x_score_tsv)
+
+    fe_ = feature_x_metric_x_score[!, 1]
 
     BioLab.Error.error_duplicate(fe_)
 
     BioLab.Error.error_bad(fe_)
 
-    sc_ = view(fe_x_me_x_sc, :, 1)
+    sc_ = feature_x_metric_x_score[!, 2]
 
     BioLab.Error.error_bad(sc_)
 
@@ -556,15 +588,27 @@ Run user-rank (pre-rank) GSEA.
 
     al = _set_algorithm(algorithm)
 
-    en_, se_x_id_x_ra =
-        _enrich_permute_set(al, fe_, sc_, fe1___, exponent, number_of_permutations, random_seed)
+    if permutation == "set"
+
+        se_x_id_x_en =
+            _permute_set(number_of_permutations, random_seed, al, fe_, sc_, fe1___, exponent)
+
+    elseif isfile(permutation)
+
+        se_x_id_x_en = _use_permutation(permutation, al, fe_, fe1___, exponent)
+
+    else
+
+        error("Permutation $permutation is not set or feature_x_index_x_score.tsv.")
+
+    end
 
     _write(
         output_directory,
-        write_set_x_index_x_random_tsv,
+        write_set_x_index_x_enrichment_tsv,
         se_,
-        en_,
-        se_x_id_x_ra,
+        BioLab.FeatureSetEnrichment.enrich(al, fe_, sc_, fe1___; ex = exponent),
+        se_x_id_x_en,
         number_of_sets_to_plot,
         split(more_sets_to_plot),
         al,
@@ -640,7 +684,7 @@ Run metric-rank (standard) GSEA.
   - `--metric`: = "signal-to-noise-ratio". "signal-to-noise-ratio" | (coming soon).
   - `--algorithm`: = "ks". "ks" | "ksa" | "kli" | "kliom" | "kliop".
   - `--exponent`: = 1.
-  - `--permutation`: = "sample". "sample" | "set".
+  - `--permutation`: = "sample". "sample" | "set" | feature_x_index_x_score.tsv.
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
   - `--number-of-sets-to-plot`: = 4.
@@ -652,7 +696,7 @@ Run metric-rank (standard) GSEA.
 
 # Flags
 
-  - `--write-set-x-index-x-random-tsv`: = false.
+  - `--write-set-x-index-x-enrichment-tsv`: = false.
 """
 @cast function metric_rank(
     output_directory,
@@ -670,8 +714,7 @@ Run metric-rank (standard) GSEA.
     permutation = "sample",
     number_of_permutations::Int = 100,
     random_seed::Int = 20150603,
-    write_set_x_index_x_random_tsv::Bool = false,
-    feature_x_index_x_random_tsv = "",
+    write_set_x_index_x_enrichment_tsv::Bool = false,
     number_of_sets_to_plot::Int = 4,
     more_sets_to_plot = "",
     feature_name = "Gene",
@@ -718,7 +761,7 @@ Run metric-rank (standard) GSEA.
 
     else
 
-        error("Metric $metric is not supported.")
+        error("Metric $metric is not signal-to-noise-ratio.")
 
     end
 
@@ -738,33 +781,9 @@ Run metric-rank (standard) GSEA.
 
     if permutation == "sample"
 
-        en_ = BioLab.FeatureSetEnrichment.enrich(al, fe_, sc_, fe1___; ex = exponent)
+        se_x_id_x_en = Matrix{Float64}(undef, length(fe1___), number_of_permutations)
 
-        se_x_id_x_ra = Matrix{Float64}(undef, length(fe1___), number_of_permutations)
-
-        if !isempty(feature_x_index_x_random_tsv)
-
-            _naf2, fe2_, _id_, fe2_x_id_x_ra =
-                BioLab.DataFrame.separate(BioLab.DataFrame.read(feature_x_index_x_random_tsv))
-
-            @info "Using predefined $number_of_permutations sample-permutation scores to compute significance",
-            @showprogress for id in 1:number_of_permutations
-
-                ra_ = fe2_x_id_x_ra[:, id]
-
-                id_ = sortperm(ra_; rev = true)
-
-                se_x_id_x_ra[:, id] = BioLab.FeatureSetEnrichment.enrich(
-                    al,
-                    view(fe2_, id_),
-                    view(ra_, id_),
-                    fe1___;
-                    ex = exponent,
-                )
-
-            end
-
-        elseif 0 < number_of_permutations
+        if 0 < number_of_permutations
 
             @info "Permuting samples to compute significance"
 
@@ -774,68 +793,46 @@ Run metric-rank (standard) GSEA.
 
                 ra_, fe2_ = _apply_sort(fu, shuffle!(is_), fe_x_sa_x_sc, fe_)
 
-                se_x_id_x_ra[:, id] =
+                se_x_id_x_en[:, id] =
                     BioLab.FeatureSetEnrichment.enrich(al, fe2_, ra_, fe1___; ex = exponent)
 
             end
 
         end
 
-        _write(
-            output_directory,
-            write_set_x_index_x_random_tsv,
-            se_,
-            en_,
-            se_x_id_x_ra,
-            number_of_sets_to_plot,
-            split(more_sets_to_plot),
-            al,
-            fe_,
-            sc_,
-            fe1___,
-            exponent,
-            feature_name,
-            score_name,
-            low_text,
-            high_text,
-        )
-
     elseif permutation == "set"
 
-        en_, se_x_id_x_ra = _enrich_permute_set(
-            al,
-            fe_,
-            sc_,
-            fe1___,
-            exponent,
-            number_of_permutations,
-            random_seed,
-        )
+        se_x_id_x_en =
+            _permute_set(number_of_permutations, random_seed, al, fe_, sc_, fe1___, exponent)
 
-        _write(
-            output_directory,
-            write_set_x_index_x_random_tsv,
-            se_,
-            en_,
-            se_x_id_x_ra,
-            number_of_sets_to_plot,
-            split(more_sets_to_plot),
-            al,
-            fe_,
-            sc_,
-            fe1___,
-            exponent,
-            feature_name,
-            score_name,
-            low_text,
-            high_text,
-        )
+    elseif isfile(permutation)
+
+        se_x_id_x_en = _use_permutation(permutation, al, fe_, fe1___, exponent)
 
     else
 
-        error("Permutation $permutation is not supported.")
+        error("Permutation $permutation is not sample, set, or feature_x_index_x_score.tsv.")
 
     end
+
+    _write(
+        output_directory,
+        write_set_x_index_x_enrichment_tsv,
+        se_,
+        BioLab.FeatureSetEnrichment.enrich(al, fe_, sc_, fe1___; ex = exponent),
+        se_x_id_x_en,
+        number_of_sets_to_plot,
+        split(more_sets_to_plot),
+        al,
+        fe_,
+        sc_,
+        fe1___,
+        exponent,
+        feature_name,
+        score_name,
+        low_text,
+        high_text,
+    )
 
 end
 
