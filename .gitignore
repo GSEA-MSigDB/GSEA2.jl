@@ -35,4 +35,5 @@ build/
 
 *-application-*-julia-*-*-*.tar.gz
 
+# TODO: Remove.
 benchmark/

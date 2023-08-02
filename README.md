@@ -45,19 +45,25 @@ ls -l
 #### 2. Make a directory for saving outputs
 
 ```bash
-mkdir ~/Downloads/gsea_output
+mkdir ~/Downloads/gsea
 ```
 
 #### 3. Run GSEA
 
 ```bash
-gsea metric-rank ~/Downloads/gsea_output target_x_sample_x_number.tsv feature_x_sample_x_number.tsv set_features.json
+gsea metric-rank \
+    ~/Downloads/gsea \
+    target_x_sample_x_number.tsv \
+    feature_x_sample_x_number.tsv \
+    set_features.json \
+    --number-of-permutations 10 \
+    --more-sets-to-plot "WP_DNA_MISMATCH_REPAIR WP_CELL_CYCLE ALIEN"
 ```
 
 #### 4. Look at the results
 
 ```bash
-cd ~/Downloads/gsea_output
+cd ~/Downloads/gsea
 
 ls -l
 

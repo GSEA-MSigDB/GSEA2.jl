@@ -180,29 +180,32 @@ Run data-rank (single-sample) GSEA.
 
 # Options
 
-  - `--skip-0`: = false.
   - `--normalization-dimension`: = 0.
   - `--normalization-standard-deviation`: = 4.
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
   - `--minimum-set-fraction`: = 0.
-  - `--algorithm`: = "ks".
+  - `--algorithm`: = "ks". "ks" | "ksa" | "kli" | "kliom" | "kliop".
   - `--post-skip-minimum-set-size`: = 1.
   - `--exponent`: = 1.
+
+# Flags
+
+  - `--skip-0`: = false.
 """
 @cast function data_rank(
     output_directory,
     feature_x_sample_x_score_tsv,
     set_features_json;
-    skip_0 = false,
-    normalization_dimension = 0,
-    normalization_standard_deviation = 4,
-    minimum_set_size = 15,
-    maximum_set_size = 500,
-    minimum_set_fraction = 0,
+    skip_0::Bool = false,
+    normalization_dimension::Int = 0,
+    normalization_standard_deviation::Float64 = 4.0,
+    minimum_set_size::Int = 15,
+    maximum_set_size::Int = 500,
+    minimum_set_fraction::Float64 = 0.0,
     algorithm = "ks",
-    post_skip_minimum_set_size = 1,
-    exponent = 1,
+    post_skip_minimum_set_size::Int = 1,
+    exponent::Float64 = 1.0,
 )
 
     BioLab.Error.error_missing(output_directory)
@@ -416,6 +419,12 @@ function _write(
 
     for id in unique(vcat(BioLab.Rank.get_extreme(en_, n_pl), indexin(pl_, se_)))
 
+        if isnothing(id)
+
+            continue
+
+        end
+
         se = se_[id]
 
         title_text = "$id $se"
@@ -488,12 +497,12 @@ Run user-rank (pre-rank) GSEA.
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
   - `--minimum-set-fraction`: = 0.
-  - `--algorithm`: = "ks".
+  - `--algorithm`: = "ks". "ks" | "ksa" | "kli" | "kliom" | "kliop".
   - `--exponent`: = 1.
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
   - `--number-of-sets-to-plot`: = 4.
-  - `--more-sets-to-plot`: = Vector{String}().
+  - `--more-sets-to-plot`: = "". Space-separated set names.
   - `--feature-name`: = "Gene".
   - `--score-name`: = "User-Defined Score".
   - `--low-text`: = "Low Side".
@@ -507,16 +516,16 @@ Run user-rank (pre-rank) GSEA.
     output_directory,
     feature_x_metric_x_score_tsv,
     set_features_json;
-    minimum_set_size = 15,
-    maximum_set_size = 500,
-    minimum_set_fraction = 0,
+    minimum_set_size::Int = 15,
+    maximum_set_size::Int = 500,
+    minimum_set_fraction::Float64 = 0.0,
     algorithm = "ks",
-    exponent = 1,
-    number_of_permutations = 100,
-    random_seed = 20150603,
-    write_set_x_index_x_random_tsv = false,
-    number_of_sets_to_plot = 4,
-    more_sets_to_plot = Vector{String}(),
+    exponent::Float64 = 1.0,
+    number_of_permutations::Int = 100,
+    random_seed::Int = 20150603,
+    write_set_x_index_x_random_tsv::Bool = false,
+    number_of_sets_to_plot::Int = 4,
+    more_sets_to_plot = "",
     feature_name = "Gene",
     score_name = "User-Defined Score",
     low_text = "Low Side",
@@ -557,7 +566,7 @@ Run user-rank (pre-rank) GSEA.
         en_,
         se_x_id_x_ra,
         number_of_sets_to_plot,
-        more_sets_to_plot,
+        split(more_sets_to_plot),
         al,
         fe_,
         sc_,
@@ -628,15 +637,14 @@ Run metric-rank (standard) GSEA.
   - `--minimum-set-fraction`: = 0.
   - `--normalization-dimension`: = 0.
   - `--normalization-standard-deviation`: = 4.
-  - `--metric`: = "signal_to_noise_ratio".
-  - `--algorithm`: = "ks".
+  - `--metric`: = "signal-to-noise-ratio". "signal-to-noise-ratio" | (coming soon).
+  - `--algorithm`: = "ks". "ks" | "ksa" | "kli" | "kliom" | "kliop".
   - `--exponent`: = 1.
-  - `--permutation`: = "sample".
+  - `--permutation`: = "sample". "sample" | "set".
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
-  - `--feature-x-index-x-random-tsv`: = "".
   - `--number-of-sets-to-plot`: = 4.
-  - `--more-sets-to-plot`: = Vector{String}().
+  - `--more-sets-to-plot`: = "". Space-separated set names.
   - `--feature-name`: = "Gene".
   - `--score-name`: = "Signal-to-Noise Ratio".
   - `--low-text`: = "Low Side".
@@ -651,21 +659,21 @@ Run metric-rank (standard) GSEA.
     target_x_sample_x_number_tsv,
     feature_x_sample_x_score_tsv,
     set_features_json;
-    minimum_set_size = 15,
-    maximum_set_size = 500,
-    minimum_set_fraction = 0,
-    normalization_dimension = 0,
-    normalization_standard_deviation = 4,
-    metric = "signal_to_noise_ratio",
+    minimum_set_size::Int = 15,
+    maximum_set_size::Int = 500,
+    minimum_set_fraction::Float64 = 0.0,
+    normalization_dimension::Int = 0,
+    normalization_standard_deviation::Float64 = 4.0,
+    metric = "signal-to-noise-ratio",
     algorithm = "ks",
-    exponent = 1,
+    exponent::Float64 = 1.0,
     permutation = "sample",
-    number_of_permutations = 100,
-    random_seed = 20150603,
-    write_set_x_index_x_random_tsv = false,
+    number_of_permutations::Int = 100,
+    random_seed::Int = 20150603,
+    write_set_x_index_x_random_tsv::Bool = false,
     feature_x_index_x_random_tsv = "",
-    number_of_sets_to_plot = 4,
-    more_sets_to_plot = Vector{String}(),
+    number_of_sets_to_plot::Int = 4,
+    more_sets_to_plot = "",
     feature_name = "Gene",
     score_name = "Signal-to-Noise Ratio",
     low_text = "Low Side",
@@ -704,7 +712,7 @@ Run metric-rank (standard) GSEA.
 
     fe_x_sa_x_sc = view(fe_x_sa_x_sc, :, indexin(sat_, saf_))
 
-    if metric == "signal_to_noise_ratio"
+    if metric == "signal-to-noise-ratio"
 
         fu = _get_signal_to_noise_ratio
 
@@ -780,7 +788,7 @@ Run metric-rank (standard) GSEA.
             en_,
             se_x_id_x_ra,
             number_of_sets_to_plot,
-            more_sets_to_plot,
+            split(more_sets_to_plot),
             al,
             fe_,
             sc_,
@@ -811,7 +819,7 @@ Run metric-rank (standard) GSEA.
             en_,
             se_x_id_x_ra,
             number_of_sets_to_plot,
-            more_sets_to_plot,
+            split(more_sets_to_plot),
             al,
             fe_,
             sc_,
