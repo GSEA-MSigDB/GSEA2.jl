@@ -1,4 +1,4 @@
-The official command-line program for the gene-set-enrichment analysis (GSEA) 🧬.
+The official command-line program for the gene-set-enrichment analysis (GSEA) 🏔️.
 
 ## Use `gsea` command-line interface
 
