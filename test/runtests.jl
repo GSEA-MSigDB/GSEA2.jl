@@ -1,12 +1,14 @@
 using Test: @test
 
-using BioLab
-
 using GSEA
 
 # ---- #
 
 # ----------------------------------------------------------------------------------------------- #
+
+using BioLab
+
+# ---- #
 
 const TE = BioLab.Path.make_directory(joinpath(BioLab.TE, "GSEA"))
 

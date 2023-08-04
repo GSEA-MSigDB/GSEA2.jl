@@ -43,7 +43,7 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[deps.BioLab]]
 deps = ["CSV", "Clustering", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "Distances", "Distributed", "Distributions", "GZip", "JSON", "KernelDensity", "LinearAlgebra", "Mmap", "MultipleTesting", "NMF", "OrderedCollections", "Printf", "ProgressMeter", "Random", "Statistics", "StatsBase", "TOML", "XLSX"]
-git-tree-sha1 = "e2005e6aa361b45f9775dcd077d4f6bbf55e04d0"
+git-tree-sha1 = "1d98fa86aec86eb553fa0404bfdfc1ca591a4677"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/BioLab.jl"
 uuid = "1fe83854-81c0-42f7-afc9-71ba9af673ca"
@@ -115,9 +115,9 @@ version = "1.0.5"
 
 [[deps.Compat]]
 deps = ["UUIDs"]
-git-tree-sha1 = "5ce999a19f4ca23ea484e92a1774a61b8ca4cf8e"
+git-tree-sha1 = "e460f044ca8b99be31d35fe54fc33a5c33dd8ed7"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.8.0"
+version = "4.9.0"
 weakdeps = ["Dates", "LinearAlgebra"]
 
     [deps.Compat.extensions]
@@ -152,9 +152,9 @@ version = "1.6.1"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
-git-tree-sha1 = "cf25ccb972fec4e4817764d01c82386ae94f77b4"
+git-tree-sha1 = "3dbd312d370723b6bb43ba9d02fc36abade4518d"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.18.14"
+version = "0.18.15"
 
 [[deps.DataValueInterfaces]]
 git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
@@ -180,10 +180,10 @@ deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[deps.Distributions]]
-deps = ["FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SparseArrays", "SpecialFunctions", "Statistics", "StatsAPI", "StatsBase", "StatsFuns", "Test"]
-git-tree-sha1 = "e76a3281de2719d7c81ed62c6ea7057380c87b1d"
+deps = ["FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SpecialFunctions", "Statistics", "StatsAPI", "StatsBase", "StatsFuns", "Test"]
+git-tree-sha1 = "27a18994a5991b1d2e2af7833c4f8ecf9af6b9ea"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
-version = "0.25.98"
+version = "0.25.99"
 
     [deps.Distributions.extensions]
     DistributionsChainRulesCoreExt = "ChainRulesCore"
