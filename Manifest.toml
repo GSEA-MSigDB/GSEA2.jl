@@ -43,7 +43,7 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[deps.BioLab]]
 deps = ["CSV", "Clustering", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "Distances", "Distributed", "Distributions", "GZip", "JSON", "KernelDensity", "LinearAlgebra", "Mmap", "MultipleTesting", "NMF", "OrderedCollections", "Printf", "ProgressMeter", "Random", "Statistics", "StatsBase", "TOML", "XLSX"]
-git-tree-sha1 = "9a2f2aad6143adc9eee1b8cd25e794d30044b54f"
+git-tree-sha1 = "3457f052118fd6c37f9dbc2b603d47bdf0cae9b6"
 repo-rev = "main"
 repo-url = "https://github.com/KwatMDPhD/BioLab.jl"
 uuid = "1fe83854-81c0-42f7-afc9-71ba9af673ca"
