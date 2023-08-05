@@ -8,7 +8,7 @@ using GSEA
 
 const DI = joinpath(dirname(@__DIR__), "benchmark", "outer_loop")
 
-const IN = BioLab.Path.make_directory(joinpath(DI, "input"))
+const IN = BioLab.Path.remake_directory(joinpath(DI, "input"))
 
 # ---- #
 
@@ -28,7 +28,7 @@ const JS = GSEA.convert_gmt(
 # ---- #
 
 const OU = GSEA.metric_rank(
-    BioLab.Path.make_directory(joinpath(DI, "output")),
+    BioLab.Path.remake_directory(joinpath(DI, "output")),
     TST,
     TSF,
     JS;
@@ -130,7 +130,7 @@ for (id, js) in enumerate(readdir(DIJ))
 
     @info "$id $js"
 
-    di = BioLab.Path.make_directory(joinpath(DIB, BioLab.Path.clean(splitext(js)[1])))
+    di = BioLab.Path.remake_directory(joinpath(DIB, BioLab.Path.clean(chop(js; tail = 3))))
 
     tst = joinpath(di, "target_x_sample_x_number.tsv")
 
@@ -150,7 +150,7 @@ for (id, js) in enumerate(readdir(DIJ))
 
         @info "Comparing $al"
 
-        dio = BioLab.Path.make_directory(joinpath(di, "output_$al"))
+        dio = BioLab.Path.remake_directory(joinpath(di, "output_$al"))
 
         GSEA.metric_rank(dio, tst, tsf, js; algorithm = al)
 

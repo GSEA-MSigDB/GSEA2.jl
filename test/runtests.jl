@@ -10,7 +10,7 @@ using BioLab
 
 # ---- #
 
-const TE = BioLab.Path.make_directory(joinpath(BioLab.TE, "GSEA"))
+const TE = BioLab.Path.remake_directory(joinpath(BioLab.TE, "GSEA"))
 
 const DA = joinpath(dirname(@__DIR__), "data")
 
@@ -46,7 +46,7 @@ const TSF = joinpath(DA, "feature_x_sample_x_number.tsv")
 
 @test BioLab.Error.@is_error GSEA.data_rank("", TSF, SE)
 
-const OUD = GSEA.data_rank(BioLab.Path.make_directory(joinpath(TE, "data_rank")), TSF, SE)
+const OUD = GSEA.data_rank(BioLab.Path.remake_directory(joinpath(TE, "data_rank")), TSF, SE)
 
 const SET_FEATURES_X_SAMPLE_X_ENRICHMENT =
     BioLab.DataFrame.read(joinpath(OUD, "set_x_sample_x_enrichment.tsv"))
@@ -73,7 +73,7 @@ const TSM = joinpath(DA, "feature_x_metric_x_score.tsv")
 @test BioLab.Error.@is_error GSEA.user_rank("", TSM, SE)
 
 const OUU = GSEA.user_rank(
-    BioLab.Path.make_directory(joinpath(TE, "user_rank")),
+    BioLab.Path.remake_directory(joinpath(TE, "user_rank")),
     TSM,
     SE;
     number_of_sets_to_plot = 2,
@@ -130,7 +130,8 @@ const TST = joinpath(DA, "target_x_sample_x_number.tsv")
 
 @test BioLab.Error.@is_error GSEA.metric_rank("", TST, TSF, SE)
 
-const OUM = GSEA.metric_rank(BioLab.Path.make_directory(joinpath(TE, "metric_rank")), TST, TSF, SE)
+const OUM =
+    GSEA.metric_rank(BioLab.Path.remake_directory(joinpath(TE, "metric_rank")), TST, TSF, SE)
 
 const FEATURE_X_METRIC_X_SCORE =
     BioLab.DataFrame.read(joinpath(OUM, "feature_x_metric_x_score.tsv"))
@@ -153,7 +154,7 @@ const SET_X_STATISTIC_X_NUMBERM =
 @test length(
     BioLab.Path.read(
         GSEA.metric_rank(
-            BioLab.Path.make_directory(joinpath(TE, "metric_rank_small")),
+            BioLab.Path.remake_directory(joinpath(TE, "metric_rank_small")),
             TST,
             TSF,
             joinpath(DA, "2set_features.json");
