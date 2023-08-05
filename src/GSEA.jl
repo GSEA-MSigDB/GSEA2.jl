@@ -44,7 +44,9 @@ function _read_set(js, fe_, mi, ma, mif)
 
     n = length(se_)
 
-    @info "There are $n sets before filtering."
+    n_nos = BioLab.String.count(n, "set")
+
+    @info "Filtering $n_nos"
 
     ke_ = BitVector(undef, n)
 
@@ -68,7 +70,9 @@ function _read_set(js, fe_, mi, ma, mif)
 
     end
 
-    @info "$n_ke after."
+    n_nos = BioLab.String.count(n_ke, "set")
+
+    @info "Kept $n_nos."
 
     se_[ke_], fe1___[ke_]
 
