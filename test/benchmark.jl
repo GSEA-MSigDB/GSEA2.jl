@@ -117,7 +117,7 @@ end
 
 const AL_ = ("ks", "kli", "kli", "kliom", "kliop")
 
-for (id, js) in enumerate(readdir(DIJ))
+for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
     ke_va = BioLab.Dict.read(joinpath(DIJ, js))[chop(js; tail = 5)]
 
