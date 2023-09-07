@@ -421,13 +421,13 @@ function plot(
                 "y" => zeros(sum(is_)),
                 "x" => view(x, is_),
                 "text" => view(fe_, is_),
+                "hoverinfo" => "name+x+text",
                 "mode" => "markers",
                 "marker" => Dict(
                     "symbol" => "line-ns",
                     "size" => 24,
                     "line" => Dict("width" => 1.28, "color" => "#175e54", "opacity" => 0.8),
                 ),
-                "hoverinfo" => "x+text+name",
             ),
             BioLab.Dict.merge_recursively(
                 scatter,
