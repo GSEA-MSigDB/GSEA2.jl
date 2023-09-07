@@ -368,7 +368,7 @@ function plot(
 
     coe1 = "#07fa07"
 
-    coe2 = BioLab.Plot.add_alpha(coe1, 0.32)
+    coe2 = BioLab.Color.add_alpha(coe1, 0.32)
 
     title_text = BioLab.String.limit(title_text, 80)
 
@@ -446,29 +446,17 @@ function plot(
                 "text" => "<b>$title_text</b>",
                 "font" => Dict("size" => 32, "family" => "Relaway", "color" => "#2b2028"),
             ),
-            "yaxis" => BioLab.Dict.merge_recursively(
-                BioLab.Plot.AXIS,
-                Dict("domain" => yaxis1_domain, "title" => Dict("text" => "<b>$nas</b>")),
+            "yaxis" => Dict("domain" => yaxis1_domain, "title" => Dict("text" => "<b>$nas</b>")),
+            "yaxis2" => Dict(
+                "domain" => yaxis2_domain,
+                "title" => Dict("text" => "<b>Set</b>"),
+                "tickvals" => (),
             ),
-            "yaxis2" => BioLab.Dict.merge_recursively(
-                BioLab.Plot.AXIS,
-                Dict(
-                    "domain" => yaxis2_domain,
-                    "title" => Dict("text" => "<b>Set</b>"),
-                    "tickvals" => (),
-                ),
-            ),
-            "yaxis3" => BioLab.Dict.merge_recursively(
-                BioLab.Plot.AXIS,
+            "yaxis3" =>
                 Dict("domain" => yaxis3_domain, "title" => Dict("text" => "<b>Δ Enrichment</b>")),
-            ),
-            "xaxis" => reduce(
-                BioLab.Dict.merge_recursively,
-                (
-                    BioLab.Plot.AXIS,
-                    BioLab.Plot.SPIKE,
-                    Dict("zeroline" => false, "title" => Dict("text" => "<b>$naf (n=$n)</b>")),
-                ),
+            "xaxis" => BioLab.Dict.merge_recursively(
+                BioLab.Plot.SPIKE,
+                Dict("zeroline" => false, "title" => Dict("text" => "<b>$naf (n=$n)</b>")),
             ),
             "annotations" => (
                 BioLab.Dict.merge_recursively(
