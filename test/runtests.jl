@@ -1,8 +1,14 @@
+using Aqua: test_all, test_ambiguities
+
 using Test: @test
 
 using GSEA
 
 # ---- #
+
+test_all(GSEA; ambiguities = false)
+
+test_ambiguities(GSEA)
 
 # ----------------------------------------------------------------------------------------------- #
 
