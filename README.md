@@ -78,7 +78,9 @@ gsea convert-gmt
 ]add https://github.com/KwatMDPhD/GSEA.jl
 ```
 
-(To run the metric-rank from the example)
+Each command-line-interface command has a corresponding function. Options and flags are keyword arguments.
+
+Run the example above
 
 ```julia
 using GSEA
@@ -86,7 +88,7 @@ using GSEA
 const DI = joinpath("path", "to", "example", "sarcopenia")
 
 GSEA.metric_rank(
-    "~/Downloads/gsea",
+    mkdir(joinpath(homedir(), "Downloads", "gsea")),
     joinpath(DI, "target_x_sample_x_number.tsv"),
     joinpath(DI, "feature_x_sample_x_number.tsv"),
     joinpath(DI, "set_features.json"),
