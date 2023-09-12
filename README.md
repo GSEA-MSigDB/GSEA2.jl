@@ -1,4 +1,4 @@
-The official command-line program for the gene-set-enrichment analysis (GSEA) 🏔️.
+The official command-line program for the gene-set-enrichment analysis (GSEA) 🏔️
 
 ## Quick Start
 
@@ -10,7 +10,7 @@ cd example/sarcopenia
 ls -l
 ```
 
-#### 2. Make a directory for saving outputs
+#### 2. Make a directory for outputs
 
 ```bash
 mkdir ~/Downloads/gsea
@@ -101,7 +101,7 @@ GSEA.metric_rank(
 
 1. Download the latest [release](https://github.com/KwatMDPhD/GSEA.jl/releases/latest) and extract it.
 
-2. Add to the path
+2. Path
 
 ```bash
 PATH=$(pwd)/gsea/bin:$PATH
@@ -121,7 +121,7 @@ gsea --help
 
 If installation is unavailable or fails, try building.
 
-#### 1. Download this repository
+#### 1. Download
 
 ```bash
 git clone https://github.com/KwatMDPhD/GSEA.jl
@@ -141,7 +141,7 @@ julia --project --eval "using Pkg; Pkg.instantiate()"
 julia --project deps/build.jl app tarball
 ```
 
-#### 4. Add to the path
+#### 4. Path
 
 ```bash
 PATH=$(pwd)/build/gsea/bin:$PATH
@@ -157,4 +157,4 @@ gsea --help
 
 ---
 
-Powered by https://github.com/KwatMDPhD/Kata.jl 🥋.
+Powered by https://github.com/KwatMDPhD/Kata.jl 🥋
