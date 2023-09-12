@@ -1,3 +1,3 @@
-using GSEA
+using GSEA: comonicon_install
 
-GSEA.comonicon_install()
+comonicon_install()
