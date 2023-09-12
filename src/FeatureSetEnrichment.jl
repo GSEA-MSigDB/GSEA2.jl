@@ -421,7 +421,6 @@ function plot(
                 "y" => zeros(sum(is_)),
                 "x" => view(x, is_),
                 "text" => view(fe_, is_),
-                "hoverinfo" => "name+x+text",
                 "mode" => "markers",
                 "marker" => Dict(
                     "symbol" => "line-ns",
