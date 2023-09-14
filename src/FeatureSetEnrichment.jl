@@ -2,7 +2,7 @@ module FeatureSetEnrichment
 
 using ProgressMeter: @showprogress
 
-using ..BioLab
+using BioLab
 
 struct KS end
 
@@ -16,7 +16,7 @@ struct KLioP end
 
 function _make_string(al)
 
-    chop(string(al); head = 28, tail = 2)
+    chop(string(al); head = 26, tail = 2)
 
 end
 
@@ -87,16 +87,6 @@ end
     n, su0, su1 = _sum_01(sc_, ex, is_)
 
     n, 1 / su0, su1, 0.0, !isnothing(mo_)
-
-end
-
-@inline function _ready_kli(sc_, ex, is_, mo_)
-
-    n, su, su1 = _sum_all1(sc_, ex, is_)
-
-    ep = eps()
-
-    n, su, su1, ep, ep, ep, 1.0, 1.0, 0.0, !isnothing(mo_), 0.0, 0.0
 
 end
 
@@ -174,6 +164,16 @@ function _enrich!(::KSa, sc_, ex, is_, mo_)
 
 end
 
+@inline function _ready_kli(sc_, ex, is_, mo_)
+
+    n, su, su1 = _sum_all1(sc_, ex, is_)
+
+    ep = eps()
+
+    n, su, su1, ep, ep, ep, 1.0, 1.0, 0.0, !isnothing(mo_), 0.0, 0.0
+
+end
+
 function _enrich!(::KLi, sc_, ex, is_, mo_)
 
     n, su, su1, ep, ri, ri1, le, le1, ar, mo, ridp, ri1dp = _ready_kli(sc_, ex, is_, mo_)
@@ -214,7 +214,7 @@ function _enrich!(::KLi, sc_, ex, is_, mo_)
 
         end
 
-        en = BioLab.Information.get_antisymmetric_kullback_leibler_divergence(ri1, ri, le1, le)
+        en = BioLab.Information.get_antisymmetric_kullback_leibler_divergence(ri1, le1, ri, le)
 
         ar += en
 
@@ -354,13 +354,7 @@ function plot(
 
     x = collect(1:n)
 
-    scatter = Dict(
-        "x" => x,
-        "text" => fe_,
-        "mode" => "lines",
-        "line" => Dict("width" => 0.4),
-        "fill" => "tozeroy",
-    )
+    scatter = Dict("x" => x, "text" => fe_, "mode" => "lines", "fill" => "tozeroy")
 
     cor = "#ff1992"
 
@@ -380,9 +374,7 @@ function plot(
 
     annotation = Dict("showarrow" => false, "bgcolor" => "#fcfcfc", "borderwidth" => 2.4)
 
-    enf = BioLab.String.format(en)
-
-    annotationhl = BioLab.Dict.merge_recursively(
+    annotationhl = merge(
         annotation,
         Dict(
             "y" => 0,
@@ -397,27 +389,27 @@ function plot(
     BioLab.Plot.plot(
         ht,
         [
-            BioLab.Dict.merge_recursively(
+            merge(
                 scatter,
                 Dict(
                     "name" => "- Score",
                     "y" => ifelse.(sc_ .< 0, sc_, 0),
-                    "line" => Dict("color" => cob),
+                    "line" => Dict("width" => 0.4, "color" => cob),
                     "fillcolor" => cob,
                 ),
             ),
-            BioLab.Dict.merge_recursively(
+            merge(
                 scatter,
                 Dict(
                     "name" => "+ Score",
                     "y" => ifelse.(0 .< sc_, sc_, 0),
-                    "line" => Dict("color" => cor),
+                    "line" => Dict("width" => 0.4, "color" => cor),
                     "fillcolor" => cor,
                 ),
             ),
             Dict(
-                "yaxis" => "y2",
                 "name" => "Set",
+                "yaxis" => "y2",
                 "y" => zeros(sum(is_)),
                 "x" => view(x, is_),
                 "text" => view(fe_, is_),
@@ -428,11 +420,11 @@ function plot(
                     "line" => Dict("width" => 1.28, "color" => "#175e54", "opacity" => 0.8),
                 ),
             ),
-            BioLab.Dict.merge_recursively(
+            merge(
                 scatter,
                 Dict(
-                    "yaxis" => "y3",
                     "name" => "Δ Enrichment",
+                    "yaxis" => "y3",
                     "y" => mo_,
                     "line" => Dict("width" => 3.2, "color" => coe1),
                     "fillcolor" => coe2,
@@ -445,32 +437,44 @@ function plot(
                 "text" => "<b>$title_text</b>",
                 "font" => Dict("size" => 32, "family" => "Relaway", "color" => "#2b2028"),
             ),
-            "yaxis" => Dict("domain" => yaxis1_domain, "title" => Dict("text" => "<b>$nas</b>")),
+            "yaxis" => Dict(
+                "domain" => yaxis1_domain,
+                "title" => Dict("text" => "<b>$nas</b>"),
+                "showgrid" => false,
+            ),
             "yaxis2" => Dict(
                 "domain" => yaxis2_domain,
                 "title" => Dict("text" => "<b>Set</b>"),
                 "tickvals" => (),
+                "showgrid" => false,
             ),
-            "yaxis3" =>
-                Dict("domain" => yaxis3_domain, "title" => Dict("text" => "<b>Δ Enrichment</b>")),
-            "xaxis" => BioLab.Dict.merge_recursively(
+            "yaxis3" => Dict(
+                "domain" => yaxis3_domain,
+                "title" => Dict("text" => "<b>Δ Enrichment</b>"),
+                "showgrid" => false,
+            ),
+            "xaxis" => merge(
+                Dict(
+                    "title" => Dict("text" => "<b>$naf (n=$n)</b>"),
+                    "zeroline" => false,
+                    "showgrid" => false,
+                ),
                 BioLab.Plot.SPIKE,
-                Dict("zeroline" => false, "title" => Dict("text" => "<b>$naf (n=$n)</b>")),
             ),
             "annotations" => (
-                BioLab.Dict.merge_recursively(
+                merge(
                     annotation,
                     Dict(
                         "yref" => "paper",
                         "xref" => "paper",
                         "y" => 1.04,
-                        "text" => "Enrichment = <b>$enf</b>",
+                        "text" => "Enrichment = <b>$(BioLab.String.format(en))</b>",
                         "font" => Dict("size" => 20, "color" => "#224634"),
                         "borderpad" => 12.8,
                         "bordercolor" => "#ffd96a",
                     ),
                 ),
-                BioLab.Dict.merge_recursively(
+                merge(
                     annotationhl,
                     Dict(
                         "x" => 1 - margin,
@@ -479,7 +483,7 @@ function plot(
                         "font" => Dict("color" => cor),
                     ),
                 ),
-                BioLab.Dict.merge_recursively(
+                merge(
                     annotationhl,
                     Dict(
                         "x" => n + margin,
@@ -548,21 +552,17 @@ function plot(di, al, fe_, fe_x_sa_x_sc, fe1___, nac, se_, sa_, se_x_sa_x_en; ex
 
     BioLab.Error.error_missing(di)
 
-    als = _make_string(al)
-
-    nacc = BioLab.Path.clean(nac)
-
     BioLab.Plot.plot_heat_map(
-        joinpath(di, "set_x_$(nacc)_x_enrichment.html"),
-        se_x_sa_x_en,
-        se_,
-        sa_;
+        joinpath(di, "set_x_$(BioLab.Path.clean(nac))_x_enrichment.html"),
+        se_x_sa_x_en;
+        y = se_,
+        x = sa_,
         nar = "Set",
         nac,
-        layout = Dict("title" => Dict("text" => "Enrichment using $als")),
+        layout = Dict("title" => Dict("text" => "Enrichment using $(_make_string(al))")),
     )
 
-    nos_ = BitVector(undef, length(fe_))
+    no_ = BitVector(undef, length(fe_))
 
     noe = .!isnan.(se_x_sa_x_en)
 
@@ -574,28 +574,26 @@ function plot(di, al, fe_, fe_x_sa_x_sc, fe1___, nac, se_, sa_, se_x_sa_x_en; ex
 
         id1, id2 = Tuple(id_)
 
-        enf = BioLab.String.format(se_x_sa_x_en[id1, id2])
-
         se = se_[id1]
 
         sa = sa_[id2]
 
-        sc_ = fe_x_sa_x_sc[:, id2]
+        sc_ = view(fe_x_sa_x_sc, :, id2)
 
-        nos_ .= .!isnan.(sc_)
+        no_ .= .!isnan.(sc_)
 
-        scn_ = view(sc_, nos_)
+        scn_ = sc_[no_]
 
         so_ = sortperm(scn_; rev = true)
 
         plot(
             joinpath(di, "$(sa)_enriching_$se.html"),
             al,
-            view(view(fe_, nos_), so_),
+            view(fe_[no_], so_),
             view(scn_, so_),
             fe1___[id1];
             ex,
-            title_text = "$sa Enriching $se ($enf)",
+            title_text = "$sa Enriching $se ($(BioLab.String.format(se_x_sa_x_en[id1, id2])))",
         )
 
     end
