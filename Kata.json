@@ -2,7 +2,6 @@
   "download": {},
   "call": {
     "update": "julia --project --eval 'using Pkg; Pkg.update()'",
-    "run": "julia --project --eval 'using Pkg; Pkg.test()'",
-    "build": "rm -rf build && julia --project deps/build.jl app tarball"
+    "run": "julia --project --eval 'using Pkg; Pkg.test()'"
   }
 }

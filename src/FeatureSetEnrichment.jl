@@ -455,7 +455,7 @@ function plot(
             ),
             "xaxis" => merge(
                 Dict(
-                    "title" => Dict("text" => "<b>$naf (n=$n)</b>"),
+                    "title" => Dict("text" => "<b>$naf (n = $n)</b>"),
                     "zeroline" => false,
                     "showgrid" => false,
                 ),
@@ -574,10 +574,6 @@ function plot(di, al, fe_, fe_x_sa_x_sc, fe1___, nac, se_, sa_, se_x_sa_x_en; ex
 
         id1, id2 = Tuple(id_)
 
-        se = se_[id1]
-
-        sa = sa_[id2]
-
         sc_ = view(fe_x_sa_x_sc, :, id2)
 
         no_ .= .!isnan.(sc_)
@@ -586,14 +582,16 @@ function plot(di, al, fe_, fe_x_sa_x_sc, fe1___, nac, se_, sa_, se_x_sa_x_en; ex
 
         so_ = sortperm(scn_; rev = true)
 
+        pr = "$(sa_[id2]) Enriching $(se_[id1])"
+
         plot(
-            joinpath(di, "$(sa)_enriching_$se.html"),
+            joinpath(di, BioLab.Path.clean("$pr.html")),
             al,
             view(fe_[no_], so_),
             view(scn_, so_),
             fe1___[id1];
             ex,
-            title_text = "$sa Enriching $se ($(BioLab.String.format(se_x_sa_x_en[id1, id2])))",
+            title_text = "$pr ($(BioLab.String.format(se_x_sa_x_en[id1, id2])))",
         )
 
     end

@@ -1,8 +1,8 @@
-The official command-line program for the gene-set-enrichment analysis (GSEA) 🏔️
+The official command-line program for gene-set-enrichment analysis (GSEA) 🏔️
 
 ## Quick Start
 
-#### 1. Go to the example directory
+#### 1. Go to `example` directory
 
 ```bash
 cd example/sarcopenia
@@ -10,7 +10,7 @@ cd example/sarcopenia
 ls -l
 ```
 
-#### 2. Make a directory for outputs
+#### 2. Make an output directory
 
 ```bash
 mkdir ~/Downloads/gsea
@@ -42,19 +42,19 @@ open *.html
 
 ## Use `gsea` command-line interface
 
-#### Run metric-rank (standard) GSEA
+#### Run `metric-rank` (standard) GSEA
 
 ```bash
 gsea metric-rank
 ```
 
-#### Run user-rank (pre-rank) GSEA
+#### Run `user-rank` (pre-rank) GSEA
 
 ```bash
 gsea user-rank
 ```
 
-#### Run data-rank (single-sample) GSEA
+#### Run `data-rank` (single-sample) GSEA
 
 ```bash
 gsea data-rank
@@ -74,18 +74,23 @@ gsea convert-gmt
 
 ## Use in `julia`
 
+#### `]add`
+
 ```julia
 ]add https://github.com/KwatMDPhD/GSEA.jl
 ```
 
-Each command-line-interface command has a corresponding function. Options and flags are keyword arguments.
+#### Use
 
-Run the example above
+Each command-line-interface command has a corresponding function.
+Options and flags are keyword arguments.
+
+#### Reproduce [Quick Start](#quick-start) in `julia`
 
 ```julia
 using GSEA
 
-const DI = joinpath("path", "to", "example", "sarcopenia")
+const DI = joinpath("example", "sarcopenia")
 
 GSEA.metric_rank(
     mkdir(joinpath(homedir(), "Downloads", "gsea")),

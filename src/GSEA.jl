@@ -100,7 +100,7 @@ function _set_algorithm(al)
 
     else
 
-        error("Algorithm $al is not ks, ksa, kli, kliom, or kliop.")
+        error("Algorithm \"$al\" is not \"ks\", \"ksa\", \"kli\", \"kliom\", or \"kliop\".")
 
     end
 
@@ -402,9 +402,7 @@ function _write(
 
         end
 
-        se = se_[id]
-
-        title_text = "$id $se"
+        title_text = "$id $(se_[id])"
 
         FeatureSetEnrichment.plot(
             joinpath(ou, "$(BioLab.Path.clean(title_text)).html"),
@@ -574,7 +572,7 @@ Run user-rank (pre-rank) GSEA.
 
     else
 
-        error("Permutation $permutation is not \"set\" or feature_x_index_x_random.tsv.")
+        error("Permutation \"$permutation\" is not \"set\" or feature_x_index_x_random.tsv.")
 
     end
 
@@ -808,7 +806,7 @@ Run metric-rank (standard) GSEA.
 end
 
 """
-The official command-line program for the gene-set-enrichment analysis (GSEA). Learn more at https://github.com/KwatMDPhD/GSEA.jl.
+The official command-line program for gene-set-enrichment analysis (GSEA). Learn more at https://github.com/KwatMDPhD/GSEA.jl.
 """
 @main
 

@@ -10,6 +10,8 @@ test_all(GSEA; ambiguities = false)
 
 test_ambiguities(GSEA)
 
+# ---- #
+
 # ----------------------------------------------------------------------------------------------- #
 
 #run(`julia --project FeatureSetEnrichment.jl`)
