@@ -703,9 +703,11 @@ function metric_rank(
 
     BioLab.Error.error_bad(ta_x_sa_x_nu)
 
-    if unique(ta_x_sa_x_nu) != [0, 1]
+    un_ = Set(ta_x_sa_x_nu)
 
-        error("Target has a number other than 0 and 1.")
+    if un_ != Set((0, 1))
+
+        error("Target has a number other than 0 and 1. $un_.")
 
     end
 
