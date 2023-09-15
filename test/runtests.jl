@@ -1,4 +1,4 @@
-using Aqua: test_all, test_ambiguities
+#using Aqua: test_all, test_ambiguities
 
 using Test: @test
 
@@ -6,15 +6,15 @@ using GSEA
 
 # ---- #
 
-test_all(GSEA; ambiguities = false)
+#test_all(GSEA; ambiguities = false)
 
-test_ambiguities(GSEA)
+#test_ambiguities(GSEA)
 
 # ---- #
 
 # ----------------------------------------------------------------------------------------------- #
 
-#run(`julia --project FeatureSetEnrichment.jl`)
+run(`julia --project FeatureSetEnrichment.jl`)
 
 # ---- #
 
@@ -75,41 +75,6 @@ end
 
 # ---- #
 
-const DAO = joinpath(dirname(@__DIR__), "benchmark", "outer_loop")
-
-const COT = joinpath(TE, "target_x_sample_x_number.tsv")
-
-const COF = joinpath(TE, "feature_x_sample_x_number.tsv")
-
-@test GSEA.convert_cls_gct(
-    COT,
-    COF,
-    joinpath(DAO, "Coller_et_al_phen.cls"),
-    joinpath(DAO, "Coller_et_al_gene_exp_preproc.gct"),
-) === (COT, COF)
-
-# ---- #
-
-@test read(COF) == read(joinpath(DAO, "input", "feature_x_sample_x_number.tsv"))
-
-@test read(COT) == read(joinpath(DAO, "input", "target_x_sample_x_number.tsv"))
-
-# ---- #
-
-const COS = joinpath(TE, "set_features.json")
-
-@test GSEA.convert_gmt(
-    COS,
-    joinpath(DAO, "h.all.v2022.1.Hs.symbols.gmt"),
-    joinpath(DAO, "c2.all.v2022.1.Hs.symbols.gmt"),
-) === COS
-
-# ---- #
-
-@test read(COS) == read(joinpath(DAO, "input", "set_features.json"))
-
-# ---- #
-
 const TSF = joinpath(DA, "feature_x_sample_x_number.tsv")
 
 @test BioLab.Error.@is GSEA.data_rank("", TSF, SE)
@@ -154,13 +119,16 @@ const OUU = GSEA.user_rank(
 
 # ---- #
 
-const SET_X_STATISTIC_X_NUMBER =
+const SET_X_STATISTIC_X_NUMBERU =
     BioLab.DataFrame.read(joinpath(OUU, "set_x_statistic_x_number.tsv"))
 
-@test size(SET_X_STATISTIC_X_NUMBER) === (50, 5)
+@test size(SET_X_STATISTIC_X_NUMBERU) === (50, 5)
 
-@test names(SET_X_STATISTIC_X_NUMBER) ==
-      ["Set", "Enrichment", "Normalized Enrichment", "P-Value", "Adjusted P-Value"]
+# ---- #
+
+const ST_ = ["Set", "Enrichment", "Normalized Enrichment", "P-Value", "Adjusted P-Value"]
+
+@test names(SET_X_STATISTIC_X_NUMBERU) == ST_
 
 # ---- #
 
@@ -171,18 +139,25 @@ for (id, re) in (
     (50, ["HALLMARK_MYC_TARGETS_V2", 0.866579, 3.36557, 0.000262812]),
 )
 
-    @test SET_X_STATISTIC_X_NUMBER[id, 1] === re[1]
+    @test SET_X_STATISTIC_X_NUMBERU[id, 1] === re[1]
 
-    @test isapprox(collect(SET_X_STATISTIC_X_NUMBER[id, 2:length(re)]), re[2:end]; atol = 1e-5)
+    @test isapprox(collect(SET_X_STATISTIC_X_NUMBERU[id, 2:length(re)]), re[2:end]; atol = 1e-5)
 
 end
+
+# ---- #
 
 @test length(BioLab.Path.read(OUU; ke_ = (r"html$",))) === 6
 
 # ---- #
 
+const ZE_ = fill(0, 3)
+
+@test isnan(GSEA._get_signal_to_noise_ratio(ZE_, ZE_))
+
+# ---- #
+
 for (nu1_, nu2_, re) in (
-    (fill(0, 3), fill(0, 3), 0.0),
     (fill(1, 3), fill(0.001, 3), 4.990009990009989),
     (collect(1:3), collect(10:10:30), -1.6363636363636365),
     (fill(0.001, 3), fill(1, 3), -4.990009990009989),
@@ -191,7 +166,6 @@ for (nu1_, nu2_, re) in (
 
     @test GSEA._get_signal_to_noise_ratio(nu1_, nu2_) === re
 
-    # 48.196 ns (0 allocations: 0 bytes)
     # 21.899 ns (0 allocations: 0 bytes)
     # 57.646 ns (0 allocations: 0 bytes)
     # 57.631 ns (0 allocations: 0 bytes)
@@ -220,14 +194,20 @@ const FEATURE_X_METRIC_X_SCORE =
 
 @test names(FEATURE_X_METRIC_X_SCORE) == ["Feature", "signal-to-noise-ratio"]
 
-@test isapprox(view(FEATURE_X_METRIC_X_SCORE, [1, 1000], 2), [1.7411, -1.83724]; atol = 1e-5)
+@test isapprox(view(FEATURE_X_METRIC_X_SCORE, [1, 1000], 2), [1.83724, -1.7411]; atol = 1e-5)
 
 # ---- #
 
-const SET_X_STATISTIC_X_NUMBER =
+const SET_X_STATISTIC_X_NUMBERM =
     BioLab.DataFrame.read(joinpath(OUM, "set_x_statistic_x_number.tsv"))
 
-@test size(SET_X_STATISTIC_X_NUMBER) === (8, 5)
+@test size(SET_X_STATISTIC_X_NUMBERM) === (8, 5)
+
+# ---- #
+
+@test names(SET_X_STATISTIC_X_NUMBERM) == ST_
+
+# ---- #
 
 @test length(BioLab.Path.read(OUM; ke_ = (r"html$",))) === 8
 

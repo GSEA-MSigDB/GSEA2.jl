@@ -116,12 +116,8 @@ Convert `.cls` and `.gct` to `.tsv`s.
   - `cls`: Input `.cls`.
   - `gct`: Input `.gct`.
 """
-@cast function convert_cls_gct(
-    target_x_sample_x_number_tsv,
-    feature_x_sample_x_score_tsv,
-    cls,
-    gct,
-)
+#@cast function convert_cls_gct(
+function convert_cls_gct(target_x_sample_x_number_tsv, feature_x_sample_x_score_tsv, cls, gct)
 
     _nat, ta_, _sa_, ta_x_sa_x_nu = BioLab.DataFrame.separate(BioLab.CLS.read(cls))
 
@@ -165,7 +161,8 @@ Convert one or more `.gmt`s to a `.json`.
   - `set_features_json`: Output `.json`.
   - `gmt_`: Input `.gmt`s.
 """
-@cast function convert_gmt(set_features_json, gmt_...)
+#@cast function convert_gmt(set_features_json, gmt_...)
+function convert_gmt(set_features_json, gmt_...)
 
     BioLab.Dict.write(set_features_json, merge((BioLab.GMT.read(gmt) for gmt in gmt_)...))
 
@@ -195,7 +192,8 @@ Run data-rank (single-sample) GSEA.
 
   - `--skip-0`: = false.
 """
-@cast function data_rank(
+#@cast function data_rank(
+function data_rank(
     output_directory,
     feature_x_sample_x_score_tsv,
     set_features_json;
@@ -515,7 +513,8 @@ Run user-rank (pre-rank) GSEA.
 
   - `--write-set-x-index-x-random-tsv`: = false.
 """
-@cast function user_rank(
+#@cast function user_rank(
+function user_rank(
     output_directory,
     feature_x_metric_x_score_tsv,
     set_features_json;
@@ -601,11 +600,11 @@ function _get_standard_deviation(nu_, me)
 
     fr = 0.2
 
-    if iszero(me)
+    #if iszero(me)
 
-        return fr
+    #    return fr
 
-    end
+    #end
 
     max(abs(me) * fr, std(nu_; corrected = true))
 
@@ -621,9 +620,11 @@ function _get_signal_to_noise_ratio(nu1_, nu2_)
 
 end
 
+# TODO: Benchmark.
 function _target_sort(fu, is_, fe_x_sa_x_sc, fe_)
 
-    sc_ = fu.(eachrow(view(fe_x_sa_x_sc, :, .!is_)), eachrow(view(fe_x_sa_x_sc, :, is_)))
+    # TODO: Try `view`.
+    sc_ = fu.(eachrow(fe_x_sa_x_sc[:, .!is_]), eachrow(fe_x_sa_x_sc[:, is_]))
 
     so_ = sortperm(sc_; rev = true)
 
@@ -665,7 +666,8 @@ Run metric-rank (standard) GSEA.
 
   - `--write-set-x-index-x-random-tsv`: = false.
 """
-@cast function metric_rank(
+#@cast function metric_rank(
+function metric_rank(
     output_directory,
     target_x_sample_x_number_tsv,
     feature_x_sample_x_score_tsv,
@@ -701,6 +703,12 @@ Run metric-rank (standard) GSEA.
 
     BioLab.Error.error_bad(ta_x_sa_x_nu)
 
+    if unique(ta_x_sa_x_nu) != [0, 1]
+
+        error("Target has a number other than 0 and 1.")
+
+    end
+
     _naf, fe_, saf_, fe_x_sa_x_sc =
         BioLab.DataFrame.separate(BioLab.DataFrame.read(feature_x_sample_x_score_tsv))
 
@@ -732,7 +740,7 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    is_ = iszero.(view(ta_x_sa_x_nu, 1, :))
+    is_ = convert(BitVector, view(ta_x_sa_x_nu, 1, :))
 
     sc_, fe_ = _target_sort(fu, is_, fe_x_sa_x_sc, fe_)
 
@@ -808,6 +816,6 @@ end
 """
 The official command-line program for gene-set-enrichment analysis (GSEA). Learn more at https://github.com/KwatMDPhD/GSEA.jl.
 """
-@main
+#@main
 
 end

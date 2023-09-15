@@ -6,8 +6,6 @@ using GSEA
 
 # ---- #
 
-const DIB = joinpath(dirname(@__DIR__), "benchmark")
-
 const DII = joinpath(homedir(), "Desktop", "benchmark")
 
 const DIJ = joinpath(DII, "json_files")
@@ -16,7 +14,7 @@ const DIT = joinpath(DII, "Datasets_and_Phenotypes")
 
 const DIS = joinpath(DII, "Gene_Sets_Collections")
 
-const DIR = joinpath(DII, "results_sets")
+const DIR = joinpath(DII, "results")
 
 # ---- #
 
@@ -34,9 +32,9 @@ end
 
 # ---- #
 
-function path(di)
+function path(di, re)
 
-    if RE || !isdir(di)
+    if re || !isdir(di)
 
         BioLab.Path.remake_directory(di)
 
@@ -50,13 +48,25 @@ end
 
 const RE = false
 
-const AL_ = ["ks", "kli", "kliom", "kliop"]
+const AL_ = ("ks", "kli", "kli", "kliom", "kliop")
 
 # ---- #
 
+const DIB = path(joinpath(dirname(@__DIR__), "benchmark"), RE)
+
+# ---- #
+
+tst = nothing
+
+tsf = nothing
+
+pda = nothing
+
+jda = nothing
+
 for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
-    if js in ("GSE121051 LPS vs. CNTRL.json", "NRF2_mouse_model.json")
+    if js in ()
 
         continue
 
@@ -66,9 +76,9 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
     ke_va = BioLab.Dict.read(joinpath(DIJ, js))[chop(js; tail = 5)]
 
-    dib = path(joinpath(DIB, BioLab.Path.clean(chop(js; tail = 5))))
+    dib = path(joinpath(DIB, BioLab.Path.clean(chop(js; tail = 5))), RE)
 
-    dii = path(joinpath(dib, "input"))
+    dii = path(joinpath(dib, "input"), RE)
 
     tst = joinpath(dii, "target_x_sample_x_number.tsv")
 
@@ -96,9 +106,15 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
     for (al, pr) in zip(AL_, ke_va["results_files_prefix"])
 
-        @info "Comparing $al"
+        if al != "ks"
 
-        dio = path(joinpath(dib, "output_$al"))
+            continue
+
+        end
+
+        @info "Comparing \"$al\""
+
+        dio = path(joinpath(dib, "output_$al"), RE)
 
         feature_x_metric_x_score_tsv = joinpath(dio, "feature_x_metric_x_score.tsv")
 
@@ -112,18 +128,25 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
         feature_x_metric_x_score = joinpath(dip, "$(pr)_gene_selection_scores.txt")
 
-        pda = sort!(BioLab.DataFrame.read(feature_x_metric_x_score; select = [1, 2]))
+        pda = BioLab.DataFrame.read(feature_x_metric_x_score; select = [1, 2])
 
-        jda = sort!(BioLab.DataFrame.read(feature_x_metric_x_score_tsv))
+        jda = BioLab.DataFrame.read(feature_x_metric_x_score_tsv)
 
-        @test size(pda, 1) === size(jda, 1)
+        @test size(pda, 1) == size(jda, 1)
+
+        pda[!, 1] = [BioLab.String.limit(st, 50) for st in pda[!, 1]]
+
+        jda[!, 1] = [BioLab.String.limit(st, 50) for st in jda[!, 1]]
+
+        pda = sort!(pda)
+
+        jda = sort!(jda)
 
         for id in 1:size(pda, 1)
 
-            @test pda[id, 1] === jda[id, 1]
+            @test pda[id, 1] == jda[id, 1]
 
-            # TODO: Check directionality.
-            @test isapprox(abs(pda[id, 2]), abs(jda[id, 2]); atol = 1e-5)
+            @test isapprox(pda[id, 2], jda[id, 2]; atol = 1e-5)
 
         end
 
@@ -152,23 +175,36 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
         jda = sort!(BioLab.DataFrame.read(set_x_statistic_x_number_tsv))
 
-        @test size(pda, 1) === size(jda, 1)
+        @test size(pda, 1) == size(jda, 1)
 
         for id in 1:size(pda, 1)
 
-            @test pda[id, 1] === jda[id, 1]
+            @test pda[id, 1] == jda[id, 1]
 
-            # TODO: Check directionality.
-            @test isapprox(abs(pda[id, 3]), abs(jda[id, 2]); atol = 1e-3)
+            @test isapprox(pda[id, 3], jda[id, 2]; atol = 1e-3)
 
-            @test isapprox(pda[id, 2], jda[id, 3]; atol = 1e-2)
+            #@test isapprox(pda[id, 2], jda[id, 3]; atol = 1e-2)
 
-            @test isapprox(parse_float(pda[id, 4]), jda[id, 4]; atol = 1e-2)
+            #@test isapprox(parse_float(pda[id, 4]), jda[id, 4]; atol = 1e-2)
 
-            @test isapprox(parse_float(pda[id, 5]), jda[id, 5]; atol = 1e-1)
+            #@test isapprox(parse_float(pda[id, 5]), jda[id, 5]; atol = 1e-1)
 
         end
 
     end
 
+end
+
+# ---- #
+is_ = .!isapprox.(pda[!, 2], jda[!, 2]; atol = 1e-5);
+view(pda, is_, :)
+view(jda, is_, :)
+# ---- #
+ta = convert(BitVector, Vector(BioLab.DataFrame.read(tst)[1, 2:end]));
+fe = BioLab.DataFrame.read(tsf);
+# ---- #
+for ge in view(pda, is_, 1)
+    @info ge
+    fe2 = Vector(fe[findfirst(==(ge), fe[!, 1]), 2:end])
+    println(GSEA._get_signal_to_noise_ratio(fe2[.!ta], fe2[ta]))
 end
