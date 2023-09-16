@@ -6,15 +6,17 @@ using GSEA
 
 # ---- #
 
-const DII = joinpath(homedir(), "Desktop", "benchmark")
+const DIP = joinpath(homedir(), "Desktop", "benchmark")
 
-const DIJ = joinpath(DII, "json_files")
+const DIJ = joinpath(DIP, "json_files")
 
-const DIT = joinpath(DII, "Datasets_and_Phenotypes")
+const DID = joinpath(DIP, "Datasets_and_Phenotypes")
 
-const DIS = joinpath(DII, "Gene_Sets_Collections")
+const DIS = joinpath(DIP, "Gene_Sets_Collections")
 
-const DIR = joinpath(DII, "results")
+const DIR = joinpath(DIP, "results")
+
+const AL_ = ("ks", "kli", "kli", "kliom", "kliop")
 
 # ---- #
 
@@ -32,62 +34,37 @@ end
 
 # ---- #
 
-function path(di, re)
-
-    if re || !isdir(di)
-
-        BioLab.Path.remake_directory(di)
-
-    end
-
-    di
-
-end
+const DIB = joinpath(dirname(@__DIR__), "benchmark")
+#BioLab.Path.remake_directory(DIB)
 
 # ---- #
 
-const RE = false
-
-const DIB = path(joinpath(dirname(@__DIR__), "benchmark"), RE)
-
-const AL_ = ("ks", "kli", "kli", "kliom", "kliop")
-
-# ---- #
-
-tst = nothing
-
-tsf = nothing
-
-pda = nothing
-
-jda = nothing
+tst = tsf = py = ju = nothing
 
 # ---- #
 
 for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
-    @info "$id $js"
-
     if js in (
-        "CCLE_STAT3_vs_mRNA.json", # Number of sets.
-        "CCLE_YAP_vs_mRNA.json", # Number of sets.
-        "CFC1-overexpressing NGP cells.json", # Direction.
-        "CRISPR_FOXA1_vs_mRNA.json", # Number of sets.
-        "CRISPR_NFE2L2_vs_mRNA.json", # Number of sets.
-        "CRISPR_SOX10_vs_mRNA.json", # Number of sets.
-        "Cyclin_D1.json", # Number of sets.
-        "EBV_Arrested.json", # Unique genes.
-        "ERbeta.json", # Number of sets.
-        "European and African American Lung Comparison.json", # Enrichment.
-        "Gender.json", # Number of sets.
-        "MD_C1_vs_others.json", # Enrichment.
-        "MYC mut and wt vs RNA.json", # Enrichment.
-        "NRF2_Liver_Cancer.json", # Number of sets.
-        "NRF2_mouse_model.json", # Number of sets.
-        "PI3K_Inihibtion.json", # Enrichment.
-        "PIK3CA mut and wt vs RNA.json", # Enrichment.
-        "Regulation of ZBTB18 in glioblastoma.json", # Direction.
-        "Stroma_senescence.json", # Unique genes.
+        "CCLE_STAT3_vs_mRNA.json", # Number of sets differ.
+        "CCLE_YAP_vs_mRNA.json", # Number of sets differ.
+        "CFC1-overexpressing NGP cells.json", # Target directionalities differ.
+        "CRISPR_FOXA1_vs_mRNA.json", # Number of sets differ.
+        "CRISPR_NFE2L2_vs_mRNA.json", # Number of sets differ.
+        "CRISPR_SOX10_vs_mRNA.json", # Number of sets differ.
+        "Cyclin_D1.json", # Number of sets differ.
+        "EBV_Arrested.json", # Genes are duplicates.
+        "ERbeta.json", # Number of sets differ.
+        "European and African American Lung Comparison.json", # Enrichments differ.
+        "Gender.json", # Number of sets differ.
+        "MD_C1_vs_others.json", # Enrichments differ.
+        "MYC mut and wt vs RNA.json", # Enrichments differ.
+        "NRF2_Liver_Cancer.json", # Number of sets differ.
+        "NRF2_mouse_model.json", # Number of sets differ.
+        "PI3K_Inihibtion.json", # Enrichments differ.
+        "PIK3CA mut and wt vs RNA.json", # Enrichments differ.
+        "Regulation of ZBTB18 in glioblastoma.json", # Target directionalities differ.
+        "Stroma_senescence.json", # Genes are duplicates.
     )
 
         continue
@@ -96,33 +73,37 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
     ke_va = BioLab.Dict.read(joinpath(DIJ, js))[chop(js; tail = 5)]
 
-    dib = path(joinpath(DIB, BioLab.Path.clean(chop(js; tail = 5))), RE)
+    @info "$id $js" ke_va
 
-    dii = path(joinpath(dib, "input"), RE)
+    dib = joinpath(DIB, BioLab.Path.clean(chop(js; tail = 5)))
+    #BioLab.Path.remake_directory(dib)
+
+    dii = joinpath(dib, "input")
+    #BioLab.Path.remake_directory(dii)
 
     tst = joinpath(dii, "target_x_sample_x_number.tsv")
 
     tsf = joinpath(dii, "feature_x_sample_x_number.tsv")
 
-    jss = joinpath(dii, "set_features.json")
+    if !isfile(tst) || !isfile(tsf)
 
-    if RE || !isfile(tst) || !isfile(tsf)
+        @info "convert_cls_gct"
 
-        @info "Converting `cls` and `gct`"
-
-        GSEA.convert_cls_gct(tst, tsf, joinpath(DIT, ke_va["cls"]), joinpath(DIT, ke_va["ds"]))
+        GSEA.convert_cls_gct(tst, tsf, joinpath(DID, ke_va["cls"]), joinpath(DID, ke_va["ds"]))
 
     end
 
-    if RE || !isfile(jss)
+    jss = joinpath(dii, "set_features.json")
 
-        @info "Converting `gmt`"
+    if !isfile(jss)
+
+        @info "convert_gmt"
 
         GSEA.convert_gmt(jss, (joinpath(DIS, gm) for gm in ke_va["gene_sets_collections"])...)
 
     end
 
-    dip = joinpath(DIR, basename(ke_va["results_directory"]))
+    dir = joinpath(DIR, basename(ke_va["results_directory"]))
 
     for (al, pr) in zip(AL_, ke_va["results_files_prefix"])
 
@@ -132,82 +113,80 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
         end
 
-        @info "Comparing \"$al\""
+        @info al
 
-        dio = path(joinpath(dib, "output_$al"), RE)
+        dio = joinpath(dib, "output_$al")
+        #BioLab.Path.remake_directory(dio)
 
-        feature_x_metric_x_score_tsv = joinpath(dio, "feature_x_metric_x_score.tsv")
+        txm = joinpath(dir, "$(pr)_gene_selection_scores.txt")
 
-        if RE || !isfile(feature_x_metric_x_score_tsv)
+        txs = joinpath(dir, "$(pr)_GSEA_results_table.txt")
 
-            @info "Computing metrics"
+        tsm = joinpath(dio, "feature_x_metric_x_score.tsv")
+
+        tss = joinpath(dio, "set_x_statistic_x_number.tsv")
+
+        if !isfile(tsm)
+
+            @info "metric-rank"
 
             GSEA.metric_rank(dio, tst, tsf, jss; algorithm = al, number_of_permutations = 0)
 
-        end
-
-        feature_x_metric_x_score = joinpath(dip, "$(pr)_gene_selection_scores.txt")
-
-        pda = BioLab.DataFrame.read(feature_x_metric_x_score; select = [1, 2])
-
-        jda = BioLab.DataFrame.read(feature_x_metric_x_score_tsv)
-
-        @test size(pda, 1) === size(jda, 1)
-
-        pda[!, 1] = [BioLab.String.limit(st, 50) for st in pda[!, 1]]
-
-        jda[!, 1] = [BioLab.String.limit(st, 50) for st in jda[!, 1]]
-
-        pda = sort!(pda)
-
-        jda = sort!(jda)
-
-        for id in 1:size(pda, 1)
-
-            @test pda[id, 1] == jda[id, 1]
-
-            @test isapprox(pda[id, 2], jda[id, 2]; atol = 1e-5)
+            BioLab.Path.remove(tss)
 
         end
 
-        set_x_statistic_x_number_tsv = joinpath(dio, "set_x_statistic_x_number.tsv")
+        n_ch = 50
 
-        if RE || !isfile(set_x_statistic_x_number_tsv)
+        py = sort!(
+            BioLab.DataFrame.read(txm; select = [1, 2]);
+            by = [an -> BioLab.String.limit(an, n_ch), an -> an],
+        )
 
-            @info "Computing enrichments"
+        ju =
+            sort!(BioLab.DataFrame.read(tsm); by = [an -> BioLab.String.limit(an, n_ch), an -> an])
+
+        @test size(py, 1) === size(ju, 1)
+
+        for id in 1:size(py, 1)
+
+            @test BioLab.String.limit(py[id, 1], n_ch) == BioLab.String.limit(ju[id, 1], n_ch)
+
+            @test isapprox(py[id, 2], ju[id, 2]; atol = 1e-5)
+
+        end
+
+        if !isfile(tss)
+
+            @info "user_rank"
 
             GSEA.user_rank(
                 dio,
-                feature_x_metric_x_score,
+                txm,
                 jss;
                 algorithm = al,
-                permutation = joinpath(dip, "$(pr)_rand_perm_gene_scores.txt"),
+                permutation = joinpath(dir, "$(pr)_rand_perm_gene_scores.txt"),
             )
 
         end
 
-        pda = sort!(
-            BioLab.DataFrame.read(
-                joinpath(dip, "$(pr)_GSEA_results_table.txt");
-                select = [1, 5, 4, 6, 7],
-            ),
-        )
+        py = sort!(BioLab.DataFrame.read(txs; select = [1, 5, 4, 6, 7]))
 
-        jda = sort!(BioLab.DataFrame.read(set_x_statistic_x_number_tsv))
+        ju = sort!(BioLab.DataFrame.read(tss))
 
-        @test size(pda, 1) === size(jda, 1)
+        @test size(py, 1) === size(ju, 1)
 
-        for id in 1:size(pda, 1)
+        for id in 1:size(py, 1)
 
-            @test pda[id, 1] == jda[id, 1]
+            @test py[id, 1] == ju[id, 1]
 
-            @test isapprox(pda[id, 3], jda[id, 2]; atol = 1e-2)
+            @test isapprox(py[id, 3], ju[id, 2]; atol = 1e-2)
 
-            #@test isapprox(pda[id, 2], jda[id, 3]; atol = 1e-2)
+            @test isapprox(py[id, 2], ju[id, 3]; atol = 1e-2)
 
-            #@test isapprox(parse_float(pda[id, 4]), jda[id, 4]; atol = 1e-2)
+            @test isapprox(parse_float(py[id, 4]), ju[id, 4]; atol = 1e-2)
 
-            #@test isapprox(parse_float(pda[id, 5]), jda[id, 5]; atol = 1e-1)
+            @test isapprox(parse_float(py[id, 5]), ju[id, 5]; atol = 1e-1)
 
         end
 
@@ -216,18 +195,33 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 end
 
 # ---- #
-first(pda, 10)
-first(jda, 10)
+
+first(py, 10)
+
+first(ju, 10)
+
 # ---- #
-is_ = .!isapprox.(pda[!, 2], jda[!, 2]; atol = 1e-5);
-view(pda, is_, :)
-view(jda, is_, :)
+
+is_ = .!isapprox.(py[!, 2], ju[!, 2]; atol = 1e-5);
+
+view(py, is_, :)
+
+view(ju, is_, :)
+
 # ---- #
+
 ta = convert(BitVector, Vector(BioLab.DataFrame.read(tst)[1, 2:end]));
+
 fe = BioLab.DataFrame.read(tsf);
+
 # ---- #
-for ge in view(pda, is_, 1)
+
+for ge in view(py, is_, 1)
+
     @info ge
+
     fe2 = Vector(fe[findfirst(==(ge), fe[!, 1]), 2:end])
+
     println(GSEA._get_signal_to_noise_ratio(fe2[.!ta], fe2[ta]))
+
 end

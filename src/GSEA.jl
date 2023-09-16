@@ -455,6 +455,7 @@ end
 function _use_permutation(permutation, al, fe_, fe1___, ex)
 
     feature_x_index_x_random = BioLab.DataFrame.read(permutation)
+    @info "!" feature_x_index_x_random fe_ feature_x_index_x_random[!, 1]
 
     fe_x_id_x_ra = view(
         Matrix(feature_x_index_x_random[!, 2:end]),
