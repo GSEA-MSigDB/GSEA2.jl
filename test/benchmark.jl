@@ -16,7 +16,7 @@ const DIS = joinpath(DIP, "Gene_Sets_Collections")
 
 const DIR = joinpath(DIP, "results")
 
-const AL_ = ("ks", "kli", "kli2", "kliom", "kliop")
+const AL_ = ("ks", "kli", "kli1", "kliom", "kliop")
 
 # ---- #
 
@@ -42,7 +42,11 @@ function test(st, is_, py, ju)
 
     if any(is_)
 
-        @error st view(py, is_, :) view(ju, is_, :)
+        @error "$st $(BioLab.String.format(100 - 100 * sum(is_) / size(py,  1)))%" view(py, is_, :) view(
+            ju,
+            is_,
+            :,
+        )
 
     end
 
@@ -98,7 +102,7 @@ const BA_ = Set((
 
 # ---- #
 
-for (id, js) in enumerate(BioLab.Path.read(DIJ)[1:1])
+for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
     if js in BA_
 
@@ -136,12 +140,6 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ)[1:1])
 
     for (al, pr, no) in
         zip(AL_, ke_va["results_files_prefix"], ke_va["standardize_genes_before_gene_sel"])
-
-        if al in ()
-
-            continue
-
-        end
 
         @info "$al ($pr)"
 

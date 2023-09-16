@@ -86,6 +86,10 @@ function _set_algorithm(al)
 
         FeatureSetEnrichment.KSa()
 
+    elseif al == "kli1"
+
+        FeatureSetEnrichment.KLi1()
+
     elseif al == "kli"
 
         FeatureSetEnrichment.KLi()
