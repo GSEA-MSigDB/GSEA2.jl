@@ -35,7 +35,7 @@ end
 # ---- #
 
 const DIB = joinpath(dirname(@__DIR__), "benchmark")
-#BioLab.Path.remake_directory(DIB)
+BioLab.Path.remake_directory(DIB)
 
 # ---- #
 
@@ -76,10 +76,10 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
     @info "$id $js" ke_va
 
     dib = joinpath(DIB, BioLab.Path.clean(chop(js; tail = 5)))
-    #BioLab.Path.remake_directory(dib)
+    BioLab.Path.remake_directory(dib)
 
     dii = joinpath(dib, "input")
-    #BioLab.Path.remake_directory(dii)
+    BioLab.Path.remake_directory(dii)
 
     tst = joinpath(dii, "target_x_sample_x_number.tsv")
 
@@ -116,7 +116,7 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
         @info al
 
         dio = joinpath(dib, "output_$al")
-        #BioLab.Path.remake_directory(dio)
+        BioLab.Path.remake_directory(dio)
 
         txm = joinpath(dir, "$(pr)_gene_selection_scores.txt")
 
