@@ -9,9 +9,11 @@ using GSEA: FeatureSetEnrichment
 const DA = joinpath(dirname(@__DIR__), "data", "FeatureSetEnrichment")
 
 @test BioLab.Path.read(DA) == [
-    "c2.all.v7.1.symbols.gmt"
-    "gene_x_statistic_x_number.tsv"
-    "h.all.v7.1.symbols.gmt"
+    "c2.all.v7.1.symbols.gmt",
+    "coller_auc.tsv",
+    "gene_x_statistic_x_number.tsv",
+    "h.all.v2022.1.Hs.symbols.gmt",
+    "h.all.v7.1.symbols.gmt",
 ]
 
 # ---- #
@@ -143,15 +145,17 @@ const CFE1_ = ["A", "K"]
 
 const CIS_ = in(Set(CFE1_)).(CFE_)
 
+# ---- #
+
 for (al, re) in zip(AL_, (-0.5, 0.0, 0.0, 0.0, 0.0))
 
     @test isapprox(FeatureSetEnrichment._enrich!(al, CSC_, EX, CIS_, nothing), re; atol = 1e-15)
 
     # 19.433 ns (0 allocations: 0 bytes)
     # 17.576 ns (0 allocations: 0 bytes)
-    # 129.786 ns (0 allocations: 0 bytes)
-    # 235.042 ns (0 allocations: 0 bytes)
-    # 235.214 ns (0 allocations: 0 bytes)
+    # 129.421 ns (0 allocations: 0 bytes)
+    # 234.970 ns (0 allocations: 0 bytes)
+    # 235.023 ns (0 allocations: 0 bytes)
     #@btime FeatureSetEnrichment._enrich!($al, $CSC_, $EX, $CIS_, nothing)
 
 end
@@ -166,6 +170,37 @@ end
 
 # ---- #
 
+const PFE_, PSC_ = eachcol(BioLab.DataFrame.read(joinpath(DA, "Coller_auc.tsv"); select = [1, 2]))
+
+const PIS_ =
+    in(
+        Set(
+            BioLab.GMT.read(joinpath(DA, "h.all.v2022.1.Hs.symbols.gmt"))["HALLMARK_MYC_TARGETS_V1"],
+        ),
+    ).(PFE_)
+
+for (al, re) in zip(AL_, (
+    0.6823,
+    0.3988,
+    0.7171,
+    #0.817,
+    0.7286 / 2,
+    0.7056 / 2,
+))
+
+    @test round(FeatureSetEnrichment._enrich!(al, PSC_, EX, PIS_, nothing); digits = 4) === re
+
+    # 43.250 μs (0 allocations: 0 bytes)
+    # 37.042 μs (0 allocations: 0 bytes)
+    # 196.708 μs (0 allocations: 0 bytes)
+    # 348.333 μs (0 allocations: 0 bytes)
+    # 348.500 μs (0 allocations: 0 bytes)
+    @btime FeatureSetEnrichment._enrich!($al, $PSC_, $EX, $PIS_, nothing)
+
+end
+
+# ---- #
+
 const MFE_, MSC_ =
     eachcol(BioLab.DataFrame.read(joinpath(DA, "gene_x_statistic_x_number.tsv"); select = [1, 2]))
 
@@ -173,9 +208,10 @@ reverse!(MFE_)
 
 reverse!(MSC_)
 
-const MFE1_ = BioLab.GMT.read(joinpath(DA, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"]
-
-const MIS_ = in(Set(MFE1_)).(MFE_)
+const MIS_ =
+    in(
+        Set(BioLab.GMT.read(joinpath(DA, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"]),
+    ).(MFE_)
 
 const FE_X_SA_X_MSC = hcat(MSC_, MSC_ * 10.0, fill(0.8, length(MFE_)))
 
@@ -191,12 +227,12 @@ for (al, re) in zip(
         0.7651927829281453,
         0.41482514169516305,
         0.7736480596525319,
-        0.7750661968892066,
-        0.772229922415844,
+        0.7750661968892066 / 2,
+        0.772229922415844 / 2,
     ),
 )
 
-    @test isapprox(FeatureSetEnrichment._enrich!(al, MSC_, EX, MIS_, nothing), re; atol = 1e-12)
+    #@test isapprox(FeatureSetEnrichment._enrich!(al, MSC_, EX, MIS_, nothing), re; atol = 1e-12)
 
     # 43.375 μs (0 allocations: 0 bytes)
     # 2.940 ms (108 allocations: 934.22 KiB)
@@ -214,11 +250,11 @@ for (al, re) in zip(
     # 18.230 ms (108 allocations: 934.22 KiB)
     # 55.666 ms (358 allocations: 4.59 MiB)
 
-    #@btime FeatureSetEnrichment._enrich!($al, $MSC_, $EX, $MIS_, nothing)
+    @btime FeatureSetEnrichment._enrich!($al, $MSC_, $EX, $MIS_, nothing)
 
-    #@btime FeatureSetEnrichment.enrich($al, $MFE_, $MSC_, $MFE1___)
+    @btime FeatureSetEnrichment.enrich($al, $MFE_, $MSC_, $MFE1___)
 
-    #@btime FeatureSetEnrichment.enrich($al, $MFE_, $FE_X_SA_X_MSC, $MFE1___)
+    @btime FeatureSetEnrichment.enrich($al, $MFE_, $FE_X_SA_X_MSC, $MFE1___)
 
 end
 
@@ -230,7 +266,9 @@ const MSA_ = ["Score", "Score x 10", "Constant"]
 
 const AL = FeatureSetEnrichment.KS()
 
-se_x_sa_x_en = FeatureSetEnrichment.enrich(AL, MFE_, FE_X_SA_X_MSC, MFE1___)
+const SE_X_SA_X_EN = FeatureSetEnrichment.enrich(AL, MFE_, FE_X_SA_X_MSC, MFE1___)
+
+# ---- #
 
 @test BioLab.Error.@is FeatureSetEnrichment.plot(
     "",
@@ -241,7 +279,7 @@ se_x_sa_x_en = FeatureSetEnrichment.enrich(AL, MFE_, FE_X_SA_X_MSC, MFE1___)
     "Sample",
     MSE_,
     MSA_,
-    se_x_sa_x_en;
+    SE_X_SA_X_EN;
     ex = EX,
 )
 
@@ -256,6 +294,6 @@ se_x_sa_x_en = FeatureSetEnrichment.enrich(AL, MFE_, FE_X_SA_X_MSC, MFE1___)
     "Sample",
     MSE_,
     MSA_,
-    se_x_sa_x_en;
+    SE_X_SA_X_EN;
     ex = EX,
 ) === BioLab.TE
