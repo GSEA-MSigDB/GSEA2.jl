@@ -74,29 +74,33 @@ end
 
 # ---- #
 
-for (id, js) in enumerate(BioLab.Path.read(DIJ))
+const BA_ = Set((
+    "CCLE_STAT3_vs_mRNA.json", # Number of sets differ.
+    "CCLE_YAP_vs_mRNA.json", # Number of sets differ.
+    "CFC1-overexpressing NGP cells.json", # Target directionalities differ.
+    "CRISPR_FOXA1_vs_mRNA.json", # Number of sets differ.
+    "CRISPR_NFE2L2_vs_mRNA.json", # Number of sets differ.
+    "CRISPR_SOX10_vs_mRNA.json", # Number of sets differ.
+    "Cyclin_D1.json", # Number of sets differ.
+    "EBV_Arrested.json", # Genes are duplicates.
+    "ERbeta.json", # Number of sets differ.
+    "European and African American Lung Comparison.json", # Enrichments differ.
+    "Gender.json", # Number of sets differ.
+    "MD_C1_vs_others.json", # Enrichments differ.
+    "MYC mut and wt vs RNA.json", # Enrichments differ.
+    "NRF2_Liver_Cancer.json", # Number of sets differ.
+    "NRF2_mouse_model.json", # Number of sets differ.
+    "PI3K_Inihibtion.json", # Enrichments differ.
+    "PIK3CA mut and wt vs RNA.json", # Enrichments differ.
+    "Regulation of ZBTB18 in glioblastoma.json", # Target directionalities differ.
+    "Stroma_senescence.json", # Genes are duplicates.
+))
 
-    if js in (
-        "CCLE_STAT3_vs_mRNA.json", # Number of sets differ.
-        "CCLE_YAP_vs_mRNA.json", # Number of sets differ.
-        "CFC1-overexpressing NGP cells.json", # Target directionalities differ.
-        "CRISPR_FOXA1_vs_mRNA.json", # Number of sets differ.
-        "CRISPR_NFE2L2_vs_mRNA.json", # Number of sets differ.
-        "CRISPR_SOX10_vs_mRNA.json", # Number of sets differ.
-        "Cyclin_D1.json", # Number of sets differ.
-        "EBV_Arrested.json", # Genes are duplicates.
-        "ERbeta.json", # Number of sets differ.
-        "European and African American Lung Comparison.json", # Enrichments differ.
-        "Gender.json", # Number of sets differ.
-        "MD_C1_vs_others.json", # Enrichments differ.
-        "MYC mut and wt vs RNA.json", # Enrichments differ.
-        "NRF2_Liver_Cancer.json", # Number of sets differ.
-        "NRF2_mouse_model.json", # Number of sets differ.
-        "PI3K_Inihibtion.json", # Enrichments differ.
-        "PIK3CA mut and wt vs RNA.json", # Enrichments differ.
-        "Regulation of ZBTB18 in glioblastoma.json", # Target directionalities differ.
-        "Stroma_senescence.json", # Genes are duplicates.
-    )
+# ---- #
+
+for (id, js) in enumerate(BioLab.Path.read(DIJ)[1:end])
+
+    if js in BA_
 
         continue
 
@@ -130,9 +134,10 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
     dir = joinpath(DIR, basename(ke_va["results_directory"]))
 
-    for (al, pr) in zip(AL_, ke_va["results_files_prefix"])
+    for (al, pr, no) in
+        zip(AL_, ke_va["results_files_prefix"], ke_va["standardize_genes_before_gene_sel"])
 
-        if al != "ks"
+        if al in ()
 
             continue
 
@@ -152,7 +157,26 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
         if !isfile(tsm)
 
-            GSEA.metric_rank(dio, tst, tsf, jss; algorithm = al, number_of_permutations = 0)
+            if no
+
+                normalization_dimension = 1
+
+            else
+
+                normalization_dimension = 0
+
+            end
+
+            GSEA.metric_rank(
+                dio,
+                tst,
+                tsf,
+                jss;
+                algorithm = al,
+                normalization_dimension,
+                normalization_standard_deviation = 3.0,
+                number_of_permutations = 0,
+            )
 
             BioLab.Path.remove(tss)
 
