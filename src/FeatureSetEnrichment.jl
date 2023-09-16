@@ -378,7 +378,7 @@ function _enrich!(fu::Function, sc_, ex, is_, mo_)
 
     end
 
-    ar / n
+    ar / n / 2
 
 end
 
