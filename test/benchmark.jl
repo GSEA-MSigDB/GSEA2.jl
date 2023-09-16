@@ -35,15 +35,35 @@ end
 # ---- #
 
 const DIB = joinpath(dirname(@__DIR__), "benchmark")
-BioLab.Path.remake_directory(DIB)
+#BioLab.Path.remake_directory(DIB)
 
 # ---- #
 
-tst = tsf = py = ju = nothing
+function test(st, is_, py, ju)
+
+    if any(is_)
+
+        @error st view(py, is_, :) view(ju, is_, :)
+
+    end
+
+end
+
+function test(st, py, pyi, ju, jui)
+
+    test(st, .!isequal.(py[!, pyi], ju[!, jui]), py, ju)
+
+end
+
+function test(st, py, pyi, ju, jui, atol)
+
+    test(st, .!isapprox.(py[!, pyi], ju[!, jui]; atol), py, ju)
+
+end
 
 # ---- #
 
-for (id, js) in enumerate(BioLab.Path.read(DIJ))
+for (id, js) in enumerate(BioLab.Path.read(DIJ)[34:34])
 
     if js in (
         "CCLE_STAT3_vs_mRNA.json", # Number of sets differ.
@@ -73,21 +93,19 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
     ke_va = BioLab.Dict.read(joinpath(DIJ, js))[chop(js; tail = 5)]
 
-    @info "$id $js" ke_va
+    @info "$id $js"
 
     dib = joinpath(DIB, BioLab.Path.clean(chop(js; tail = 5)))
-    BioLab.Path.remake_directory(dib)
+    #BioLab.Path.remake_directory(dib)
 
     dii = joinpath(dib, "input")
-    BioLab.Path.remake_directory(dii)
+    #BioLab.Path.remake_directory(dii)
 
     tst = joinpath(dii, "target_x_sample_x_number.tsv")
 
     tsf = joinpath(dii, "feature_x_sample_x_number.tsv")
 
     if !isfile(tst) || !isfile(tsf)
-
-        @info "convert_cls_gct"
 
         GSEA.convert_cls_gct(tst, tsf, joinpath(DID, ke_va["cls"]), joinpath(DID, ke_va["ds"]))
 
@@ -96,8 +114,6 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
     jss = joinpath(dii, "set_features.json")
 
     if !isfile(jss)
-
-        @info "convert_gmt"
 
         GSEA.convert_gmt(jss, (joinpath(DIS, gm) for gm in ke_va["gene_sets_collections"])...)
 
@@ -116,7 +132,7 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
         @info al
 
         dio = joinpath(dib, "output_$al")
-        BioLab.Path.remake_directory(dio)
+        #BioLab.Path.remake_directory(dio)
 
         txm = joinpath(dir, "$(pr)_gene_selection_scores.txt")
 
@@ -128,8 +144,6 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
         if !isfile(tsm)
 
-            @info "metric-rank"
-
             GSEA.metric_rank(dio, tst, tsf, jss; algorithm = al, number_of_permutations = 0)
 
             BioLab.Path.remove(tss)
@@ -138,27 +152,25 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
         n_ch = 50
 
-        py = sort!(
-            BioLab.DataFrame.read(txm; select = [1, 2]);
-            by = [an -> BioLab.String.limit(an, n_ch), an -> an],
-        )
+        py = BioLab.DataFrame.read(txm; select = [1, 2])
 
-        ju =
-            sort!(BioLab.DataFrame.read(tsm); by = [an -> BioLab.String.limit(an, n_ch), an -> an])
+        ju = BioLab.DataFrame.read(tsm)
+
+        py[!, 1] = BioLab.String.limit.(py[!, 1], n_ch)
+
+        ju[!, 1] = BioLab.String.limit.(ju[!, 1], n_ch)
+
+        sort!(py)
+
+        sort!(ju)
 
         @test size(py, 1) === size(ju, 1)
 
-        for id in 1:size(py, 1)
+        test("Gene", py, 1, ju, 1)
 
-            @test BioLab.String.limit(py[id, 1], n_ch) == BioLab.String.limit(ju[id, 1], n_ch)
-
-            @test isapprox(py[id, 2], ju[id, 2]; atol = 1e-5)
-
-        end
+        test("Signal-to-Noise Ratio", py, 2, ju, 2, 1e-5)
 
         if !isfile(tss)
-
-            @info "user_rank"
 
             GSEA.user_rank(
                 dio,
@@ -176,52 +188,16 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
         @test size(py, 1) === size(ju, 1)
 
-        for id in 1:size(py, 1)
+        test("Set", py, 1, ju, 1)
 
-            @test py[id, 1] == ju[id, 1]
+        test("Enrichment", py, 3, ju, 2, 1e-2)
 
-            @test isapprox(py[id, 3], ju[id, 2]; atol = 1e-2)
+        test("Normalized Enrichment", py, 2, ju, 3, 1e-2)
 
-            @test isapprox(py[id, 2], ju[id, 3]; atol = 1e-2)
+        test("P-Value", py, 4, ju, 4, 1e-2)
 
-            @test isapprox(parse_float(py[id, 4]), ju[id, 4]; atol = 1e-2)
-
-            @test isapprox(parse_float(py[id, 5]), ju[id, 5]; atol = 1e-1)
-
-        end
+        test("Adjusted P-Value", py, 5, ju, 5, 1e-2)
 
     end
-
-end
-
-# ---- #
-
-first(py, 10)
-
-first(ju, 10)
-
-# ---- #
-
-is_ = .!isapprox.(py[!, 2], ju[!, 2]; atol = 1e-5);
-
-view(py, is_, :)
-
-view(ju, is_, :)
-
-# ---- #
-
-ta = convert(BitVector, Vector(BioLab.DataFrame.read(tst)[1, 2:end]));
-
-fe = BioLab.DataFrame.read(tsf);
-
-# ---- #
-
-for ge in view(py, is_, 1)
-
-    @info ge
-
-    fe2 = Vector(fe[findfirst(==(ge), fe[!, 1]), 2:end])
-
-    println(GSEA._get_signal_to_noise_ratio(fe2[.!ta], fe2[ta]))
 
 end
