@@ -394,6 +394,32 @@ function _enrich!(::KLioP, sc_, ex, is_, mo_)
 
 end
 
+function _get_extreme(nu_)
+
+    mi = minimum(nu_)
+
+    ma = maximum(nu_)
+
+    mia = abs(mi)
+
+    maa = abs(ma)
+
+    if isapprox(mia, maa)
+
+        return (mi, ma)
+
+    elseif maa < mia
+
+        return (mi,)
+
+    else
+
+        return (ma,)
+
+    end
+
+end
+
 function plot(
     ht,
     al,
@@ -408,17 +434,15 @@ function plot(
     nah = "High",
 )
 
-    is_ = in(Set(fe1_)).(fe_)
-
     n = length(fe_)
+
+    x = collect(1:n)
+
+    is_ = in(Set(fe1_)).(fe_)
 
     mo_ = Vector{Float64}(undef, n)
 
     en = _enrich!(al, sc_, ex, is_, mo_)
-
-    x = collect(1:n)
-
-    scatter = Dict("x" => x, "text" => fe_, "mode" => "lines", "fill" => "tozeroy")
 
     cor = "#ff1992"
 
@@ -428,7 +452,9 @@ function plot(
 
     coe2 = BioLab.Color.add_alpha(coe1, 0.32)
 
-    title_text = BioLab.String.limit(title_text, 80)
+    coy = "#ffd96a"
+
+    scatter = Dict("x" => x, "text" => fe_, "mode" => "lines", "fill" => "tozeroy")
 
     yaxis1_domain = (0, 0.24)
 
@@ -436,16 +462,43 @@ function plot(
 
     yaxis3_domain = (0.32, 1)
 
+    if al isa KS
+
+        scatterp = Dict("fillcolor" => "#ffffff")
+
+        id_ = findall(in(_get_extreme(mo_)), mo_)
+
+        pe_ = (
+            Dict(
+                "yaxis" => "y3",
+                "y" => mo_[id_],
+                "x" => x[id_],
+                "mode" => "markers",
+                "marker" => Dict(
+                    "symbol" => "circle",
+                    "size" => 32,
+                    "color" => coe2,
+                    "opacity" => 0.72,
+                    "line" => Dict("width" => 2, "color" => BioLab.Color.HEFA),
+                ),
+            ),
+        )
+
+    else
+
+        scatterp = Dict("fillcolor" => coe2)
+
+        pe_ = ()
+
+    end
+
+    title_text = BioLab.String.limit(title_text, 80)
+
     annotation = Dict("showarrow" => false, "bgcolor" => "#fcfcfc", "borderwidth" => 2.4)
 
     annotationhl = merge(
         annotation,
-        Dict(
-            "y" => 0,
-            "font" => Dict("size" => 16),
-            "borderpad" => 4.8,
-            "bordercolor" => "#ffd96a",
-        ),
+        Dict("y" => 0, "font" => Dict("size" => 16), "borderpad" => 4.8, "bordercolor" => coy),
     )
 
     margin = n * 0.008
@@ -491,9 +544,10 @@ function plot(
                     "yaxis" => "y3",
                     "y" => mo_,
                     "line" => Dict("width" => 3.2, "color" => coe1),
-                    "fillcolor" => coe2,
                 ),
+                scatterp,
             ),
+            pe_...,
         ],
         Dict(
             "showlegend" => false,
@@ -535,7 +589,7 @@ function plot(
                         "text" => "Enrichment = <b>$(BioLab.String.format(en))</b>",
                         "font" => Dict("size" => 20, "color" => "#224634"),
                         "borderpad" => 12.8,
-                        "bordercolor" => "#ffd96a",
+                        "bordercolor" => coy,
                     ),
                 ),
                 merge(

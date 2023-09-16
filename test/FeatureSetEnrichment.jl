@@ -142,7 +142,7 @@ const CFE_ = ["K", "Q", "J", "X", "9", "8", "7", "6", "5", "4", "3", "2", "A"]
 
 const CSC_ = [6.0, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6]
 
-const CFE1_ = ["A", "K"]
+const CFE1_ = ["K", "A"]
 
 const CIS_ = in(Set(CFE1_)).(CFE_)
 
