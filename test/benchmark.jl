@@ -63,7 +63,7 @@ end
 
 # ---- #
 
-for (id, js) in enumerate(BioLab.Path.read(DIJ)[34:34])
+for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
     if js in (
         "CCLE_STAT3_vs_mRNA.json", # Number of sets differ.
