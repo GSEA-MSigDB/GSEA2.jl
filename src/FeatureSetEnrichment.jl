@@ -8,6 +8,8 @@ struct KS end
 
 struct KSa end
 
+struct KLi1 end
+
 struct KLi end
 
 struct KLioM end
@@ -182,7 +184,7 @@ function _enrich!(::KLi1, sc_, ex, is_, mo_)
 
         ab = _index_absolute_exponentiate(sc_, id, ex)
 
-        rid = ab / su
+        rid = 1 / n
 
         if is_[id]
 
@@ -293,6 +295,8 @@ function _enrich!(::KLi, sc_, ex, is_, mo_)
     ar / n
 
 end
+
+# TODO: Try macros to define functions.
 
 function _enrich!(fu::Function, sc_, ex, is_, mo_)
 
