@@ -16,7 +16,7 @@ const DIS = joinpath(DIP, "Gene_Sets_Collections")
 
 const DIR = joinpath(DIP, "results")
 
-const AL_ = ("ks", "kli", "kli", "kliom", "kliop")
+const AL_ = ("ks", "kli", "kli2", "kliom", "kliop")
 
 # ---- #
 
@@ -98,7 +98,7 @@ const BA_ = Set((
 
 # ---- #
 
-for (id, js) in enumerate(BioLab.Path.read(DIJ)[1:end])
+for (id, js) in enumerate(BioLab.Path.read(DIJ)[1:1])
 
     if js in BA_
 
@@ -143,7 +143,7 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ)[1:end])
 
         end
 
-        @info al
+        @info "$al ($pr)"
 
         dio = make_directory(joinpath(dib, "output_$al"))
 
