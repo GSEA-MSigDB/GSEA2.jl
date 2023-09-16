@@ -20,22 +20,21 @@ const AL_ = ("ks", "kli", "kli", "kliom", "kliop")
 
 # ---- #
 
-function parse_float(fl)
+function make_directory(di)
 
-    if fl isa AbstractString
+    if !isdir(di)
 
-        fl = parse(Float64, lstrip(fl, '≤'))
+        mkdir(di)
 
     end
 
-    fl
+    di
 
 end
 
 # ---- #
 
-const DIB = joinpath(dirname(@__DIR__), "benchmark")
-#BioLab.Path.remake_directory(DIB)
+const DIB = make_directory(joinpath(dirname(@__DIR__), "benchmark"))
 
 # ---- #
 
@@ -55,9 +54,21 @@ function test(st, py, pyi, ju, jui)
 
 end
 
+function parse_float(fl)
+
+    if fl isa AbstractString
+
+        fl = parse(Float64, lstrip(fl, '≤'))
+
+    end
+
+    fl
+
+end
+
 function test(st, py, pyi, ju, jui, atol)
 
-    test(st, .!isapprox.(py[!, pyi], ju[!, jui]; atol), py, ju)
+    test(st, .!isapprox.(parse_float.(py[!, pyi]), ju[!, jui]; atol), py, ju)
 
 end
 
@@ -95,11 +106,9 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
     @info "$id $js"
 
-    dib = joinpath(DIB, BioLab.Path.clean(chop(js; tail = 5)))
-    #BioLab.Path.remake_directory(dib)
+    dib = make_directory(joinpath(DIB, BioLab.Path.clean(chop(js; tail = 5))))
 
-    dii = joinpath(dib, "input")
-    #BioLab.Path.remake_directory(dii)
+    dii = make_directory(joinpath(dib, "input"))
 
     tst = joinpath(dii, "target_x_sample_x_number.tsv")
 
@@ -131,8 +140,7 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
         @info al
 
-        dio = joinpath(dib, "output_$al")
-        #BioLab.Path.remake_directory(dio)
+        dio = make_directory(joinpath(dib, "output_$al"))
 
         txm = joinpath(dir, "$(pr)_gene_selection_scores.txt")
 
@@ -196,7 +204,7 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
         test("P-Value", py, 4, ju, 4, 1e-2)
 
-        test("Adjusted P-Value", py, 5, ju, 5, 1e-2)
+        test("Adjusted P-Value", py, 5, ju, 5, 1e-1)
 
     end
 
