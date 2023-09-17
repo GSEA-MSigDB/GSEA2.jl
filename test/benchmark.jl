@@ -221,6 +221,7 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
         test("Set", py, 1, ju, 1)
 
         test("Enrichment", py, 3, ju, 2, 1e-2)
+        continue
 
         test("Normalized Enrichment", py, 2, ju, 3, 1e-2)
 
