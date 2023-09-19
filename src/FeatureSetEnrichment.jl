@@ -172,19 +172,41 @@ end
 
     ep = eps()
 
-    n, su, su1, ep, ep, ep, 1.0, 1.0, 0.0, !isnothing(mo_), 0.0, 0.0
+    n, su, su1, ep, ep, 1.0, 1.0, 0.0, !isnothing(mo_), 0.0, 0.0
+
+end
+
+@inline function _floor(nu)
+
+    ep = eps()
+
+    if nu < ep
+
+        ep
+
+    else
+
+        nu
+
+    end
 
 end
 
 function _enrich!(::KLi1, sc_, ex, is_, mo_)
 
-    n, su, su1, ep, ri, ri1, le, le1, ar, mo, ridp, ri1dp = _ready_kli(sc_, ex, is_, mo_)
+    n, su, su1, ri, ri1, le, le1, ar, mo, ridp, ri1dp = _ready_kli(sc_, ex, is_, mo_)
+
+    rid = 1 / n
 
     for id in 1:n
 
-        ab = _index_absolute_exponentiate(sc_, id, ex)
+        ri += rid
 
-        rid = 1 / n
+        le -= ridp
+
+        ridp = rid
+
+        ab = _index_absolute_exponentiate(sc_, id, ex)
 
         if is_[id]
 
@@ -196,25 +218,15 @@ function _enrich!(::KLi1, sc_, ex, is_, mo_)
 
         end
 
-        ri += rid
-
         ri1 += ri1d
-
-        le -= ridp
 
         le1 -= ri1dp
 
-        if le < ep
+        ri1dp = ri1d
 
-            le = ep
+        le = _floor(le)
 
-        end
-
-        if le1 < ep
-
-            le1 = ep
-
-        end
+        le1 = _floor(le1)
 
         en = BioLab.Information.get_antisymmetric_kullback_leibler_divergence(ri1, le1, ri, le)
 
@@ -225,10 +237,6 @@ function _enrich!(::KLi1, sc_, ex, is_, mo_)
             mo_[id] = en
 
         end
-
-        ridp = rid
-
-        ri1dp = ri1d
 
     end
 
@@ -238,13 +246,19 @@ end
 
 function _enrich!(::KLi, sc_, ex, is_, mo_)
 
-    n, su, su1, ep, ri, ri1, le, le1, ar, mo, ridp, ri1dp = _ready_kli(sc_, ex, is_, mo_)
+    n, su, su1, ri, ri1, le, le1, ar, mo, ridp, ri1dp = _ready_kli(sc_, ex, is_, mo_)
 
     for id in 1:n
 
         ab = _index_absolute_exponentiate(sc_, id, ex)
 
         rid = ab / su
+
+        ri += rid
+
+        le -= ridp
+
+        ridp = rid
 
         if is_[id]
 
@@ -256,25 +270,15 @@ function _enrich!(::KLi, sc_, ex, is_, mo_)
 
         end
 
-        ri += rid
-
         ri1 += ri1d
-
-        le -= ridp
 
         le1 -= ri1dp
 
-        if le < ep
+        ri1dp = ri1d
 
-            le = ep
+        le = _floor(le)
 
-        end
-
-        if le1 < ep
-
-            le1 = ep
-
-        end
+        le1 = _floor(le1)
 
         en = BioLab.Information.get_antisymmetric_kullback_leibler_divergence(ri1, le1, ri, le)
 
@@ -286,35 +290,35 @@ function _enrich!(::KLi, sc_, ex, is_, mo_)
 
         end
 
-        ridp = rid
-
-        ri1dp = ri1d
-
     end
 
     ar / n
 
 end
 
-# TODO: Try macros to define functions.
+function _enrich!(::KLioM, sc_, ex, is_, mo_)
 
-function _enrich!(fu::Function, sc_, ex, is_, mo_)
-
-    n, su, su1, ep, ri, ri1, le, le1, ar, mo, ridp, ri1dp = _ready_kli(sc_, ex, is_, mo_)
+    n, su, su1, ri, ri1, le, le1, ar, mo, ridp, ri1dp = _ready_kli(sc_, ex, is_, mo_)
 
     su0 = su - su1
 
-    ri0 = ep
+    ri0 = ri1
 
-    le0 = 1.0
+    le0 = le1
 
-    ri0dp = 0.0
+    ri0dp = ri1dp
 
     for id in 1:n
 
         ab = _index_absolute_exponentiate(sc_, id, ex)
 
         rid = ab / su
+
+        ri += rid
+
+        le -= ridp
+
+        ridp = rid
 
         if is_[id]
 
@@ -330,37 +334,27 @@ function _enrich!(fu::Function, sc_, ex, is_, mo_)
 
         end
 
-        ri += rid
-
         ri1 += ri1d
 
         ri0 += ri0d
 
-        le -= ridp
-
         le1 -= ri1dp
+
+        ri1dp = ri1d
 
         le0 -= ri0dp
 
-        if le < ep
+        ri0dp = ri0d
 
-            le = ep
+        le = _floor(le)
 
-        end
+        le1 = _floor(le1)
 
-        if le1 < ep
+        le0 = _floor(le0)
 
-            le1 = ep
-
-        end
-
-        if le0 < ep
-
-            le0 = ep
-
-        end
-
-        en = fu(ri1, ri0, ri) - fu(le1, le0, le)
+        en =
+            BioLab.Information.get_antisymmetric_kullback_leibler_divergence(ri1, ri0, ri) -
+            BioLab.Information.get_antisymmetric_kullback_leibler_divergence(le1, le0, le)
 
         ar += en
 
@@ -370,27 +364,83 @@ function _enrich!(fu::Function, sc_, ex, is_, mo_)
 
         end
 
-        ridp = rid
-
-        ri1dp = ri1d
-
-        ri0dp = ri0d
-
     end
 
     ar / n
 
 end
 
-function _enrich!(::KLioM, sc_, ex, is_, mo_)
-
-    _enrich!(BioLab.Information.get_antisymmetric_kullback_leibler_divergence, sc_, ex, is_, mo_)
-
-end
-
 function _enrich!(::KLioP, sc_, ex, is_, mo_)
 
-    _enrich!(BioLab.Information.get_symmetric_kullback_leibler_divergence, sc_, ex, is_, mo_)
+    n, su, su1, ri, ri1, le, le1, ar, mo, ridp, ri1dp = _ready_kli(sc_, ex, is_, mo_)
+
+    su0 = su - su1
+
+    ri0 = ri1
+
+    le0 = le1
+
+    ri0dp = ri1dp
+
+    for id in 1:n
+
+        ab = _index_absolute_exponentiate(sc_, id, ex)
+
+        rid = ab / su
+
+        ri += rid
+
+        le -= ridp
+
+        ridp = rid
+
+        if is_[id]
+
+            ri1d = ab / su1
+
+            ri0d = 0.0
+
+        else
+
+            ri1d = 0.0
+
+            ri0d = ab / su0
+
+        end
+
+        ri1 += ri1d
+
+        ri0 += ri0d
+
+        le1 -= ri1dp
+
+        ri1dp = ri1d
+
+        le0 -= ri0dp
+
+        ri0dp = ri0d
+
+        le = _floor(le)
+
+        le1 = _floor(le1)
+
+        le0 = _floor(le0)
+
+        en =
+            BioLab.Information.get_symmetric_kullback_leibler_divergence(ri1, ri0, ri) -
+            BioLab.Information.get_symmetric_kullback_leibler_divergence(le1, le0, le)
+
+        ar += en
+
+        if mo
+
+            mo_[id] = en
+
+        end
+
+    end
+
+    ar / n
 
 end
 

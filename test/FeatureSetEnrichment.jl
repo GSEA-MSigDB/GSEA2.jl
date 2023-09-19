@@ -153,11 +153,11 @@ for (al, re) in zip(AL_, (-0.5, 0, 0, 0, 0, 0))
     @test isapprox(FeatureSetEnrichment._enrich!(al, CSC_, EX, CIS_, nothing), re; atol = 1e-15)
 
     # 19.433 ns (0 allocations: 0 bytes)
-    # 17.577 ns (0 allocations: 0 bytes)
-    # 153.895 ns (0 allocations: 0 bytes)
-    # 129.467 ns (0 allocations: 0 bytes)
-    # 241.137 ns (0 allocations: 0 bytes)
+    # 17.576 ns (0 allocations: 0 bytes)
+    # 152.494 ns (0 allocations: 0 bytes)
+    # 128.660 ns (0 allocations: 0 bytes)
     # 235.118 ns (0 allocations: 0 bytes)
+    # 235.140 ns (0 allocations: 0 bytes)
     #@btime FeatureSetEnrichment._enrich!($al, $CSC_, $EX, $CIS_, nothing)
 
 end
@@ -181,25 +181,16 @@ const PIS_ =
         ),
     ).(PFE_)
 
-for (al, re) in zip(AL_, (
-    0.6823,
-    0.3988,
-    0.817,
-    0.7171,
-    0.7287,
-    0.7055,
-    #0.3643,
-    #0.3528,
-))
+for (al, re) in zip(AL_, (0.6823, 0.3988, 0.817, 0.7171, 0.7287, 0.7055))
 
     @test round(FeatureSetEnrichment._enrich!(al, PSC_, EX, PIS_, nothing); digits = 4) === re
 
     # 43.250 μs (0 allocations: 0 bytes)
-    # 37.083 μs (0 allocations: 0 bytes)
-    # 193.667 μs (0 allocations: 0 bytes)
-    # 196.708 μs (0 allocations: 0 bytes)
-    # 357.459 μs (0 allocations: 0 bytes)
-    # 348.291 μs (0 allocations: 0 bytes)
+    # 37.041 μs (0 allocations: 0 bytes)
+    # 194.666 μs (0 allocations: 0 bytes)
+    # 195.958 μs (0 allocations: 0 bytes)
+    # 349.000 μs (0 allocations: 0 bytes)
+    # 348.917 μs (0 allocations: 0 bytes)
     #@btime FeatureSetEnrichment._enrich!($al, $PSC_, $EX, $PIS_, nothing)
 
 end
@@ -235,8 +226,6 @@ for (al, re) in zip(
         0.7736480596525319,
         0.7750661968892066,
         0.772229922415844,
-        #0.3875330984446027,
-        #0.38611496120792593,
     ),
 )
 
@@ -244,10 +233,10 @@ for (al, re) in zip(
 
     # 43.375 μs (0 allocations: 0 bytes)
     # 37.166 μs (0 allocations: 0 bytes)
-    # 193.584 μs (0 allocations: 0 bytes)
-    # 196.375 μs (0 allocations: 0 bytes)
-    # 348.750 μs (0 allocations: 0 bytes)
-    # 348.458 μs (0 allocations: 0 bytes)
+    # 194.583 μs (0 allocations: 0 bytes)
+    # 195.666 μs (0 allocations: 0 bytes)
+    # 349.250 μs (0 allocations: 0 bytes)
+    # 349.291 μs (0 allocations: 0 bytes)
     #@btime FeatureSetEnrichment._enrich!($al, $MSC_, $EX, $MIS_, nothing)
 
 end
@@ -256,12 +245,12 @@ end
 
 for al in AL_
 
-    # 2.943 ms (108 allocations: 934.22 KiB)
-    # 2.633 ms (108 allocations: 934.22 KiB)
-    # 10.407 ms (108 allocations: 934.22 KiB)
-    # 10.477 ms (108 allocations: 934.22 KiB)
-    # 18.656 ms (108 allocations: 934.22 KiB)
-    # 18.227 ms (108 allocations: 934.22 KiB)
+    # 2.941 ms (108 allocations: 934.22 KiB)
+    # 2.641 ms (108 allocations: 934.22 KiB)
+    # 10.462 ms (108 allocations: 934.22 KiB)
+    # 10.416 ms (108 allocations: 934.22 KiB)
+    # 18.263 ms (108 allocations: 934.22 KiB)
+    # 18.209 ms (108 allocations: 934.22 KiB)
     #@btime FeatureSetEnrichment.enrich($al, $MFE_, $MSC_, $MFE1___)
 
 end

@@ -42,11 +42,9 @@ function test(st, is_, py, ju)
 
     if any(is_)
 
-        @error "$st $(BioLab.String.format(100 - 100 * sum(is_) / size(py,  1)))%" view(py, is_, :) view(
-            ju,
-            is_,
-            :,
-        )
+        pe = BioLab.String.format(100 - 100 * sum(is_) / size(py, 1))
+
+        @error "$st $pe%" view(py, is_, :) view(ju, is_, :)
 
     end
 
@@ -102,7 +100,7 @@ const BA_ = Set((
 
 # ---- #
 
-for (id, js) in enumerate(BioLab.Path.read(DIJ))
+for (idb, js) in enumerate(BioLab.Path.read(DIJ))
 
     if js in BA_
 
@@ -112,7 +110,7 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
 
     ke_va = BioLab.Dict.read(joinpath(DIJ, js))[chop(js; tail = 5)]
 
-    @info "$id $js"
+    @info "$idb $js"
 
     dib = make_directory(joinpath(DIB, BioLab.Path.clean(chop(js; tail = 5))))
 
@@ -141,7 +139,7 @@ for (id, js) in enumerate(BioLab.Path.read(DIJ))
     for (al, pr, no) in
         zip(AL_, ke_va["results_files_prefix"], ke_va["standardize_genes_before_gene_sel"])
 
-        @info "$al ($pr)"
+        @info "$idb $al"
 
         dio = make_directory(joinpath(dib, "output_$al"))
 
