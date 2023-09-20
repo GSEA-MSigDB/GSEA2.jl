@@ -104,7 +104,9 @@ function _set_algorithm(al)
 
     else
 
-        error("Algorithm \"$al\" is not \"ks\", \"ksa\", \"kli\", \"kliom\", or \"kliop\".")
+        error(
+            "Algorithm \"$al\" is not \"ks\", \"ksa\", \"kli1\", \"kli\", \"kliom\", or \"kliop\".",
+        )
 
     end
 
@@ -188,7 +190,7 @@ Run data-rank (single-sample) GSEA.
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
   - `--minimum-set-fraction`: = 0.0.
-  - `--algorithm`: = "ks". "ks" | "ksa" | "kli" | "kliom" | "kliop".
+  - `--algorithm`: = "ks". "ks" | "ksa" | "kli1" | "kli" | "kliom" | "kliop".
   - `--post-skip-minimum-set-size`: = 1.
   - `--exponent`: = 1.0.
 
@@ -501,7 +503,7 @@ Run user-rank (pre-rank) GSEA.
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
   - `--minimum-set-fraction`: = 0.0.
-  - `--algorithm`: = "ks". "ks" | "ksa" | "kli" | "kliom" | "kliop".
+  - `--algorithm`: = "ks". "ks" | "ksa" | "kli1" | "kli" | "kliom" | "kliop".
   - `--exponent`: = 1.0.
   - `--permutation`: = "set". "set" | feature_x_index_x_random.tsv.
   - `--number-of-permutations`: = 100.
@@ -654,7 +656,7 @@ Run metric-rank (standard) GSEA.
   - `--normalization-dimension`: = 0. 0 (not normalizing) | 1 | 2.
   - `--normalization-standard-deviation`: = 4.
   - `--metric`: = "signal-to-noise-ratio". "signal-to-noise-ratio" | (coming soon).
-  - `--algorithm`: = "ks". "ks" | "ksa" | "kli" | "kliom" | "kliop".
+  - `--algorithm`: = "ks". "ks" | "ksa" | "kli1" | "kli" | "kliom" | "kliop".
   - `--exponent`: = 1.0.
   - `--permutation`: = "sample". "sample" | "set" | feature_x_index_x_random.tsv.
   - `--number-of-permutations`: = 100.
