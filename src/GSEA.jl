@@ -310,7 +310,7 @@ function _write(
 
     se_x_id_x_ra = view(se_x_id_x_ra, so_, :)
 
-    se_x_st_x_nu[:, 1] .= en_
+    se_x_st_x_nu[:, 1] = en_
 
     if wr
 
@@ -371,7 +371,7 @@ function _write(
 
     end
 
-    se_x_st_x_nu[:, 2] .= enn_
+    se_x_st_x_nu[:, 2] = enn_
 
     nei_ = 1:idl
 
@@ -380,13 +380,13 @@ function _write(
     npv_, nad_, ppv_, pad_ =
         BioLab.Statistics.get_p_value(enn_, nei_, poi_, se_x_id_x_ra; nef_, pof_)
 
-    se_x_st_x_nu[nei_, 3] .= npv_
+    se_x_st_x_nu[nei_, 3] = npv_
 
-    se_x_st_x_nu[poi_, 3] .= ppv_
+    se_x_st_x_nu[poi_, 3] = ppv_
 
-    se_x_st_x_nu[nei_, 4] .= nad_
+    se_x_st_x_nu[nei_, 4] = nad_
 
-    se_x_st_x_nu[poi_, 4] .= pad_
+    se_x_st_x_nu[poi_, 4] = pad_
 
     BioLab.DataFrame.write(
         joinpath(ou, "set_x_statistic_x_number.tsv"),
