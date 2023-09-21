@@ -24,7 +24,7 @@ function _normalize_with_0_clamp!(ma, di, st)
 
     else
 
-        error("Dimension $di is not 1 or 2.")
+        error("Dimension is $di, not 1 or 2.")
 
     end
 
@@ -64,13 +64,15 @@ function _read_set(js, fe_, mi, ma, mif)
 
     n_ke = sum(ke_)
 
+    me = "Selected $(BioLab.String.count(n_ke, "set"))."
+
     if iszero(n_ke)
 
-        error("Selected 0 set.")
+        error(me)
 
     end
 
-    @info "Selected $(BioLab.String.count(n_ke, "set"))."
+    @info me
 
     se_[ke_], fe1___[ke_]
 
@@ -104,9 +106,7 @@ function _set_algorithm(al)
 
     else
 
-        error(
-            "Algorithm \"$al\" is not \"ks\", \"ksa\", \"kli1\", \"kli\", \"kliom\", or \"kliop\".",
-        )
+        error("\"$al\" is not \"ks\", \"ksa\", \"kli1\", \"kli\", \"kliom\", or \"kliop\".")
 
     end
 
@@ -122,8 +122,12 @@ Convert `.cls` and `.gct` to `.tsv`s.
   - `cls`: Input `.cls`.
   - `gct`: Input `.gct`.
 """
-#@cast function convert_cls_gct(
-function convert_cls_gct(target_x_sample_x_number_tsv, feature_x_sample_x_score_tsv, cls, gct)
+@cast function convert_cls_gct(
+    target_x_sample_x_number_tsv,
+    feature_x_sample_x_score_tsv,
+    cls,
+    gct,
+)
 
     _nat, ta_, _sa_, ta_x_sa_x_nu = BioLab.DataFrame.separate(BioLab.CLS.read(cls))
 
@@ -133,9 +137,13 @@ function convert_cls_gct(target_x_sample_x_number_tsv, feature_x_sample_x_score_
 
     _naf, fe_, sa_, fe_x_sa_x_nu = BioLab.DataFrame.separate(BioLab.GCT.read(gct))
 
-    if length(_sa_) != length(sa_)
+    n_sac = length(_sa_)
 
-        error("Sample (column) lengths differ.")
+    n_sag = length(sa_)
+
+    if n_sac != n_sag
+
+        error("Numbers of samples differ. $n_sac (`.cls`) != $n_sag (`.gct`).")
 
     end
 
@@ -167,8 +175,7 @@ Convert one or more `.gmt`s to a `.json`.
   - `set_features_json`: Output `.json`.
   - `gmt_`: Input `.gmt`s.
 """
-#@cast function convert_gmt(set_features_json, gmt_...)
-function convert_gmt(set_features_json, gmt_...)
+@cast function convert_gmt(set_features_json, gmt_...)
 
     BioLab.Dict.write(set_features_json, merge((BioLab.GMT.read(gmt) for gmt in gmt_)...))
 
@@ -198,8 +205,7 @@ Run data-rank (single-sample) GSEA.
 
   - `--skip-0`: = false.
 """
-#@cast function data_rank(
-function data_rank(
+@cast function data_rank(
     output_directory,
     feature_x_sample_x_score_tsv,
     set_features_json;
@@ -434,7 +440,7 @@ function _permute_set(n_pe, se, al, fe_, sc_, fe1___, ex)
 
     if 0 < n_pe
 
-        @info "Permuting sets to compute significance"
+        @info "Calculating significance by permuting sets"
 
         le_ = length.(fe1___)
 
@@ -472,7 +478,7 @@ function _use_permutation(permutation, al, fe_, fe1___, ex)
 
     se_x_id_x_ra = Matrix{Float64}(undef, length(fe1___), n_pe)
 
-    @info "Using predefined $n_pe random scores to compute significance"
+    @info "Calculating significance using predefined $n_pe random scores"
 
     @showprogress for id in 1:n_pe
 
@@ -519,8 +525,7 @@ Run user-rank (pre-rank) GSEA.
 
   - `--write-set-x-index-x-random-tsv`: = false.
 """
-#@cast function user_rank(
-function user_rank(
+@cast function user_rank(
     output_directory,
     feature_x_metric_x_score_tsv,
     set_features_json;
@@ -577,7 +582,7 @@ function user_rank(
 
     else
 
-        error("Permutation \"$permutation\" is not \"set\" or feature_x_index_x_random.tsv.")
+        error("\"$permutation\" is not \"set\" or feature_x_index_x_random.tsv.")
 
     end
 
@@ -607,9 +612,9 @@ function _get_standard_deviation(nu_, me)
     fr = 0.2
 
     #if iszero(me)
-
+    #
     #    return fr
-
+    #
     #end
 
     max(abs(me) * fr, std(nu_; corrected = true))
@@ -672,8 +677,7 @@ Run metric-rank (standard) GSEA.
 
   - `--write-set-x-index-x-random-tsv`: = false.
 """
-#@cast function metric_rank(
-function metric_rank(
+@cast function metric_rank(
     output_directory,
     target_x_sample_x_number_tsv,
     feature_x_sample_x_score_tsv,
@@ -713,7 +717,7 @@ function metric_rank(
 
     if un_ != Set((0, 1))
 
-        error("Target has a number other than 0 and 1. $un_.")
+        error("Target numbers are not all 0 or 1. $un_.")
 
     end
 
@@ -744,7 +748,7 @@ function metric_rank(
 
     else
 
-        error("Metric \"$metric\" is not \"signal-to-noise-ratio\".")
+        error("\"$metric\" is not \"signal-to-noise-ratio\".")
 
     end
 
@@ -768,7 +772,7 @@ function metric_rank(
 
         if 0 < number_of_permutations
 
-            @info "Permuting samples to compute significance"
+            @info "Calculating significance by permuting samples"
 
             seed!(random_seed)
 
@@ -794,9 +798,7 @@ function metric_rank(
 
     else
 
-        error(
-            "Permutation \"$permutation\" is not \"sample\", \"set\", or feature_x_index_x_random.tsv.",
-        )
+        error("\"$permutation\" is not \"sample\", \"set\", or feature_x_index_x_random.tsv.")
 
     end
 
@@ -824,6 +826,6 @@ end
 """
 The official command-line program for gene-set-enrichment analysis (GSEA). Learn more at https://github.com/KwatMDPhD/GSEA.jl.
 """
-#@main
+@main
 
 end
