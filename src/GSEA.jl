@@ -1,6 +1,6 @@
 module GSEA
 
-using Comonicon: @cast, @main
+#using Comonicon: @cast, @main
 
 using ProgressMeter: @showprogress
 
@@ -12,7 +12,7 @@ using Nucleus
 
 include("FeatureSetEnrichment.jl")
 
-function _normalize_with_0_clamp!(ma, di, st)
+function _normalize!(ma, di, st)
 
     if isone(di)
 
@@ -24,11 +24,11 @@ function _normalize_with_0_clamp!(ma, di, st)
 
     else
 
-        error("Dimension is $di, not 1 or 2.")
+        error("Dimension is not 1 or 2.")
 
     end
 
-    @info "Normalizing dimension $di using standard deviation $st"
+    @info "Normalizing dimension $di using standard-deviation $st"
 
     foreach(Nucleus.Normalization.normalize_with_0!, fu(ma))
 
@@ -36,29 +36,29 @@ function _normalize_with_0_clamp!(ma, di, st)
 
 end
 
-function _read_set(js, fe_, mi, ma, mif)
+function _read_set(js, fe_, mi, ma, fr)
 
-    se_fe1_ = Nucleus.Dict.read(js, Dict{String, Vector{String}})
+    se_fe1_ = Nucleus.Dict.read(js)
 
     se_ = collect(keys(se_fe1_))
 
     fe1___ = collect(values(se_fe1_))
 
-    n = length(se_)
+    n = lastindex(se_)
 
-    @info "Selecting ($mi <= N <= $ma && $mif <= %) from $(Nucleus.String.count(n, "set"))"
+    @info "Selecting ($mi <= N <= $ma && $fr <= %) from $(Nucleus.String.count(n, "set"))"
 
     ke_ = BitVector(undef, n)
 
     for (id, fe1_) in enumerate(fe1___)
 
-        n1 = length(fe1_)
+        n1 = lastindex(fe1_)
 
         intersect!(fe1_, fe_)
 
-        n2 = length(fe1_)
+        n2 = lastindex(fe1_)
 
-        ke_[id] = mi <= n2 <= ma && mif <= n2 / n1
+        ke_[id] = mi <= n2 <= ma && fr <= n2 / n1
 
     end
 
@@ -106,9 +106,17 @@ function _set_algorithm(al)
 
     else
 
-        error("\"$al\" is not \"ks\", \"ksa\", \"kli1\", \"kli\", \"kliom\", or \"kliop\".")
+        error("`$al` is not \"ks\", \"ksa\", \"kli1\", \"kli\", \"kliom\", or \"kliop\".")
 
     end
+
+end
+
+function _error(fe_, an_)
+
+    Nucleus.Error.error_duplicate(fe_)
+
+    Nucleus.Error.error_bad(!isfinite, an_)
 
 end
 
@@ -122,20 +130,16 @@ Convert `.cls` and `.gct` to `.tsv`s.
   - `cls`: Input `.cls`.
   - `gct`: Input `.gct`.
 """
-@cast function convert_cls_gct(
-    target_x_sample_x_number_tsv,
-    feature_x_sample_x_score_tsv,
-    cls,
-    gct,
-)
+#@cast function convert_cls_gct(
+function convert_cls_gct(target_x_sample_x_number_tsv, feature_x_sample_x_score_tsv, cls, gct)
 
     _nat, ta_, _sa_, ta_x_sa_x_nu = Nucleus.DataFrame.separate(Nucleus.CLS.read(cls))
 
     _naf, fe_, sa_, fe_x_sa_x_nu = Nucleus.DataFrame.separate(Nucleus.GCT.read(gct))
 
-    n_sac = length(_sa_)
+    n_sac = lastindex(_sa_)
 
-    n_sag = length(sa_)
+    n_sag = lastindex(sa_)
 
     if n_sac != n_sag
 
@@ -143,19 +147,11 @@ Convert `.cls` and `.gct` to `.tsv`s.
 
     end
 
-    Nucleus.Error.error_duplicate(fe_)
+    _error(fe_, fe_x_sa_x_nu)
 
-    Nucleus.Error.error_bad(!isfinite, fe_x_sa_x_nu)
+    Nucleus.DataFrame.write(target_x_sample_x_number_tsv, "Target", ta_, sa_, ta_x_sa_x_nu .- 1)
 
-    Nucleus.DataFrame.write(
-        target_x_sample_x_number_tsv,
-        Nucleus.DataFrame.make("Target", ta_, sa_, ta_x_sa_x_nu .- 1),
-    )
-
-    Nucleus.DataFrame.write(
-        feature_x_sample_x_score_tsv,
-        Nucleus.DataFrame.make("Feature", fe_, sa_, fe_x_sa_x_nu),
-    )
+    Nucleus.DataFrame.write(feature_x_sample_x_score_tsv, "Feature", fe_, sa_, fe_x_sa_x_nu)
 
     target_x_sample_x_number_tsv, feature_x_sample_x_score_tsv
 
@@ -169,9 +165,10 @@ Convert one or more `.gmt`s to a `.json`.
   - `set_features_json`: Output `.json`.
   - `gmt_`: Input `.gmt`s.
 """
-@cast function convert_gmt(set_features_json, gmt_...)
+#@cast function convert_gmt(set_features_json, gmt_...)
+function convert_gmt(set_features_json, gmt_...)
 
-    Nucleus.Dict.write(set_features_json, merge((Nucleus.GMT.read(gmt) for gmt in gmt_)...))
+    Nucleus.Dict.write(set_features_json, merge!((Nucleus.GMT.read(gmt) for gmt in gmt_)...))
 
 end
 
@@ -197,9 +194,10 @@ Run data-rank (single-sample) GSEA.
 
 # Flags
 
-  - `--skip-0`: = false.
+  - `--skip-0`: = false. Set this to true for single-cell or other sparse data.
 """
-@cast function data_rank(
+#@cast function data_rank(
+function data_rank(
     output_directory,
     feature_x_sample_x_score_tsv,
     set_features_json;
@@ -216,12 +214,9 @@ Run data-rank (single-sample) GSEA.
 
     Nucleus.Error.error_missing(output_directory)
 
-    _naf, fe_, sa_, fe_x_sa_x_sc =
-        Nucleus.DataFrame.separate(Nucleus.DataFrame.read(feature_x_sample_x_score_tsv))
+    _naf, fe_, sa_, fe_x_sa_x_sc = Nucleus.DataFrame.separate(feature_x_sample_x_score_tsv)
 
-    Nucleus.Error.error_duplicate(fe_)
-
-    Nucleus.Error.error_bad(!isfinite, fe_x_sa_x_sc)
+    _error(fe_, fe_x_sa_x_sc)
 
     if skip_0
 
@@ -231,11 +226,7 @@ Run data-rank (single-sample) GSEA.
 
     if !iszero(normalization_dimension)
 
-        _normalize_with_0_clamp!(
-            fe_x_sa_x_sc,
-            normalization_dimension,
-            normalization_standard_deviation,
-        )
+        _normalize!(fe_x_sa_x_sc, normalization_dimension, normalization_standard_deviation)
 
     end
 
@@ -255,7 +246,10 @@ Run data-rank (single-sample) GSEA.
 
     Nucleus.DataFrame.write(
         joinpath(output_directory, "set_x_sample_x_enrichment.tsv"),
-        Nucleus.DataFrame.make("Set", se_, sa_, se_x_sa_x_en),
+        "Set",
+        se_,
+        sa_,
+        se_x_sa_x_en,
     )
 
     FeatureSetEnrichment.plot(
@@ -270,8 +264,6 @@ Run data-rank (single-sample) GSEA.
         se_x_sa_x_en;
         ex = exponent,
     )
-
-    output_directory
 
 end
 
@@ -294,66 +286,73 @@ function _write(
     nah,
 )
 
-    n_se = length(se_)
+    n_se = lastindex(se_)
 
     se_x_st_x_nu = fill(NaN, n_se, 4)
 
     so_ = sortperm(en_)
 
-    en_ = view(en_, so_)
+    en_ = en_[so_]
 
-    se_ = view(se_, so_)
+    se_ = se_[so_]
 
     fe1___ = view(fe1___, so_)
 
-    se_x_id_x_ra = view(se_x_id_x_ra, so_, :)
-
-    se_x_st_x_nu[:, 1] = en_
+    se_x_id_x_ra = se_x_id_x_ra[so_, :]
 
     if wr
 
         Nucleus.DataFrame.write(
             joinpath(ou, "set_x_index_x_random.tsv"),
-            Nucleus.DataFrame.make("Set", se_, collect(1:size(se_x_id_x_ra, 2)), se_x_id_x_ra),
+            "Set",
+            se_,
+            1:size(se_x_id_x_ra, 2),
+            se_x_id_x_ra,
         )
 
     end
+
+    se_x_st_x_nu[:, 1] = en_
 
     nef_ = Vector{Float64}(undef, n_se)
 
     pof_ = Vector{Float64}(undef, n_se)
 
-    for id in 1:n_se
+    for (id, ra_) in enumerate(eachrow(se_x_id_x_ra))
 
-        ne_ = Vector{Float64}()
+        ne_, po_ = Nucleus.Number.separate(ra_)
 
-        po_ = Vector{Float64}()
+        nef = -1 / mean(ne_)
 
-        for ra in view(se_x_id_x_ra, id, :)
+        pof = 1 / mean(po_)
 
-            if ra < 0
+        nef_[id] = nef
 
-                push!(ne_, ra)
+        pof_[id] = pof
+
+        for (id, ra) in enumerate(ra_)
+
+            if Nucleus.Number.is_negative(ra)
+
+                fa = nef
 
             else
 
-                push!(po_, ra)
+                fa = pof
 
             end
 
+            ra_[id] *= fa
+
         end
-
-        nef_[id] = -1 / mean(ne_)
-
-        pof_[id] = 1 / mean(po_)
 
     end
 
-    idl = findlast(<(0), en_)
+    idl = findlast(Nucleus.Number.is_negative, en_)
 
     enn_ = Vector{Float64}(undef, n_se)
 
-    for id in eachindex(enn_)
+    for id in eachindex(en_)
 
         if id <= idl
 
@@ -375,28 +374,25 @@ function _write(
 
     poi_ = (idl + 1):n_se
 
-    npv_, nad_, ppv_, pad_ =
-        Nucleus.Statistics.get_p_value(enn_, nei_, poi_, se_x_id_x_ra; nef_, pof_)
+    nep_, nea_, pop_, poa_ = Nucleus.Statistics.get_p_value(enn_, nei_, poi_, se_x_id_x_ra)
 
-    se_x_st_x_nu[nei_, 3] = npv_
+    se_x_st_x_nu[nei_, 3] = nep_
 
-    se_x_st_x_nu[poi_, 3] = ppv_
+    se_x_st_x_nu[poi_, 3] = pop_
 
-    se_x_st_x_nu[nei_, 4] = nad_
+    se_x_st_x_nu[nei_, 4] = nea_
 
-    se_x_st_x_nu[poi_, 4] = pad_
+    se_x_st_x_nu[poi_, 4] = poa_
 
     Nucleus.DataFrame.write(
         joinpath(ou, "set_x_statistic_x_number.tsv"),
-        Nucleus.DataFrame.make(
-            "Set",
-            se_,
-            ["Enrichment", "Normalized Enrichment", "P-Value", "Adjusted P-Value"],
-            se_x_st_x_nu,
-        ),
+        "Set",
+        se_,
+        ["Enrichment", "Normalized Enrichment", "P-Value", "Adjusted P-Value"],
+        se_x_st_x_nu,
     )
 
-    for id in unique(vcat(Nucleus.Rank.get_extreme(en_, n_pl), indexin(pl_, se_)))
+    for id in unique!(vcat(Nucleus.Rank.get_extreme(enn_, n_pl), indexin(pl_, se_)))
 
         if isnothing(id)
 
@@ -422,29 +418,27 @@ function _write(
 
     end
 
-    ou
-
 end
 
-function _permute_set(n_pe, se, al, fe_, sc_, fe1___, ex)
+function _permute_set(n, se, al, fe_, sc_, fe1___, ex)
 
-    se_x_id_x_ra = Matrix{Float64}(undef, length(fe1___), n_pe)
+    se_x_id_x_ra = Matrix{Float64}(undef, lastindex(fe1___), n)
 
-    if 0 < n_pe
+    if 0 < n
 
         @info "Calculating significance by permuting sets"
 
-        le_ = length.(fe1___)
+        le_ = lastindex.(fe1___)
 
         seed!(se)
 
-        @showprogress for id in 1:n_pe
+        @showprogress for id in 1:n
 
             se_x_id_x_ra[:, id] = FeatureSetEnrichment.enrich(
                 al,
                 fe_,
                 sc_,
-                [sample(fe_, le; replace = false) for le in le_];
+                (le -> sample(fe_, le; replace = false)).(le_);
                 ex,
             )
 
@@ -458,28 +452,21 @@ end
 
 function _use_permutation(permutation, al, fe_, fe1___, ex)
 
-    feature_x_index_x_random = Nucleus.DataFrame.read(permutation)
+    _nar, ro_, id_, ro_x_id_x_ra = Nucleus.DataFrame.separate(permutation)
 
-    fe_x_id_x_ra = view(
-        Matrix(feature_x_index_x_random[!, 2:end]),
-        indexin(fe_, feature_x_index_x_random[!, 1]),
-        :,
-    )
+    fe_x_id_x_ra = view(ro_x_id_x_ra, indexin(fe_, ro_), :)
 
-    n_pe = size(fe_x_id_x_ra, 2)
+    n = lastindex(id_)
 
-    se_x_id_x_ra = Matrix{Float64}(undef, length(fe1___), n_pe)
+    se_x_id_x_ra = Matrix{Float64}(undef, lastindex(fe1___), n)
 
-    @info "Calculating significance using predefined $n_pe random scores"
+    @info "Calculating significance using predefined $n random scores"
 
-    @showprogress for id in 1:n_pe
-
-        ra_ = fe_x_id_x_ra[:, id]
+    @showprogress for (id, ra_) in enumerate(eachcol(fe_x_id_x_ra))
 
         so_ = sortperm(ra_; rev = true)
 
-        se_x_id_x_ra[:, id] =
-            FeatureSetEnrichment.enrich(al, view(fe_, so_), view(ra_, so_), fe1___; ex)
+        se_x_id_x_ra[:, id] = FeatureSetEnrichment.enrich(al, fe_[so_], ra_[so_], fe1___; ex)
 
     end
 
@@ -517,7 +504,8 @@ Run user-rank (pre-rank) GSEA.
 
   - `--write-set-x-index-x-random-tsv`: = false.
 """
-@cast function user_rank(
+#@cast function user_rank(
+function user_rank(
     output_directory,
     feature_x_metric_x_score_tsv,
     set_features_json;
@@ -540,26 +528,24 @@ Run user-rank (pre-rank) GSEA.
 
     Nucleus.Error.error_missing(output_directory)
 
+    al = _set_algorithm(algorithm)
+
     feature_x_metric_x_score = Nucleus.DataFrame.read(feature_x_metric_x_score_tsv)
 
     fe_ = feature_x_metric_x_score[!, 1]
 
-    Nucleus.Error.error_duplicate(fe_)
-
     sc_ = feature_x_metric_x_score[!, 2]
 
-    Nucleus.Error.error_bad(!isfinite, sc_)
+    _error(fe_, sc_)
 
     so_ = sortperm(sc_; rev = true)
 
-    sc_ = view(sc_, so_)
+    sc_ = sc_[so_]
 
-    fe_ = view(fe_, so_)
+    fe_ = fe_[so_]
 
     se_, fe1___ =
         _read_set(set_features_json, fe_, minimum_set_size, maximum_set_size, minimum_set_fraction)
-
-    al = _set_algorithm(algorithm)
 
     if permutation == "set"
 
@@ -572,7 +558,7 @@ Run user-rank (pre-rank) GSEA.
 
     else
 
-        error("\"$permutation\" is not \"set\" or feature_x_index_x_random.tsv.")
+        error("`$permutation` is not \"set\" or feature_x_index_x_random.tsv.")
 
     end
 
@@ -599,15 +585,7 @@ end
 
 function _get_standard_deviation(nu_, me)
 
-    fr = 0.2
-
-    #if iszero(me)
-    #
-    #    return fr
-    #
-    #end
-
-    max(abs(me) * fr, std(nu_; corrected = true))
+    max(abs(me) * 0.2, std(nu_; corrected = true))
 
 end
 
@@ -621,15 +599,13 @@ function _get_signal_to_noise_ratio(nu1_, nu2_)
 
 end
 
-# TODO: Benchmark.
 function _target_sort(fu, is_, fe_x_sa_x_sc, fe_)
 
-    # TODO: Try `view`.
     sc_ = fu.(eachrow(fe_x_sa_x_sc[:, .!is_]), eachrow(fe_x_sa_x_sc[:, is_]))
 
     so_ = sortperm(sc_; rev = true)
 
-    view(sc_, so_), view(fe_, so_)
+    sc_[so_], fe_[so_]
 
 end
 
@@ -667,7 +643,8 @@ Run metric-rank (standard) GSEA.
 
   - `--write-set-x-index-x-random-tsv`: = false.
 """
-@cast function metric_rank(
+#@cast function metric_rank(
+function metric_rank(
     output_directory,
     target_x_sample_x_number_tsv,
     feature_x_sample_x_score_tsv,
@@ -694,12 +671,9 @@ Run metric-rank (standard) GSEA.
 
     Nucleus.Error.error_missing(output_directory)
 
-    _nat, ta_, sat_, ta_x_sa_x_nu =
-        Nucleus.DataFrame.separate(Nucleus.DataFrame.read(target_x_sample_x_number_tsv))
+    _nat, ta_, sat_, ta_x_sa_x_nu = Nucleus.DataFrame.separate(target_x_sample_x_number_tsv)
 
-    Nucleus.Error.error_duplicate(ta_)
-
-    Nucleus.Error.error_bad(!isfinite, ta_x_sa_x_nu)
+    _error(ta_, ta_x_sa_x_nu)
 
     un_ = Set(ta_x_sa_x_nu)
 
@@ -709,24 +683,17 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    _naf, fe_, saf_, fe_x_sa_x_sc =
-        Nucleus.DataFrame.separate(Nucleus.DataFrame.read(feature_x_sample_x_score_tsv))
+    _naf, fe_, saf_, fe_x_sa_x_sc = Nucleus.DataFrame.separate(feature_x_sample_x_score_tsv)
 
-    Nucleus.Error.error_duplicate(fe_)
+    fe_x_sa_x_sc = fe_x_sa_x_sc[:, indexin(sat_, saf_)]
 
-    Nucleus.Error.error_bad(!isfinite, fe_x_sa_x_sc)
+    _error(fe_, fe_x_sa_x_sc)
 
     if !iszero(normalization_dimension)
 
-        _normalize_with_0_clamp!(
-            fe_x_sa_x_sc,
-            normalization_dimension,
-            normalization_standard_deviation,
-        )
+        _normalize!(fe_x_sa_x_sc, normalization_dimension, normalization_standard_deviation)
 
     end
-
-    fe_x_sa_x_sc = view(fe_x_sa_x_sc, :, indexin(sat_, saf_))
 
     if metric == "signal-to-noise-ratio"
 
@@ -734,7 +701,7 @@ Run metric-rank (standard) GSEA.
 
     else
 
-        error("\"$metric\" is not \"signal-to-noise-ratio\".")
+        error("`$metric` is not \"signal-to-noise-ratio\".")
 
     end
 
@@ -744,7 +711,10 @@ Run metric-rank (standard) GSEA.
 
     Nucleus.DataFrame.write(
         joinpath(output_directory, "feature_x_metric_x_score.tsv"),
-        Nucleus.DataFrame.make("Feature", fe_, [metric], reshape(sc_, :, 1)),
+        "Feature",
+        fe_,
+        [metric],
+        reshape(sc_, :, 1),
     )
 
     se_, fe1___ =
@@ -754,7 +724,7 @@ Run metric-rank (standard) GSEA.
 
     if permutation == "sample"
 
-        se_x_id_x_ra = Matrix{Float64}(undef, length(fe1___), number_of_permutations)
+        se_x_id_x_ra = Matrix{Float64}(undef, lastindex(fe1___), number_of_permutations)
 
         if 0 < number_of_permutations
 
@@ -764,10 +734,10 @@ Run metric-rank (standard) GSEA.
 
             @showprogress for id in 1:number_of_permutations
 
-                ra_, fe2_ = _target_sort(fu, shuffle!(is_), fe_x_sa_x_sc, fe_)
+                ra_, fer_ = _target_sort(fu, shuffle!(is_), fe_x_sa_x_sc, fe_)
 
                 se_x_id_x_ra[:, id] =
-                    FeatureSetEnrichment.enrich(al, fe2_, ra_, fe1___; ex = exponent)
+                    FeatureSetEnrichment.enrich(al, fer_, ra_, fe1___; ex = exponent)
 
             end
 
@@ -784,7 +754,7 @@ Run metric-rank (standard) GSEA.
 
     else
 
-        error("\"$permutation\" is not \"sample\", \"set\", or feature_x_index_x_random.tsv.")
+        error("`$permutation` is not \"sample\", \"set\", or feature_x_index_x_random.tsv.")
 
     end
 
@@ -812,6 +782,6 @@ end
 """
 The official command-line program for gene-set-enrichment analysis (GSEA). Learn more at https://github.com/KwatMDPhD/GSEA.jl.
 """
-@main
+#@main
 
 end

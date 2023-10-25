@@ -276,17 +276,16 @@ Nucleus.Path.remake_directory(OUMS)
 
 # ---- #
 
-@test lastindex(
-    Nucleus.Path.read(
-        GSEA.metric_rank(
-            OUMS,
-            TST,
-            TSF,
-            joinpath(DA, "2set_features.json");
-            minimum_set_size = 3,
-            maximum_set_size = 3,
-            number_of_sets_to_plot = 2,
-        );
-        ke_ = (r"html$",),
-    ),
-) === 2
+GSEA.metric_rank(
+    OUMS,
+    TST,
+    TSF,
+    joinpath(DA, "2set_features.json");
+    minimum_set_size = 3,
+    maximum_set_size = 3,
+    number_of_sets_to_plot = 2,
+)
+
+# ---- #
+
+@test lastindex(Nucleus.Path.read(OUMS; ke_ = (r"html$",))) === 2
