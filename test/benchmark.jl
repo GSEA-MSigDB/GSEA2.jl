@@ -1,6 +1,6 @@
 using Test: @test
 
-using BioLab
+using Nucleus
 
 using GSEA
 
@@ -42,7 +42,7 @@ function test(st, is_, py, ju)
 
     if any(is_)
 
-        pe = BioLab.String.format(100 - 100 * sum(is_) / size(py, 1))
+        pe = Nucleus.String.format(100 - 100 * sum(is_) / size(py, 1))
 
         @error "$st $pe%" view(py, is_, :) view(ju, is_, :)
 
@@ -100,7 +100,7 @@ const BA_ = Set((
 
 # ---- #
 
-for (idb, js) in enumerate(BioLab.Path.read(DIJ))
+for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
     if js in BA_
 
@@ -108,11 +108,11 @@ for (idb, js) in enumerate(BioLab.Path.read(DIJ))
 
     end
 
-    ke_va = BioLab.Dict.read(joinpath(DIJ, js))[chop(js; tail = 5)]
+    ke_va = Nucleus.Dict.read(joinpath(DIJ, js))[chop(js; tail = 5)]
 
     @info "$idb $js"
 
-    dib = make_directory(joinpath(DIB, BioLab.Path.clean(chop(js; tail = 5))))
+    dib = make_directory(joinpath(DIB, Nucleus.Path.clean(chop(js; tail = 5))))
 
     dii = make_directory(joinpath(dib, "input"))
 
@@ -174,19 +174,19 @@ for (idb, js) in enumerate(BioLab.Path.read(DIJ))
                 number_of_permutations = 0,
             )
 
-            BioLab.Path.remove(tss)
+            Nucleus.Path.remove(tss)
 
         end
 
         n_ch = 50
 
-        py = BioLab.DataFrame.read(txm; select = [1, 2])
+        py = Nucleus.DataFrame.read(txm; select = [1, 2])
 
-        ju = BioLab.DataFrame.read(tsm)
+        ju = Nucleus.DataFrame.read(tsm)
 
-        py[!, 1] = BioLab.String.limit.(py[!, 1], n_ch)
+        py[!, 1] = Nucleus.String.limit.(py[!, 1], n_ch)
 
-        ju[!, 1] = BioLab.String.limit.(ju[!, 1], n_ch)
+        ju[!, 1] = Nucleus.String.limit.(ju[!, 1], n_ch)
 
         sort!(py)
 
@@ -210,9 +210,9 @@ for (idb, js) in enumerate(BioLab.Path.read(DIJ))
 
         end
 
-        py = sort!(BioLab.DataFrame.read(txs; select = [1, 5, 4, 6, 7]))
+        py = sort!(Nucleus.DataFrame.read(txs; select = [1, 5, 4, 6, 7]))
 
-        ju = sort!(BioLab.DataFrame.read(tss))
+        ju = sort!(Nucleus.DataFrame.read(tss))
 
         @test size(py, 1) === size(ju, 1)
 

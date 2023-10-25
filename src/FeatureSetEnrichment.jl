@@ -1,8 +1,10 @@
 module FeatureSetEnrichment
 
+using Printf: @sprintf
+
 using ProgressMeter: @showprogress
 
-using BioLab
+using Nucleus
 
 struct KS end
 
@@ -18,13 +20,13 @@ struct KLioP end
 
 function _make_string(al)
 
-    chop(string(al); head = 26, tail = 2)
+    string(al)[27:(end - 2)]
 
 end
 
-@inline function _index_absolute_exponentiate(sc_, id, ex)
+@inline function _absolute_exponentiate(sc, ex)
 
-    ab = abs(sc_[id])
+    ab = abs(sc)
 
     if !isone(ex)
 
@@ -36,9 +38,9 @@ end
 
 end
 
-@inline function _sum_01(sc_, ex, is_)
+@inline function _get_0_1_normalizer(sc_, ex, is_)
 
-    n = length(sc_)
+    n = lastindex(sc_)
 
     su0 = su1 = 0.0
 
@@ -46,7 +48,7 @@ end
 
         if is_[id]
 
-            su1 += _index_absolute_exponentiate(sc_, id, ex)
+            su1 += _absolute_exponentiate(sc_[id], ex)
 
         else
 
@@ -56,19 +58,40 @@ end
 
     end
 
-    n, su0, su1
+    n, 1 / su0, 1 / su1
 
 end
 
-@inline function _sum_all1(sc_, ex, is_)
+# TODO: Benchmark.
+@inline function _get_1_normalizer(sc_, ex, is_)
 
-    n = length(sc_)
+    n = lastindex(sc_)
+
+    su1 = 0.0
+
+    for id in 1:n
+
+        if is_[id]
+
+            su1 += _absolute_exponentiate(sc_[id], ex)
+
+        end
+
+    end
+
+    n, 1 / su1
+
+end
+
+@inline function _get_all_1_normalizer(sc_, ex, is_)
+
+    n = lastindex(sc_)
 
     su = su1 = 0.0
 
     for id in 1:n
 
-        ab = _index_absolute_exponentiate(sc_, id, ex)
+        ab = _absolute_exponentiate(sc_[id], ex)
 
         su += ab
 
@@ -80,21 +103,37 @@ end
 
     end
 
-    n, su, su1
+    n, 1 / su, 1 / su1
 
 end
 
-@inline function _ready_ks(sc_, ex, is_, mo_)
+@inline function _get_0_normalizer(noa, no1)
 
-    n, su0, su1 = _sum_01(sc_, ex, is_)
+    1 / (1 / noa - 1 / no1)
 
-    n, 1 / su0, su1, 0.0, !isnothing(mo_)
+end
+
+@inline function _floor(nu)
+
+    ep = eps()
+
+    if nu < ep
+
+        ep
+
+    else
+
+        nu
+
+    end
 
 end
 
 function _enrich!(::KS, sc_, ex, is_, mo_)
 
-    n, de, su1, cu, mo = _ready_ks(sc_, ex, is_, mo_)
+    n, no0, no1 = _get_0_1_normalizer(sc_, ex, is_)
+
+    cu = 0.0
 
     et = 0.0
 
@@ -104,15 +143,15 @@ function _enrich!(::KS, sc_, ex, is_, mo_)
 
         if is_[id]
 
-            cu += _index_absolute_exponentiate(sc_, id, ex) / su1
+            cu += _absolute_exponentiate(sc_[id], ex) * no1
 
         else
 
-            cu -= de
+            cu -= no0
 
         end
 
-        if mo
+        if !isnothing(mo_)
 
             mo_[id] = cu
 
@@ -136,7 +175,9 @@ end
 
 function _enrich!(::KSa, sc_, ex, is_, mo_)
 
-    n, de, su1, cu, mo = _ready_ks(sc_, ex, is_, mo_)
+    n, no0, no1 = _get_0_1_normalizer(sc_, ex, is_)
+
+    cu = 0.0
 
     ar = 0.0
 
@@ -144,15 +185,15 @@ function _enrich!(::KSa, sc_, ex, is_, mo_)
 
         if is_[id]
 
-            cu += _index_absolute_exponentiate(sc_, id, ex) / su1
+            cu += _absolute_exponentiate(sc_[id], ex) * no1
 
         else
 
-            cu -= de
+            cu -= no0
 
         end
 
-        if mo
+        if !isnothing(mo_)
 
             mo_[id] = cu
 
@@ -166,51 +207,27 @@ function _enrich!(::KSa, sc_, ex, is_, mo_)
 
 end
 
-@inline function _ready_kli(sc_, ex, is_, mo_)
-
-    n, su, su1 = _sum_all1(sc_, ex, is_)
-
-    ep = eps()
-
-    n, su, su1, ep, ep, 1.0, 1.0, 0.0, !isnothing(mo_), 0.0, 0.0
-
-end
-
-@inline function _floor(nu)
-
-    ep = eps()
-
-    if nu < ep
-
-        ep
-
-    else
-
-        nu
-
-    end
-
-end
-
 function _enrich!(::KLi1, sc_, ex, is_, mo_)
 
-    n, su, su1, ri, ri1, le, le1, ar, mo, ridp, ri1dp = _ready_kli(sc_, ex, is_, mo_)
+    n, no1 = _get_1_normalizer(sc_, ex, is_)
+
+    ri = ri1 = eps()
 
     rid = 1 / n
 
+    le = 1.0 + 1 / n
+
+    le1 = 1.0
+
+    ar = 0.0
+
+    pr1 = 0.0
+
     for id in 1:n
-
-        ri += rid
-
-        le -= ridp
-
-        ridp = rid
-
-        ab = _index_absolute_exponentiate(sc_, id, ex)
 
         if is_[id]
 
-            ri1d = ab / su1
+            ri1d = _absolute_exponentiate(sc_[id], ex) * no1
 
         else
 
@@ -218,25 +235,22 @@ function _enrich!(::KLi1, sc_, ex, is_, mo_)
 
         end
 
-        ri1 += ri1d
-
-        le1 -= ri1dp
-
-        ri1dp = ri1d
-
-        le = _floor(le)
-
-        le1 = _floor(le1)
-
-        en = BioLab.Information.get_antisymmetric_kullback_leibler_divergence(ri1, le1, ri, le)
+        en = Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
+            ri1 += ri1d,
+            _floor(le1 -= pr1),
+            ri += rid,
+            _floor(le -= rid),
+        )
 
         ar += en
 
-        if mo
+        if !isnothing(mo_)
 
             mo_[id] = en
 
         end
+
+        pr1 = ri1d
 
     end
 
@@ -246,23 +260,23 @@ end
 
 function _enrich!(::KLi, sc_, ex, is_, mo_)
 
-    n, su, su1, ri, ri1, le, le1, ar, mo, ridp, ri1dp = _ready_kli(sc_, ex, is_, mo_)
+    n, noa, no1 = _get_all_1_normalizer(sc_, ex, is_)
+
+    ri = ri1 = eps()
+
+    le = le1 = 1.0
+
+    ar = 0.0
+
+    pr = pr1 = 0.0
 
     for id in 1:n
 
-        ab = _index_absolute_exponentiate(sc_, id, ex)
-
-        rid = ab / su
-
-        ri += rid
-
-        le -= ridp
-
-        ridp = rid
+        ab = _absolute_exponentiate(sc_[id], ex)
 
         if is_[id]
 
-            ri1d = ab / su1
+            ri1d = ab * no1
 
         else
 
@@ -270,25 +284,26 @@ function _enrich!(::KLi, sc_, ex, is_, mo_)
 
         end
 
-        ri1 += ri1d
+        rid = ab * noa
 
-        le1 -= ri1dp
-
-        ri1dp = ri1d
-
-        le = _floor(le)
-
-        le1 = _floor(le1)
-
-        en = BioLab.Information.get_antisymmetric_kullback_leibler_divergence(ri1, le1, ri, le)
+        en = Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
+            ri1 += ri1d,
+            _floor(le1 -= pr1),
+            ri += rid,
+            _floor(le -= pr),
+        )
 
         ar += en
 
-        if mo
+        if !isnothing(mo_)
 
             mo_[id] = en
 
         end
+
+        pr = rid
+
+        pr1 = ri1d
 
     end
 
@@ -298,31 +313,31 @@ end
 
 function _enrich!(::KLioM, sc_, ex, is_, mo_)
 
-    n, su, su1, ri, ri1, le, le1, ar, mo, ridp, ri1dp = _ready_kli(sc_, ex, is_, mo_)
+    n, noa, no1 = _get_all_1_normalizer(sc_, ex, is_)
 
-    su0 = su - su1
+    no0 = _get_0_normalizer(noa, no1)
 
-    ri0 = ri1
+    ri = ri1 = ri0 = eps()
 
-    le0 = le1
+    le = le1 = le0 = 1.0
 
-    ri0dp = ri1dp
+    ar = 0.0
+
+    pr = pr1 = pr0 = 0.0
 
     for id in 1:n
 
-        ab = _index_absolute_exponentiate(sc_, id, ex)
+        ab = _absolute_exponentiate(sc_[id], ex)
 
-        rid = ab / su
+        rid = ab * noa
 
         ri += rid
 
-        le -= ridp
-
-        ridp = rid
+        le -= pr
 
         if is_[id]
 
-            ri1d = ab / su1
+            ri1d = ab * no1
 
             ri0d = 0.0
 
@@ -330,39 +345,39 @@ function _enrich!(::KLioM, sc_, ex, is_, mo_)
 
             ri1d = 0.0
 
-            ri0d = ab / su0
+            ri0d = ab * no0
 
         end
 
         ri1 += ri1d
 
+        le1 -= pr1
+
         ri0 += ri0d
 
-        le1 -= ri1dp
-
-        ri1dp = ri1d
-
-        le0 -= ri0dp
-
-        ri0dp = ri0d
-
-        le = _floor(le)
-
-        le1 = _floor(le1)
-
-        le0 = _floor(le0)
+        le0 -= pr0
 
         en =
-            BioLab.Information.get_antisymmetric_kullback_leibler_divergence(ri1, ri0, ri) -
-            BioLab.Information.get_antisymmetric_kullback_leibler_divergence(le1, le0, le)
+            Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(ri1, ri0, ri) -
+            Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
+                _floor(le1),
+                _floor(le0),
+                _floor(le),
+            )
 
         ar += en
 
-        if mo
+        if !isnothing(mo_)
 
             mo_[id] = en
 
         end
+
+        pr = rid
+
+        pr1 = ri1d
+
+        pr0 = ri0d
 
     end
 
@@ -372,31 +387,31 @@ end
 
 function _enrich!(::KLioP, sc_, ex, is_, mo_)
 
-    n, su, su1, ri, ri1, le, le1, ar, mo, ridp, ri1dp = _ready_kli(sc_, ex, is_, mo_)
+    n, noa, no1 = _get_all_1_normalizer(sc_, ex, is_)
 
-    su0 = su - su1
+    no0 = _get_0_normalizer(noa, no1)
 
-    ri0 = ri1
+    ri = ri1 = ri0 = eps()
 
-    le0 = le1
+    le = le1 = le0 = 1.0
 
-    ri0dp = ri1dp
+    ar = 0.0
+
+    pr = pr1 = pr0 = 0.0
 
     for id in 1:n
 
-        ab = _index_absolute_exponentiate(sc_, id, ex)
+        ab = _absolute_exponentiate(sc_[id], ex)
 
-        rid = ab / su
+        rid = ab * noa
 
         ri += rid
 
-        le -= ridp
-
-        ridp = rid
+        le -= pr
 
         if is_[id]
 
-            ri1d = ab / su1
+            ri1d = ab * no1
 
             ri0d = 0.0
 
@@ -404,39 +419,39 @@ function _enrich!(::KLioP, sc_, ex, is_, mo_)
 
             ri1d = 0.0
 
-            ri0d = ab / su0
+            ri0d = ab * no0
 
         end
 
         ri1 += ri1d
 
+        le1 -= pr1
+
         ri0 += ri0d
 
-        le1 -= ri1dp
-
-        ri1dp = ri1d
-
-        le0 -= ri0dp
-
-        ri0dp = ri0d
-
-        le = _floor(le)
-
-        le1 = _floor(le1)
-
-        le0 = _floor(le0)
+        le0 -= pr0
 
         en =
-            BioLab.Information.get_symmetric_kullback_leibler_divergence(ri1, ri0, ri) -
-            BioLab.Information.get_symmetric_kullback_leibler_divergence(le1, le0, le)
+            Nucleus.Information.get_symmetric_kullback_leibler_divergence(ri1, ri0, ri) -
+            Nucleus.Information.get_symmetric_kullback_leibler_divergence(
+                _floor(le1),
+                _floor(le0),
+                _floor(le),
+            )
 
         ar += en
 
-        if mo
+        if !isnothing(mo_)
 
             mo_[id] = en
 
         end
+
+        pr = rid
+
+        pr1 = ri1d
+
+        pr0 = ri0d
 
     end
 
@@ -456,17 +471,23 @@ function _get_extreme(nu_)
 
     if isapprox(mia, maa)
 
-        return (mi, ma)
+        (mi, ma)
 
     elseif maa < mia
 
-        return (mi,)
+        (mi,)
 
     else
 
-        return (ma,)
+        (ma,)
 
     end
+
+end
+
+function _format(nu)
+
+    @sprintf "%.4g" nu
 
 end
 
@@ -484,7 +505,7 @@ function plot(
     nah = "High",
 )
 
-    n = length(fe_)
+    n = lastindex(fe_)
 
     x = collect(1:n)
 
@@ -494,27 +515,15 @@ function plot(
 
     en = _enrich!(al, sc_, ex, is_, mo_)
 
-    cor = "#ff1992"
-
-    cob = "#1993ff"
-
     coe1 = "#07fa07"
 
-    coe2 = BioLab.Color.add_alpha(coe1, 0.32)
-
-    coy = "#ffd96a"
+    coe2 = Nucleus.Color.add_alpha(coe1, 0.32)
 
     scatter = Dict("x" => x, "text" => fe_, "mode" => "lines", "fill" => "tozeroy")
 
-    yaxis1_domain = (0, 0.24)
+    if typeof(al) == KS
 
-    yaxis2_domain = (0.25, 0.31)
-
-    yaxis3_domain = (0.32, 1)
-
-    if al isa KS
-
-        scatterp = Dict("fillcolor" => "#ffffff")
+        fi = Dict("fillcolor" => "#ffffff")
 
         id_ = findall(in(_get_extreme(mo_)), mo_)
 
@@ -525,35 +534,38 @@ function plot(
                 "x" => x[id_],
                 "mode" => "markers",
                 "marker" => Dict(
-                    "symbol" => "circle",
+                    #"symbol" => "circle",
                     "size" => 32,
                     "color" => coe2,
                     "opacity" => 0.72,
-                    "line" => Dict("width" => 2, "color" => BioLab.Color.HEFA),
+                    "line" => Dict("width" => 2, "color" => Nucleus.Color.HEFA),
                 ),
             ),
         )
 
     else
 
-        scatterp = Dict("fillcolor" => coe2)
+        fi = Dict("fillcolor" => coe2)
 
         pe_ = ()
 
     end
 
-    title_text = BioLab.String.limit(title_text, 80)
-
     annotation = Dict("showarrow" => false, "bgcolor" => "#fcfcfc", "borderwidth" => 2.4)
 
     annotationhl = merge(
         annotation,
-        Dict("y" => 0, "font" => Dict("size" => 16), "borderpad" => 4.8, "bordercolor" => coy),
+        Dict(
+            "y" => 0,
+            "font" => Dict("size" => 16),
+            "borderpad" => 4.8,
+            "bordercolor" => Nucleus.Color.HEAY,
+        ),
     )
 
     margin = n * 0.008
 
-    BioLab.Plot.plot(
+    Nucleus.Plot.plot(
         ht,
         [
             merge(
@@ -561,8 +573,8 @@ function plot(
                 Dict(
                     "name" => "- Score",
                     "y" => ifelse.(sc_ .< 0, sc_, 0),
-                    "line" => Dict("width" => 0.4, "color" => cob),
-                    "fillcolor" => cob,
+                    "line" => Dict("width" => 0.4, "color" => Nucleus.Color.HEBL),
+                    "fillcolor" => Nucleus.Color.HEBL,
                 ),
             ),
             merge(
@@ -570,8 +582,8 @@ function plot(
                 Dict(
                     "name" => "+ Score",
                     "y" => ifelse.(0 .< sc_, sc_, 0),
-                    "line" => Dict("width" => 0.4, "color" => cor),
-                    "fillcolor" => cor,
+                    "line" => Dict("width" => 0.4, "color" => Nucleus.Color.HERE),
+                    "fillcolor" => Nucleus.Color.HERE,
                 ),
             ),
             Dict(
@@ -595,39 +607,39 @@ function plot(
                     "y" => mo_,
                     "line" => Dict("width" => 3.2, "color" => coe1),
                 ),
-                scatterp,
+                fi,
             ),
             pe_...,
         ],
         Dict(
             "showlegend" => false,
             "title" => Dict(
-                "text" => "<b>$title_text</b>",
+                "text" => "<b>$(Nucleus.String.limit(title_text, 80))</b>",
                 "font" => Dict("size" => 32, "family" => "Relaway", "color" => "#2b2028"),
             ),
             "yaxis" => Dict(
-                "domain" => yaxis1_domain,
+                "domain" => (0, 0.24),
                 "title" => Dict("text" => "<b>$nas</b>"),
                 "showgrid" => false,
             ),
             "yaxis2" => Dict(
-                "domain" => yaxis2_domain,
+                "domain" => (0.25, 0.31),
                 "title" => Dict("text" => "<b>Set</b>"),
                 "tickvals" => (),
                 "showgrid" => false,
             ),
             "yaxis3" => Dict(
-                "domain" => yaxis3_domain,
+                "domain" => (0.32, 1),
                 "title" => Dict("text" => "<b>Δ Enrichment</b>"),
                 "showgrid" => false,
             ),
             "xaxis" => merge(
                 Dict(
-                    "title" => Dict("text" => "<b>$naf (n = $n)</b>"),
+                    "title" => Dict("text" => "<b>$naf ($n)</b>"),
                     "zeroline" => false,
                     "showgrid" => false,
                 ),
-                BioLab.Plot.SPIKE,
+                Nucleus.Plot.SPIKE,
             ),
             "annotations" => (
                 merge(
@@ -636,10 +648,10 @@ function plot(
                         "yref" => "paper",
                         "xref" => "paper",
                         "y" => 1.04,
-                        "text" => "Enrichment = <b>$(BioLab.String.format(en))</b>",
+                        "text" => "Enrichment = <b>$(_format(en))</b>",
                         "font" => Dict("size" => 20, "color" => "#224634"),
                         "borderpad" => 12.8,
-                        "bordercolor" => coy,
+                        "bordercolor" => Nucleus.Color.HEAY,
                     ),
                 ),
                 merge(
@@ -648,7 +660,7 @@ function plot(
                         "x" => 1 - margin,
                         "xanchor" => "right",
                         "text" => nah,
-                        "font" => Dict("color" => cor),
+                        "font" => Dict("color" => Nucleus.Color.HERE),
                     ),
                 ),
                 merge(
@@ -657,7 +669,7 @@ function plot(
                         "x" => n + margin,
                         "xanchor" => "left",
                         "text" => nal,
-                        "font" => Dict("color" => cob),
+                        "font" => Dict("color" => Nucleus.Color.HEBL),
                     ),
                 ),
             ),
@@ -668,13 +680,13 @@ end
 
 function enrich(al, fe_, sc_::AbstractVector, fe1___; mi = 1, ex = 1)
 
-    en_ = Vector{Float64}(undef, length(fe1___))
+    en_ = Vector{Float64}(undef, lastindex(fe1___))
 
     fe_id = Dict(fe => id for (id, fe) in enumerate(fe_))
 
     for (id, fe1_) in enumerate(fe1___)
 
-        is_ = BioLab.Dict.is_in(fe_id, fe1_)
+        is_ = Nucleus.Dict.is_in(fe_id, fe1_)
 
         if sum(is_) < mi
 
@@ -696,19 +708,19 @@ end
 
 function enrich(al, fe_, fe_x_sa_x_sc::AbstractMatrix, fe1___; mi = 1, ex = 1)
 
-    se_x_sa_x_en = Matrix{Float64}(undef, length(fe1___), size(fe_x_sa_x_sc, 2))
+    se_x_sa_x_en = Matrix{Float64}(undef, lastindex(fe1___), size(fe_x_sa_x_sc, 2))
 
-    no_ = BitVector(undef, length(fe_))
+    no_ = BitVector(undef, lastindex(fe_))
 
     @showprogress for (id, sc_) in enumerate(eachcol(fe_x_sa_x_sc))
 
         no_ .= .!isnan.(sc_)
 
-        scn_ = sc_[no_]
+        scn_ = view(sc_, no_)
 
         so_ = sortperm(scn_; rev = true)
 
-        se_x_sa_x_en[:, id] = enrich(al, view(fe_[no_], so_), view(scn_, so_), fe1___; mi, ex)
+        se_x_sa_x_en[:, id] = enrich(al, view(fe_, no_)[so_], scn_[so_], fe1___; mi, ex)
 
     end
 
@@ -718,10 +730,10 @@ end
 
 function plot(di, al, fe_, fe_x_sa_x_sc, fe1___, nac, se_, sa_, se_x_sa_x_en; ex = 1, n_pl = 4)
 
-    BioLab.Error.error_missing(di)
+    Nucleus.Error.error_missing(di)
 
-    BioLab.Plot.plot_heat_map(
-        joinpath(di, "set_x_$(BioLab.Path.clean(nac))_x_enrichment.html"),
+    Nucleus.Plot.plot_heat_map(
+        joinpath(di, "set_x_$(Nucleus.Path.clean(nac))_x_enrichment.html"),
         se_x_sa_x_en;
         y = se_,
         x = sa_,
@@ -730,12 +742,12 @@ function plot(di, al, fe_, fe_x_sa_x_sc, fe1___, nac, se_, sa_, se_x_sa_x_en; ex
         layout = Dict("title" => Dict("text" => "Enrichment using $(_make_string(al))")),
     )
 
-    no_ = BitVector(undef, length(fe_))
-
     noe = .!isnan.(se_x_sa_x_en)
 
+    no_ = BitVector(undef, lastindex(fe_))
+
     for id_ in
-        view(view(CartesianIndices(se_x_sa_x_en), noe), sortperm(view(se_x_sa_x_en, noe)))[BioLab.Rank.get_extreme(
+        view(view(CartesianIndices(se_x_sa_x_en), noe), sortperm(view(se_x_sa_x_en, noe)))[Nucleus.Rank.get_extreme(
         sum(noe),
         n_pl,
     )]
@@ -746,25 +758,23 @@ function plot(di, al, fe_, fe_x_sa_x_sc, fe1___, nac, se_, sa_, se_x_sa_x_en; ex
 
         no_ .= .!isnan.(sc_)
 
-        scn_ = sc_[no_]
+        scn_ = view(sc_, no_)
 
         so_ = sortperm(scn_; rev = true)
 
         pr = "$(sa_[id2]) Enriching $(se_[id1])"
 
         plot(
-            joinpath(di, BioLab.Path.clean("$pr.html")),
+            joinpath(di, "$(Nucleus.Path.clean(pr)).html"),
             al,
-            view(fe_[no_], so_),
-            view(scn_, so_),
+            view(fe_, no_)[so_],
+            scn_[so_],
             fe1___[id1];
             ex,
-            title_text = "$pr ($(BioLab.String.format(se_x_sa_x_en[id1, id2])))",
+            title_text = "$pr ($(_format(se_x_sa_x_en[id1, id2])))",
         )
 
     end
-
-    di
 
 end
 

@@ -8,7 +8,7 @@ using Random: seed!, shuffle!
 
 using StatsBase: mean, sample, std
 
-using BioLab
+using Nucleus
 
 include("FeatureSetEnrichment.jl")
 
@@ -30,7 +30,7 @@ function _normalize_with_0_clamp!(ma, di, st)
 
     @info "Normalizing dimension $di using standard deviation $st"
 
-    foreach(BioLab.Normalization.normalize_with_0!, fu(ma))
+    foreach(Nucleus.Normalization.normalize_with_0!, fu(ma))
 
     clamp!(ma, -st, st)
 
@@ -38,7 +38,7 @@ end
 
 function _read_set(js, fe_, mi, ma, mif)
 
-    se_fe1_ = BioLab.Dict.read(js, Dict{String, Vector{String}})
+    se_fe1_ = Nucleus.Dict.read(js, Dict{String, Vector{String}})
 
     se_ = collect(keys(se_fe1_))
 
@@ -46,7 +46,7 @@ function _read_set(js, fe_, mi, ma, mif)
 
     n = length(se_)
 
-    @info "Selecting ($mi <= N <= $ma && $mif <= %) from $(BioLab.String.count(n, "set"))"
+    @info "Selecting ($mi <= N <= $ma && $mif <= %) from $(Nucleus.String.count(n, "set"))"
 
     ke_ = BitVector(undef, n)
 
@@ -64,7 +64,7 @@ function _read_set(js, fe_, mi, ma, mif)
 
     n_ke = sum(ke_)
 
-    me = "Selected $(BioLab.String.count(n_ke, "set"))."
+    me = "Selected $(Nucleus.String.count(n_ke, "set"))."
 
     if iszero(n_ke)
 
@@ -129,13 +129,9 @@ Convert `.cls` and `.gct` to `.tsv`s.
     gct,
 )
 
-    _nat, ta_, _sa_, ta_x_sa_x_nu = BioLab.DataFrame.separate(BioLab.CLS.read(cls))
+    _nat, ta_, _sa_, ta_x_sa_x_nu = Nucleus.DataFrame.separate(Nucleus.CLS.read(cls))
 
-    BioLab.Error.error_bad(ta_)
-
-    BioLab.Error.error_bad(ta_x_sa_x_nu)
-
-    _naf, fe_, sa_, fe_x_sa_x_nu = BioLab.DataFrame.separate(BioLab.GCT.read(gct))
+    _naf, fe_, sa_, fe_x_sa_x_nu = Nucleus.DataFrame.separate(Nucleus.GCT.read(gct))
 
     n_sac = length(_sa_)
 
@@ -147,20 +143,18 @@ Convert `.cls` and `.gct` to `.tsv`s.
 
     end
 
-    BioLab.Error.error_bad(fe_)
+    Nucleus.Error.error_duplicate(fe_)
 
-    BioLab.Error.error_duplicate(fe_)
+    Nucleus.Error.error_bad(!isfinite, fe_x_sa_x_nu)
 
-    BioLab.Error.error_bad(fe_x_sa_x_nu)
-
-    BioLab.DataFrame.write(
+    Nucleus.DataFrame.write(
         target_x_sample_x_number_tsv,
-        BioLab.DataFrame.make("Target", ta_, sa_, ta_x_sa_x_nu .- 1),
+        Nucleus.DataFrame.make("Target", ta_, sa_, ta_x_sa_x_nu .- 1),
     )
 
-    BioLab.DataFrame.write(
+    Nucleus.DataFrame.write(
         feature_x_sample_x_score_tsv,
-        BioLab.DataFrame.make("Feature", fe_, sa_, fe_x_sa_x_nu),
+        Nucleus.DataFrame.make("Feature", fe_, sa_, fe_x_sa_x_nu),
     )
 
     target_x_sample_x_number_tsv, feature_x_sample_x_score_tsv
@@ -177,7 +171,7 @@ Convert one or more `.gmt`s to a `.json`.
 """
 @cast function convert_gmt(set_features_json, gmt_...)
 
-    BioLab.Dict.write(set_features_json, merge((BioLab.GMT.read(gmt) for gmt in gmt_)...))
+    Nucleus.Dict.write(set_features_json, merge((Nucleus.GMT.read(gmt) for gmt in gmt_)...))
 
 end
 
@@ -220,16 +214,14 @@ Run data-rank (single-sample) GSEA.
     exponent::Float64 = 1.0,
 )
 
-    BioLab.Error.error_missing(output_directory)
+    Nucleus.Error.error_missing(output_directory)
 
     _naf, fe_, sa_, fe_x_sa_x_sc =
-        BioLab.DataFrame.separate(BioLab.DataFrame.read(feature_x_sample_x_score_tsv))
+        Nucleus.DataFrame.separate(Nucleus.DataFrame.read(feature_x_sample_x_score_tsv))
 
-    BioLab.Error.error_bad(fe_)
+    Nucleus.Error.error_duplicate(fe_)
 
-    BioLab.Error.error_duplicate(fe_)
-
-    BioLab.Error.error_bad(fe_x_sa_x_sc)
+    Nucleus.Error.error_bad(!isfinite, fe_x_sa_x_sc)
 
     if skip_0
 
@@ -261,9 +253,9 @@ Run data-rank (single-sample) GSEA.
         ex = exponent,
     )
 
-    BioLab.DataFrame.write(
+    Nucleus.DataFrame.write(
         joinpath(output_directory, "set_x_sample_x_enrichment.tsv"),
-        BioLab.DataFrame.make("Set", se_, sa_, se_x_sa_x_en),
+        Nucleus.DataFrame.make("Set", se_, sa_, se_x_sa_x_en),
     )
 
     FeatureSetEnrichment.plot(
@@ -320,9 +312,9 @@ function _write(
 
     if wr
 
-        BioLab.DataFrame.write(
+        Nucleus.DataFrame.write(
             joinpath(ou, "set_x_index_x_random.tsv"),
-            BioLab.DataFrame.make("Set", se_, collect(1:size(se_x_id_x_ra, 2)), se_x_id_x_ra),
+            Nucleus.DataFrame.make("Set", se_, collect(1:size(se_x_id_x_ra, 2)), se_x_id_x_ra),
         )
 
     end
@@ -384,7 +376,7 @@ function _write(
     poi_ = (idl + 1):n_se
 
     npv_, nad_, ppv_, pad_ =
-        BioLab.Statistics.get_p_value(enn_, nei_, poi_, se_x_id_x_ra; nef_, pof_)
+        Nucleus.Statistics.get_p_value(enn_, nei_, poi_, se_x_id_x_ra; nef_, pof_)
 
     se_x_st_x_nu[nei_, 3] = npv_
 
@@ -394,9 +386,9 @@ function _write(
 
     se_x_st_x_nu[poi_, 4] = pad_
 
-    BioLab.DataFrame.write(
+    Nucleus.DataFrame.write(
         joinpath(ou, "set_x_statistic_x_number.tsv"),
-        BioLab.DataFrame.make(
+        Nucleus.DataFrame.make(
             "Set",
             se_,
             ["Enrichment", "Normalized Enrichment", "P-Value", "Adjusted P-Value"],
@@ -404,7 +396,7 @@ function _write(
         ),
     )
 
-    for id in unique(vcat(BioLab.Rank.get_extreme(en_, n_pl), indexin(pl_, se_)))
+    for id in unique(vcat(Nucleus.Rank.get_extreme(en_, n_pl), indexin(pl_, se_)))
 
         if isnothing(id)
 
@@ -415,7 +407,7 @@ function _write(
         title_text = "$id $(se_[id])"
 
         FeatureSetEnrichment.plot(
-            joinpath(ou, "$(BioLab.Path.clean(title_text)).html"),
+            joinpath(ou, "$(Nucleus.Path.clean(title_text)).html"),
             al,
             fe_,
             sc_,
@@ -466,7 +458,7 @@ end
 
 function _use_permutation(permutation, al, fe_, fe1___, ex)
 
-    feature_x_index_x_random = BioLab.DataFrame.read(permutation)
+    feature_x_index_x_random = Nucleus.DataFrame.read(permutation)
 
     fe_x_id_x_ra = view(
         Matrix(feature_x_index_x_random[!, 2:end]),
@@ -546,19 +538,17 @@ Run user-rank (pre-rank) GSEA.
     high_text = "High Side",
 )
 
-    BioLab.Error.error_missing(output_directory)
+    Nucleus.Error.error_missing(output_directory)
 
-    feature_x_metric_x_score = BioLab.DataFrame.read(feature_x_metric_x_score_tsv)
+    feature_x_metric_x_score = Nucleus.DataFrame.read(feature_x_metric_x_score_tsv)
 
     fe_ = feature_x_metric_x_score[!, 1]
 
-    BioLab.Error.error_bad(fe_)
-
-    BioLab.Error.error_duplicate(fe_)
+    Nucleus.Error.error_duplicate(fe_)
 
     sc_ = feature_x_metric_x_score[!, 2]
 
-    BioLab.Error.error_bad(sc_)
+    Nucleus.Error.error_bad(!isfinite, sc_)
 
     so_ = sortperm(sc_; rev = true)
 
@@ -702,16 +692,14 @@ Run metric-rank (standard) GSEA.
     high_text = "High Side",
 )
 
-    BioLab.Error.error_missing(output_directory)
+    Nucleus.Error.error_missing(output_directory)
 
     _nat, ta_, sat_, ta_x_sa_x_nu =
-        BioLab.DataFrame.separate(BioLab.DataFrame.read(target_x_sample_x_number_tsv))
+        Nucleus.DataFrame.separate(Nucleus.DataFrame.read(target_x_sample_x_number_tsv))
 
-    BioLab.Error.error_bad(ta_)
+    Nucleus.Error.error_duplicate(ta_)
 
-    BioLab.Error.error_duplicate(ta_)
-
-    BioLab.Error.error_bad(ta_x_sa_x_nu)
+    Nucleus.Error.error_bad(!isfinite, ta_x_sa_x_nu)
 
     un_ = Set(ta_x_sa_x_nu)
 
@@ -722,13 +710,11 @@ Run metric-rank (standard) GSEA.
     end
 
     _naf, fe_, saf_, fe_x_sa_x_sc =
-        BioLab.DataFrame.separate(BioLab.DataFrame.read(feature_x_sample_x_score_tsv))
+        Nucleus.DataFrame.separate(Nucleus.DataFrame.read(feature_x_sample_x_score_tsv))
 
-    BioLab.Error.error_bad(fe_)
+    Nucleus.Error.error_duplicate(fe_)
 
-    BioLab.Error.error_duplicate(fe_)
-
-    BioLab.Error.error_bad(fe_x_sa_x_sc)
+    Nucleus.Error.error_bad(!isfinite, fe_x_sa_x_sc)
 
     if !iszero(normalization_dimension)
 
@@ -756,9 +742,9 @@ Run metric-rank (standard) GSEA.
 
     sc_, fe_ = _target_sort(fu, is_, fe_x_sa_x_sc, fe_)
 
-    BioLab.DataFrame.write(
+    Nucleus.DataFrame.write(
         joinpath(output_directory, "feature_x_metric_x_score.tsv"),
-        BioLab.DataFrame.make("Feature", fe_, [metric], reshape(sc_, :, 1)),
+        Nucleus.DataFrame.make("Feature", fe_, [metric], reshape(sc_, :, 1)),
     )
 
     se_, fe1___ =
