@@ -1,6 +1,6 @@
 module GSEA
 
-#using Comonicon: @cast, @main
+using Comonicon: @cast, @main
 
 using Printf: @sprintf
 
@@ -901,8 +901,12 @@ Convert `.cls` and `.gct` to `.tsv`s.
   - `cls`: Input `.cls`.
   - `gct`: Input `.gct`.
 """
-#@cast function convert_cls_gct(
-function convert_cls_gct(target_x_sample_x_number_tsv, feature_x_sample_x_score_tsv, cls, gct)
+@cast function convert_cls_gct(
+    target_x_sample_x_number_tsv,
+    feature_x_sample_x_score_tsv,
+    cls,
+    gct,
+)
 
     _nat, ta_, _sa_, ta_x_sa_x_nu = Nucleus.DataFrame.separate(Nucleus.CLS.read(cls))
 
@@ -936,8 +940,7 @@ Convert one or more `.gmt`s to a `.json`.
   - `set_features_json`: Output `.json`.
   - `gmt_`: Input `.gmt`s.
 """
-#@cast function convert_gmt(set_features_json, gmt_...)
-function convert_gmt(set_features_json, gmt_...)
+@cast function convert_gmt(set_features_json, gmt_...)
 
     Nucleus.Dict.write(set_features_json, merge!((Nucleus.GMT.read(gmt) for gmt in gmt_)...))
 
@@ -967,8 +970,7 @@ Run data-rank (single-sample) GSEA.
 
   - `--skip-0`: = false. Set this to true for single-cell or other sparse data.
 """
-#@cast function data_rank(
-function data_rank(
+@cast function data_rank(
     output_directory,
     feature_x_sample_x_score_tsv,
     set_features_json;
@@ -1264,8 +1266,7 @@ Run user-rank (pre-rank) GSEA.
 
   - `--write-set-x-index-x-random-tsv`: = false.
 """
-#@cast function user_rank(
-function user_rank(
+@cast function user_rank(
     output_directory,
     feature_x_metric_x_score_tsv,
     set_features_json;
@@ -1403,8 +1404,7 @@ Run metric-rank (standard) GSEA.
 
   - `--write-set-x-index-x-random-tsv`: = false.
 """
-#@cast function metric_rank(
-function metric_rank(
+@cast function metric_rank(
     output_directory,
     target_x_sample_x_number_tsv,
     feature_x_sample_x_score_tsv,
@@ -1541,6 +1541,6 @@ end
 """
 The official command-line program for gene-set-enrichment analysis (GSEA). Learn more at https://github.com/KwatMDPhD/GSEA.jl.
 """
-#@main
+@main
 
 end
