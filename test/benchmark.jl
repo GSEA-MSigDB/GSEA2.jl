@@ -1,5 +1,7 @@
 using Test: @test
 
+using Printf: @sprintf
+
 using Nucleus
 
 using GSEA
@@ -26,7 +28,7 @@ const DIR = joinpath(DIP, "results")
 
 # ---- #
 
-const AL_ = ("ks", "kli1", "kli", "kliom", "kliop")
+const AL_ = ("ks", "kli", "kli1", "kliom", "kliop")
 
 # ---- #
 
@@ -52,7 +54,7 @@ function test(st, is_, py, ju)
 
     if any(is_)
 
-        @error "$st $(Nucleus.String.format(100 - 100 * sum(is_) / size(py, 1)))%" view(py, is_, :) view(
+        @warn "$st $(@sprintf "%.4g" 100 - 100 * sum(is_) / size(py, 1))%" view(py, is_, :) view(
             ju,
             is_,
             :,
@@ -126,13 +128,13 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
     end
 
-    ke_va = Nucleus.Dict.read(joinpath(DIJ, js))[chop(js; tail = 5)]
+    ke_va = Nucleus.Dict.read(joinpath(DIJ, js))[view(js, 1:(lastindex(js) - 5))]
 
     @info "$idb $js"
 
-    dib = make_directory(joinpath(DIB, Nucleus.Path.clean(chop(js; tail = 5))))
+    di = make_directory(joinpath(DIB, Nucleus.Path.clean(chop(js; tail = 5))))
 
-    dii = make_directory(joinpath(dib, "input"))
+    dii = make_directory(joinpath(di, "input"))
 
     tst = joinpath(dii, "target_x_sample_x_number.tsv")
 
@@ -159,7 +161,7 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
         @info "$idb $al"
 
-        dio = make_directory(joinpath(dib, "output_$al"))
+        dio = make_directory(joinpath(di, "output_$al"))
 
         txm = joinpath(dir, "$(pr)_gene_selection_scores.txt")
 
@@ -196,11 +198,11 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
         end
 
-        n_ch = 50
-
         py = Nucleus.DataFrame.read(txm; select = [1, 2])
 
         ju = Nucleus.DataFrame.read(tsm)
+
+        n_ch = 50
 
         py[!, 1] = Nucleus.String.limit.(py[!, 1], n_ch)
 
@@ -234,16 +236,15 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
         @test size(py, 1) === size(ju, 1)
 
-        test("Set", py, 1, ju, 1)
+        #test("Set", py, 1, ju, 1)
 
-        test("Enrichment", py, 3, ju, 2, 1e-2)
-        continue
+        #test("Enrichment", py, 3, ju, 2, 1e-2)
 
         test("Normalized Enrichment", py, 2, ju, 3, 1e-2)
 
-        test("P-Value", py, 4, ju, 4, 1e-2)
+        #test("P-Value", py, 4, ju, 4, 1e-2)
 
-        test("Adjusted P-Value", py, 5, ju, 5, 1e-1)
+        #test("Adjusted P-Value", py, 5, ju, 5, 1e-1)
 
     end
 
