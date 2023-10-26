@@ -8,15 +8,25 @@ using GSEA
 
 const DIP = joinpath(homedir(), "Desktop", "benchmark")
 
+# ---- #
+
 const DIJ = joinpath(DIP, "json_files")
+
+# ---- #
 
 const DID = joinpath(DIP, "Datasets_and_Phenotypes")
 
+# ---- #
+
 const DIS = joinpath(DIP, "Gene_Sets_Collections")
+
+# ---- #
 
 const DIR = joinpath(DIP, "results")
 
-const AL_ = ("ks", "kli", "kli1", "kliom", "kliop")
+# ---- #
+
+const AL_ = ("ks", "kli1", "kli", "kliom", "kliop")
 
 # ---- #
 
@@ -42,13 +52,17 @@ function test(st, is_, py, ju)
 
     if any(is_)
 
-        pe = Nucleus.String.format(100 - 100 * sum(is_) / size(py, 1))
-
-        @error "$st $pe%" view(py, is_, :) view(ju, is_, :)
+        @error "$st $(Nucleus.String.format(100 - 100 * sum(is_) / size(py, 1)))%" view(py, is_, :) view(
+            ju,
+            is_,
+            :,
+        )
 
     end
 
 end
+
+# ---- #
 
 function test(st, py, pyi, ju, jui)
 
@@ -56,7 +70,9 @@ function test(st, py, pyi, ju, jui)
 
 end
 
-function parse_float(fl)
+# ---- #
+
+function try_parse(fl)
 
     if fl isa AbstractString
 
@@ -68,9 +84,11 @@ function parse_float(fl)
 
 end
 
+# ---- #
+
 function test(st, py, pyi, ju, jui, atol)
 
-    test(st, .!isapprox.(parse_float.(py[!, pyi]), ju[!, jui]; atol), py, ju)
+    test(st, .!isapprox.(try_parse.(py[!, pyi]), ju[!, jui]; atol), py, ju)
 
 end
 
