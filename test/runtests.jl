@@ -102,12 +102,16 @@ end
 
 # ---- #
 
+const NOA = 0.25
+
+# ---- #
+
 for (ex, re) in (
-    (-0.5, (N, 0.25, 0.0)),
-    (1, (N, 0.25, 0.15625)),
-    (2, (N, 0.25, 0.06226650062266501)),
-    (0.1, (N, 0.25, 0.24581982412836917)),
-    (0.5, (N, 0.25, 0.21402570288861142)),
+    (-0.5, (N, NOA, 0.0)),
+    (1, (N, NOA, 0.15625)),
+    (2, (N, NOA, 0.06226650062266501)),
+    (0.1, (N, NOA, 0.24581982412836917)),
+    (0.5, (N, NOA, 0.21402570288861142)),
 )
 
     @test GSEA._get_0_1_normalizer(SCS_, ex, ISS_) === re
@@ -269,7 +273,7 @@ for al in AL_
     # 10.083 ms (108 allocations: 934.22 KiB)
     # 17.190 ms (108 allocations: 934.22 KiB)
     # 17.178 ms (108 allocations: 934.22 KiB)
-    #@btime GSEA.enrich($al, FE_, SC_, FE1___; ex=EX)
+    #@btime GSEA.enrich($al, FE_, SC_, FE1___; ex = EX)
 
 end
 
@@ -287,7 +291,7 @@ for al in AL_
     # 30.750 ms (370 allocations: 5.51 MiB)
     # 52.127 ms (370 allocations: 5.51 MiB)
     # 52.263 ms (370 allocations: 5.51 MiB)
-    #@btime GSEA.enrich($al, FE_, FE_X_SA_X_SC, FE1___; ex=EX)
+    #@btime GSEA.enrich($al, FE_, FE_X_SA_X_SC, FE1___; ex = EX)
 
 end
 
@@ -396,9 +400,9 @@ const SET_X_SAMPLE_X_ENRICHMENT =
 
 # ---- #
 
-function is_good_statistics(set_x_statistic_x_numberu, si)
+function is_good_statistics(set_x_statistic_x_numberu, n_ro, n_co)
 
-    size(set_x_statistic_x_numberu) === si &&
+    size(set_x_statistic_x_numberu) === (n_ro, n_co) &&
         names(set_x_statistic_x_numberu) ==
         ["Set", "Enrichment", "Normalized Enrichment", "P-Value", "Adjusted P-Value"]
 
@@ -437,7 +441,7 @@ const SET_X_STATISTIC_X_NUMBERU =
 
 # ---- #
 
-@test is_good_statistics(SET_X_STATISTIC_X_NUMBERU, (50, 5))
+@test is_good_statistics(SET_X_STATISTIC_X_NUMBERU, 50, 5)
 
 # ---- #
 
@@ -525,7 +529,7 @@ const SET_X_STATISTIC_X_NUMBERM =
 
 # ---- #
 
-@test is_good_statistics(SET_X_STATISTIC_X_NUMBERM, (8, 5))
+@test is_good_statistics(SET_X_STATISTIC_X_NUMBERM, 8, 5)
 
 # ---- #
 
