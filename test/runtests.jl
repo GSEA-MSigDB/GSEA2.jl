@@ -6,11 +6,292 @@ using GSEA
 
 # ----------------------------------------------------------------------------------------------- #
 
-#run(`julia --project FeatureSetEnrichment.jl`)
+using Nucleus
 
 # ---- #
 
-using Nucleus
+const DA = joinpath(dirname(@__DIR__), "data")
+
+# ---- #
+
+@test Nucleus.Path.read(DA) == [
+    "2set_features.json",
+    "c2.all.v7.1.symbols.gmt",
+    "feature_x_metric_x_score.tsv",
+    "feature_x_sample_x_number.tsv",
+    "gene_x_statistic_x_number.tsv",
+    "h.all.v7.1.symbols.gmt",
+    "set_features.json",
+    "target_x_sample_x_number.tsv",
+]
+
+# ---- #
+
+const AL_ = (GSEA.KS(), GSEA.KSa(), GSEA.KLi1(), GSEA.KLi(), GSEA.KLioM(), GSEA.KLioP())
+
+# ---- #
+
+for (al, re) in zip(AL_, ("KS", "KSa", "KLi1", "KLi", "KLioM", "KLioP"))
+
+    @test GSEA.make_string(al) === re
+
+    # 394.900 ns (9 allocations: 360 bytes)
+    # 402.915 ns (9 allocations: 360 bytes)
+    # 416.246 ns (9 allocations: 360 bytes)
+    # 400.625 ns (9 allocations: 360 bytes)
+    # 415.407 ns (9 allocations: 360 bytes)
+    # 421.060 ns (9 allocations: 360 bytes)
+    @btime GSEA.make_string($al)
+
+end
+
+# ---- #
+
+for ex in (-1, 0, 1, 2, 3, 4, 0.1, 0.5)
+
+    @test GSEA._absolute_exponentiate(-2.0, ex) === 2.0^ex
+
+    # 3.625 ns (0 allocations: 0 bytes)
+    # 1.792 ns (0 allocations: 0 bytes)
+    # 1.459 ns (0 allocations: 0 bytes)
+    # 3.959 ns (0 allocations: 0 bytes)
+    # 2.375 ns (0 allocations: 0 bytes)
+    # 4.875 ns (0 allocations: 0 bytes)
+    # 11.344 ns (0 allocations: 0 bytes)
+    # 11.386 ns (0 allocations: 0 bytes)
+    @btime GSEA._absolute_exponentiate(-2.0, $ex)
+
+end
+
+# ---- #
+
+const SCS_ = [-2, -1, -0.5, 0, 0, 0.5, 1, 2, 3.4]
+
+# ---- #
+
+const ISS_ = BitVector((1, 0, 1, 0, 1, 1, 0, 0, 1))
+
+# ---- #
+
+for (ex, re) in (
+    (-0.5, (9, 0.0)),
+    (1, (9, 0.15625)),
+    (2, (9, 0.06226650062266501)),
+    (0.1, (9, 0.24581982412836917)),
+    (0.5, (9, 0.21402570288861142)),
+)
+
+    @test GSEA._get_1_normalizer(SCS_, ex, ISS_) === re
+
+    # 63.350 ns (0 allocations: 0 bytes)
+    # 9.510 ns (0 allocations: 0 bytes)
+    # 20.687 ns (0 allocations: 0 bytes)
+    # 63.350 ns (0 allocations: 0 bytes)
+    # 63.308 ns (0 allocations: 0 bytes)
+    @btime GSEA._get_1_normalizer(SCS_, $ex, ISS_)
+
+end
+
+# ---- #
+
+for (ex, re) in (
+    (-0.5, (9, 0.25, 0.0)),
+    (1, (9, 0.25, 0.15625)),
+    (2, (9, 0.25, 0.06226650062266501)),
+    (0.1, (9, 0.25, 0.24581982412836917)),
+    (0.5, (9, 0.25, 0.21402570288861142)),
+)
+
+    @test GSEA._get_0_1_normalizer(SCS_, ex, ISS_) === re
+
+    # 59.681 ns (0 allocations: 0 bytes)
+    # 9.510 ns (0 allocations: 0 bytes)
+    # 21.314 ns (0 allocations: 0 bytes)
+    # 59.700 ns (0 allocations: 0 bytes)
+    # 59.700 ns (0 allocations: 0 bytes)
+    @btime GSEA._get_0_1_normalizer(SCS_, $ex, ISS_)
+
+end
+
+# ---- #
+
+for (ex, re) in (
+    (-0.5, (9, 0.0, 0.0)),
+    (1, (9, 0.09615384615384615, 0.15625)),
+    (2, (9, 0.04533091568449683, 0.06226650062266501)),
+    (0.1, (9, 0.14006007078470165, 0.24581982412836917)),
+    (0.5, (9, 0.12366213677204271, 0.21402570288861142)),
+)
+
+    @test GSEA._get_all_1_normalizer(SCS_, ex, ISS_) === re
+
+    # 97.281 ns (0 allocations: 0 bytes)
+    # 8.925 ns (0 allocations: 0 bytes)
+    # 28.098 ns (0 allocations: 0 bytes)
+    # 97.281 ns (0 allocations: 0 bytes)
+    # 97.237 ns (0 allocations: 0 bytes)
+    @btime GSEA._get_all_1_normalizer(SCS_, $ex, ISS_)
+
+end
+
+# ---- #
+
+@test GSEA._get_0_normalizer(1 / 2, 1 / 3) === -1.0
+
+# ---- #
+
+# 0.875 ns (0 allocations: 0 bytes)
+@btime GSEA._get_0_normalizer(1 / 2, 1 / 3)
+
+# ---- #
+
+const FEC_ = ["K", "Q", "J", "X", "9", "8", "7", "6", "5", "4", "3", "2", "A"]
+
+# ---- #
+
+const SCC_ = [6.0, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6]
+
+# ---- #
+
+const FE1C_ = ["K", "A"]
+
+# ---- #
+
+for al in AL_
+
+    GSEA.plot("", al, FEC_, SCC_, FE1C_; title_text = join((1:9..., 0))^8)
+
+end
+
+# ---- #
+
+const ISC_ = in(Set(FE1C_)).(FEC_)
+
+# ---- #
+
+for (al, re) in zip(AL_, (-0.5, 0, 0, 0, 0, 0))
+
+    @test isapprox(GSEA._enrich!(al, SCC_, 1, ISC_, nothing), re; atol = 1e-15)
+
+    # 19.455 ns (0 allocations: 0 bytes)
+    # 17.869 ns (0 allocations: 0 bytes)
+    # 117.569 ns (0 allocations: 0 bytes)
+    # 126.717 ns (0 allocations: 0 bytes)
+    # 225.789 ns (0 allocations: 0 bytes)
+    # 225.873 ns (0 allocations: 0 bytes)
+    @btime GSEA._enrich!($al, SCC_, 1, ISC_, nothing)
+
+end
+
+# ---- #
+
+const FE_, SC_ = eachcol(
+    reverse!(
+        Nucleus.DataFrame.read(joinpath(DA, "gene_x_statistic_x_number.tsv"); select = [1, 2]),
+    ),
+)
+
+# ---- #
+
+const FE1_ = Nucleus.GMT.read(joinpath(DA, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"]
+
+# ---- #
+
+for al in AL_
+
+    GSEA.plot("", al, FE_, SC_, FE1_; title_text = GSEA.make_string(al))
+
+end
+
+# ---- #
+
+const IS_ = in(Set(FE1_)).(FE_)
+
+# ---- #
+
+for (al, re) in zip(
+    AL_,
+    (
+        0.7651927829281453,
+        0.41482514169516305,
+        0.8524266036047564,
+        0.7736480596525319,
+        0.7750661968892066,
+        0.772229922415844,
+    ),
+)
+
+    @test isapprox(GSEA._enrich!(al, SC_, 1, IS_, nothing), re; atol = 1e-12)
+
+    # 43.375 μs (0 allocations: 0 bytes)
+    # 37.583 μs (0 allocations: 0 bytes)
+    # 164.917 μs (0 allocations: 0 bytes)
+    # 186.417 μs (0 allocations: 0 bytes)
+    # 326.042 μs (0 allocations: 0 bytes)
+    # 325.916 μs (0 allocations: 0 bytes)
+    @btime GSEA._enrich!($al, SC_, 1, IS_, nothing)
+
+end
+
+# ---- #
+
+const FE_X_SA_X_SC = hcat(SC_, SC_ * 10, fill(0.8, lastindex(FE_)))
+
+# ---- #
+
+const SE_FE1_ = Nucleus.GMT.read(joinpath(DA, "h.all.v7.1.symbols.gmt"))
+
+# ---- #
+
+const FE1___ = collect(values(SE_FE1_))
+
+# ---- #
+
+for al in AL_
+
+    # 2.932 ms (108 allocations: 934.22 KiB)
+    # 2.649 ms (108 allocations: 934.22 KiB)
+    # 9.011 ms (108 allocations: 934.22 KiB)
+    # 10.135 ms (108 allocations: 934.22 KiB)
+    # 17.190 ms (108 allocations: 934.22 KiB)
+    # 17.178 ms (108 allocations: 934.22 KiB)
+    @btime GSEA.enrich($al, FE_, SC_, FE1___)
+
+end
+
+# ---- #
+
+for al in AL_
+
+    # 9.282 ms (370 allocations: 5.51 MiB)
+    # 8.426 ms (370 allocations: 5.51 MiB)
+    # 27.542 ms (370 allocations: 5.51 MiB)
+    # 30.772 ms (370 allocations: 5.51 MiB)
+    # 52.249 ms (370 allocations: 5.51 MiB)
+    # 52.131 ms (370 allocations: 5.51 MiB)
+    @btime GSEA.enrich($al, FE_, FE_X_SA_X_SC, FE1___)
+
+end
+
+# ---- #
+
+const SE_ = collect(keys(SE_FE1_))
+
+# ---- #
+
+const SA_ = ["Score", "Score x 10", "Constant"]
+
+# ---- #
+
+const AL = GSEA.KS()
+
+# ---- #
+
+const SE_X_SA_X_EN = GSEA.enrich(AL, FE_, FE_X_SA_X_SC, FE1___)
+
+# ---- #
+
+GSEA.plot(Nucleus.TE, AL, FE_, FE_X_SA_X_SC, FE1___, "Sample", SE_, SA_, SE_X_SA_X_EN)
 
 # ---- #
 
@@ -22,30 +303,15 @@ Nucleus.Path.remake_directory(TE)
 
 # ---- #
 
-const DA = joinpath(dirname(@__DIR__), "data")
+const JS = joinpath(DA, "set_features.json")
 
 # ---- #
 
-@test Nucleus.Path.read(DA) == [
-    "2set_features.json",
-    "FeatureSetEnrichment",
-    "feature_x_metric_x_score.tsv",
-    "feature_x_sample_x_number.tsv",
-    "set_features.json",
-    "target_x_sample_x_number.tsv",
-]
+@test Nucleus.Error.@is GSEA._read_set(JS, String[], 33, 36, 0)
 
 # ---- #
 
-const SE = joinpath(DA, "set_features.json")
-
-# ---- #
-
-@test Nucleus.Error.@is GSEA._read_set(SE, String[], 33, 36, 0)
-
-# ---- #
-
-const SE1_, FE11___ = GSEA._read_set(SE, unique(vcat(values(Nucleus.Dict.read(SE))...)), 33, 36, 0)
+const SE1_, FE11___ = GSEA._read_set(JS, unique(vcat(values(Nucleus.Dict.read(JS))...)), 33, 36, 0)
 
 # ---- #
 
@@ -57,7 +323,7 @@ const SE1_, FE11___ = GSEA._read_set(SE, unique(vcat(values(Nucleus.Dict.read(SE
 
 # ---- #
 
-const SE2_, FE12___ = GSEA._read_set(SE, ["SHH", "XIST"], 1, 5656, 0)
+const SE2_, FE12___ = GSEA._read_set(JS, ["SHH", "XIST"], 1, 5656, 0)
 
 # ---- #
 
@@ -69,13 +335,7 @@ const SE2_, FE12___ = GSEA._read_set(SE, ["SHH", "XIST"], 1, 5656, 0)
 
 # ---- #
 
-for (al, re) in (
-    ("ks", GSEA.FeatureSetEnrichment.KS()),
-    ("ksa", GSEA.FeatureSetEnrichment.KSa()),
-    ("kli", GSEA.FeatureSetEnrichment.KLi()),
-    ("kliom", GSEA.FeatureSetEnrichment.KLioM()),
-    ("kliop", GSEA.FeatureSetEnrichment.KLioP()),
-)
+for (al, re) in zip(("ks", "ksa", "kli", "kliom", "kliop"), AL_)
 
     GSEA._set_algorithm(al) == re
 
@@ -87,10 +347,6 @@ const TSF = joinpath(DA, "feature_x_sample_x_number.tsv")
 
 # ---- #
 
-@test Nucleus.Error.@is GSEA.data_rank("", TSF, SE)
-
-# ---- #
-
 const OUD = joinpath(TE, "data_rank")
 
 # ---- #
@@ -99,7 +355,7 @@ Nucleus.Path.remake_directory(OUD)
 
 # ---- #
 
-GSEA.data_rank(OUD, TSF, SE)
+GSEA.data_rank(OUD, TSF, JS)
 
 # ---- #
 
@@ -129,10 +385,6 @@ const TSM = joinpath(DA, "feature_x_metric_x_score.tsv")
 
 # ---- #
 
-@test Nucleus.Error.@is GSEA.user_rank("", TSM, SE)
-
-# ---- #
-
 const OUU = joinpath(TE, "user_rank")
 
 # ---- #
@@ -144,7 +396,7 @@ Nucleus.Path.remake_directory(OUU)
 GSEA.user_rank(
     OUU,
     TSM,
-    SE;
+    JS;
     number_of_sets_to_plot = 2,
     more_sets_to_plot = "HALLMARK_MYC_TARGETS_V1 HALLMARK_UV_RESPONSE_DN HALLMARK_UV_RESPONSE_UP ALIEN",
 )
@@ -168,16 +420,16 @@ const ST_ = ["Set", "Enrichment", "Normalized Enrichment", "P-Value", "Adjusted 
 
 # ---- #
 
-for (id, re) in (
-    (1, ["HALLMARK_PANCREAS_BETA_CELLS", -0.35266, -1.36616, 0.0200837]),
-    (2, ["HALLMARK_PROTEIN_SECRETION", -0.272096, -1.25207, 0.0686192]),
-    (49, ["HALLMARK_MYC_TARGETS_V1", 0.603356, 2.73998, 0.000262812]),
-    (50, ["HALLMARK_MYC_TARGETS_V2", 0.866579, 3.36557, 0.000262812]),
+for (id, re1, re2) in (
+    (1, "HALLMARK_PANCREAS_BETA_CELLS", [-0.35266, -1.36616, 0.0200837]),
+    (2, "HALLMARK_PROTEIN_SECRETION", [-0.272096, -1.25207, 0.0686192]),
+    (49, "HALLMARK_MYC_TARGETS_V1", [0.603356, 2.73998, 0.000262812]),
+    (50, "HALLMARK_MYC_TARGETS_V2", [0.866579, 3.36557, 0.000262812]),
 )
 
-    @test SET_X_STATISTIC_X_NUMBERU[id, 1] === re[1]
+    @test SET_X_STATISTIC_X_NUMBERU[id, 1] === re1
 
-    @test isapprox(collect(SET_X_STATISTIC_X_NUMBERU[id, 2:lastindex(re)]), re[2:end]; atol = 1e-5)
+    @test isapprox(collect(SET_X_STATISTIC_X_NUMBERU[id, 2:4]), re2; atol = 1e-5)
 
 end
 
@@ -204,21 +456,17 @@ for (nu1_, nu2_, re) in (
 
     @test GSEA._get_signal_to_noise_ratio(nu1_, nu2_) === re
 
-    # 21.899 ns (0 allocations: 0 bytes)
-    # 57.646 ns (0 allocations: 0 bytes)
-    # 57.631 ns (0 allocations: 0 bytes)
-    # 57.587 ns (0 allocations: 0 bytes)
-    #@btime GSEA._get_signal_to_noise_ratio($nu1_, $nu2_)
+    # 55.725 ns (0 allocations: 0 bytes)
+    # 43.855 ns (0 allocations: 0 bytes)
+    # 56.868 ns (0 allocations: 0 bytes)
+    # 56.784 ns (0 allocations: 0 bytes)
+    @btime GSEA._get_signal_to_noise_ratio($nu1_, $nu2_)
 
 end
 
 # ---- #
 
 const TST = joinpath(DA, "target_x_sample_x_number.tsv")
-
-# ---- #
-
-@test Nucleus.Error.@is GSEA.metric_rank("", TST, TSF, SE)
 
 # ---- #
 
@@ -230,7 +478,7 @@ Nucleus.Path.remake_directory(OUM)
 
 # ---- #
 
-GSEA.metric_rank(OUM, TST, TSF, SE)
+GSEA.metric_rank(OUM, TST, TSF, JS)
 
 # ---- #
 
