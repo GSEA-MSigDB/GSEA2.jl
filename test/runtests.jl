@@ -81,7 +81,6 @@ const ISS_ = BitVector((1, 0, 1, 0, 1, 1, 0, 0, 1))
 
 # ---- #
 
-# TODO: Consider using only 0-1.
 for (ex, re) in (
     (-0.5, (N, 0.0)),
     (1, (N, 0.15625)),
