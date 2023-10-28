@@ -189,7 +189,7 @@ const ISC_ = in(Set(FE1C_)).(FEC_)
 
 for (al, re) in zip(AL_, (-0.5, 0, 0, 0, 0, 0))
 
-    @test isapprox(GSEA._enrich!(al, SCC_, EX, ISC_, nothing), re; atol = 1e-15)
+    @test isapprox(GSEA._enrich!(al, SCC_, EX, ISC_, nothing), re; atol = 0.000000000000001)
 
     # 19.433 ns (0 allocations: 0 bytes)
     # 17.869 ns (0 allocations: 0 bytes)
@@ -239,7 +239,7 @@ for (al, re) in zip(
     ),
 )
 
-    @test isapprox(GSEA._enrich!(al, SC_, EX, IS_, nothing), re; atol = 1e-12)
+    @test isapprox(GSEA._enrich!(al, SC_, EX, IS_, nothing), re; atol = 0.000000000001)
 
     # 43.375 μs (0 allocations: 0 bytes)
     # 37.583 μs (0 allocations: 0 bytes)
@@ -320,7 +320,7 @@ GSEA.plot(
 
 # ---- #
 
-const TE = joinpath(Nucleus.TE, "GSEA")
+const TE = joinpath(tempdir(), "GSEA")
 
 # ---- #
 
@@ -400,19 +400,20 @@ const SET_X_SAMPLE_X_ENRICHMENT =
 
 # ---- #
 
-function is_good_statistics(set_x_statistic_x_numberu, n_ro, n_co)
+function test_statistics(set_x_statistic_x_numberu, n_ro)
 
-    size(set_x_statistic_x_numberu) === (n_ro, n_co) &&
-        names(set_x_statistic_x_numberu) ==
-        ["Set", "Enrichment", "Normalized Enrichment", "P-Value", "Adjusted P-Value"]
+    @test size(set_x_statistic_x_numberu, 1) === n_ro
+
+    @test names(set_x_statistic_x_numberu) ==
+          ["Set", "Enrichment", "Normalized Enrichment", "P-Value", "Adjusted P-Value"]
 
 end
 
 # ---- #
 
-function is_good_html(ou, n)
+function test_html(ou, n)
 
-    lastindex(Nucleus.Path.read(ou; ke_ = (r"html$",))) === n
+    @test lastindex(Nucleus.Path.read(ou; ke_ = (r"html$",))) === n
 
 end
 
@@ -441,7 +442,7 @@ const SET_X_STATISTIC_X_NUMBERU =
 
 # ---- #
 
-@test is_good_statistics(SET_X_STATISTIC_X_NUMBERU, 50, 5)
+test_statistics(SET_X_STATISTIC_X_NUMBERU, 50)
 
 # ---- #
 
@@ -454,13 +455,13 @@ for (id, re1, re2) in (
 
     @test SET_X_STATISTIC_X_NUMBERU[id, 1] === re1
 
-    @test isapprox(collect(SET_X_STATISTIC_X_NUMBERU[id, 2:4]), re2; atol = 1e-5)
+    @test isapprox(collect(SET_X_STATISTIC_X_NUMBERU[id, 2:4]), re2; atol = 0.00001)
 
 end
 
 # ---- #
 
-@test is_good_html(OUU, 6)
+test_html(OUU, 6)
 
 # ---- #
 
@@ -520,7 +521,7 @@ const FEATURE_X_METRIC_X_SCORE =
 
 # ---- #
 
-@test isapprox(view(FEATURE_X_METRIC_X_SCORE, [1, 1000], 2), [1.83724, -1.7411]; atol = 1e-5)
+@test isapprox(view(FEATURE_X_METRIC_X_SCORE, [1, 1000], 2), [1.83724, -1.7411]; atol = 0.00001)
 
 # ---- #
 
@@ -529,11 +530,11 @@ const SET_X_STATISTIC_X_NUMBERM =
 
 # ---- #
 
-@test is_good_statistics(SET_X_STATISTIC_X_NUMBERM, 8, 5)
+test_statistics(SET_X_STATISTIC_X_NUMBERM, 8)
 
 # ---- #
 
-@test is_good_html(OUM, 8)
+test_html(OUM, 8)
 
 # ---- #
 
@@ -557,4 +558,4 @@ GSEA.metric_rank(
 
 # ---- #
 
-@test is_good_html(OUMS, 2)
+test_html(OUMS, 2)

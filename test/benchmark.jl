@@ -32,29 +32,19 @@ const AL_ = ("ks", "kli", "kli1", "kliom", "kliop")
 
 # ---- #
 
-function make_directory(di)
-
-    if !isdir(di)
-
-        mkdir(di)
-
-    end
-
-    di
-
-end
+const DIB = joinpath(dirname(@__DIR__), "benchmark")
 
 # ---- #
 
-const DIB = make_directory(joinpath(dirname(@__DIR__), "benchmark"))
+#Nucleus.Path.make_directory(DIB)
 
 # ---- #
 
-function test(st, is_, py, ju)
+function log(is_, py, ju, st)
 
     if any(is_)
 
-        @warn "$st $(@sprintf "%.4g" 100 - 100 * sum(is_) / size(py, 1))%" view(py, is_, :) view(
+        @warn "$st $(@sprintf "%.3g" 100 - 100 * sum(is_) / size(py, 1))%" view(py, is_, :) view(
             ju,
             is_,
             :,
@@ -66,31 +56,26 @@ end
 
 # ---- #
 
-function test(st, py, pyi, ju, jui)
+function compare(st, py, pyi, ju, jui)
 
-    test(st, .!isequal.(py[!, pyi], ju[!, jui]), py, ju)
-
-end
-
-# ---- #
-
-function try_parse(fl)
-
-    if fl isa AbstractString
-
-        fl = parse(Float64, lstrip(fl, '≤'))
-
-    end
-
-    fl
+    log(.!isequal.(py[!, pyi], ju[!, jui]), py, ju, st)
 
 end
 
 # ---- #
 
-function test(st, py, pyi, ju, jui, atol)
+function compare(st, py, pyi, ju, jui, atol)
 
-    test(st, .!isapprox.(try_parse.(py[!, pyi]), ju[!, jui]; atol), py, ju)
+    log(
+        .!isapprox.(
+            (fl -> fl isa AbstractString ? parse(Float64, lstrip(fl, '≤')) : fl).(py[!, pyi]),
+            ju[!, jui];
+            atol,
+        ),
+        py,
+        ju,
+        st,
+    )
 
 end
 
@@ -132,9 +117,13 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
     @info "$idb $js"
 
-    di = make_directory(joinpath(DIB, Nucleus.Path.clean(chop(js; tail = 5))))
+    di = joinpath(DIB, Nucleus.Path.clean(chop(js; tail = 5)))
 
-    dii = make_directory(joinpath(di, "input"))
+    #Nucleus.Path.remake_directory(di)
+
+    dii = joinpath(di, "input")
+
+    #Nucleus.Path.remake_directory(dii)
 
     tst = joinpath(dii, "target_x_sample_x_number.tsv")
 
@@ -161,7 +150,9 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
         @info "$idb $al"
 
-        dio = make_directory(joinpath(di, "output_$al"))
+        dio = joinpath(di, "output_$al")
+
+        #Nucleus.Path.remake_directory(dio)
 
         txm = joinpath(dir, "$(pr)_gene_selection_scores.txt")
 
@@ -214,9 +205,9 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
         @test size(py, 1) === size(ju, 1)
 
-        test("Gene", py, 1, ju, 1)
+        compare("Gene", py, 1, ju, 1)
 
-        test("Signal-to-Noise Ratio", py, 2, ju, 2, 1e-5)
+        compare("Signal-to-Noise Ratio", py, 2, ju, 2, 0.00001)
 
         if !isfile(tss)
 
@@ -236,15 +227,15 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
         @test size(py, 1) === size(ju, 1)
 
-        #test("Set", py, 1, ju, 1)
+        compare("Set", py, 1, ju, 1)
 
-        #test("Enrichment", py, 3, ju, 2, 1e-2)
+        compare("Enrichment", py, 3, ju, 2, 0.01)
 
-        test("Normalized Enrichment", py, 2, ju, 3, 1e-2)
+        compare("Normalized Enrichment", py, 2, ju, 3, 0.01)
 
-        #test("P-Value", py, 4, ju, 4, 1e-2)
+        compare("P-Value", py, 4, ju, 4, 0.01)
 
-        #test("Adjusted P-Value", py, 5, ju, 5, 1e-1)
+        compare("Adjusted P-Value", py, 5, ju, 5, 0.1)
 
     end
 
