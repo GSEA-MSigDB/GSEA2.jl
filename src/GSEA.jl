@@ -526,20 +526,64 @@ function plot(
 
     scatter = Dict("x" => x, "text" => fe_, "mode" => "lines", "fill" => "tozeroy")
 
-    if typeof(al) == KS
+    ks = typeof(al) == KS
 
-        fi = Dict("fillcolor" => "#ffffff")
+    data = [
+        merge(
+            scatter,
+            Dict(
+                "name" => "- Score",
+                "y" => ifelse.(sc_ .< 0, sc_, 0),
+                "line" => Dict("width" => 0.4, "color" => Nucleus.Color.HEBL),
+                "fillcolor" => Nucleus.Color.HEBL,
+            ),
+        ),
+        merge(
+            scatter,
+            Dict(
+                "name" => "+ Score",
+                "y" => ifelse.(0 .< sc_, sc_, 0),
+                "line" => Dict("width" => 0.4, "color" => Nucleus.Color.HERE),
+                "fillcolor" => Nucleus.Color.HERE,
+            ),
+        ),
+        Dict(
+            "name" => "Set",
+            "yaxis" => "y2",
+            "y" => zeros(sum(is_)),
+            "x" => view(x, is_),
+            "text" => view(fe_, is_),
+            "mode" => "markers",
+            "marker" => Dict(
+                "symbol" => "line-ns",
+                "size" => 24,
+                "line" => Dict("width" => 1.28, "color" => "#175e54", "opacity" => 0.8),
+            ),
+        ),
+        merge(
+            scatter,
+            Dict(
+                "name" => "Δ Enrichment",
+                "yaxis" => "y3",
+                "y" => mo_,
+                "line" => Dict("width" => 3.2, "color" => coe1),
+                "fillcolor" => ks ? "#ffffff" : coe2,
+            ),
+        ),
+    ]
+
+    if ks
 
         id_ = findall(in(_get_extreme(mo_)), mo_)
 
-        pe_ = (
+        push!(
+            data,
             Dict(
                 "yaxis" => "y3",
                 "y" => mo_[id_],
                 "x" => x[id_],
                 "mode" => "markers",
                 "marker" => Dict(
-                    #"symbol" => "circle",
                     "size" => 32,
                     "color" => coe2,
                     "opacity" => 0.72,
@@ -547,12 +591,6 @@ function plot(
                 ),
             ),
         )
-
-    else
-
-        fi = Dict("fillcolor" => coe2)
-
-        pe_ = ()
 
     end
 
@@ -572,50 +610,7 @@ function plot(
 
     Nucleus.Plot.plot(
         ht,
-        [
-            merge(
-                scatter,
-                Dict(
-                    "name" => "- Score",
-                    "y" => ifelse.(sc_ .< 0, sc_, 0),
-                    "line" => Dict("width" => 0.4, "color" => Nucleus.Color.HEBL),
-                    "fillcolor" => Nucleus.Color.HEBL,
-                ),
-            ),
-            merge(
-                scatter,
-                Dict(
-                    "name" => "+ Score",
-                    "y" => ifelse.(0 .< sc_, sc_, 0),
-                    "line" => Dict("width" => 0.4, "color" => Nucleus.Color.HERE),
-                    "fillcolor" => Nucleus.Color.HERE,
-                ),
-            ),
-            Dict(
-                "name" => "Set",
-                "yaxis" => "y2",
-                "y" => zeros(sum(is_)),
-                "x" => view(x, is_),
-                "text" => view(fe_, is_),
-                "mode" => "markers",
-                "marker" => Dict(
-                    "symbol" => "line-ns",
-                    "size" => 24,
-                    "line" => Dict("width" => 1.28, "color" => "#175e54", "opacity" => 0.8),
-                ),
-            ),
-            merge(
-                scatter,
-                Dict(
-                    "name" => "Δ Enrichment",
-                    "yaxis" => "y3",
-                    "y" => mo_,
-                    "line" => Dict("width" => 3.2, "color" => coe1),
-                ),
-                fi,
-            ),
-            pe_...,
-        ],
+        data,
         Dict(
             "showlegend" => false,
             "title" => Dict(
