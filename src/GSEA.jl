@@ -122,15 +122,7 @@ end
 
     ep = eps()
 
-    if nu < ep
-
-        ep
-
-    else
-
-        nu
-
-    end
+    nu < ep ? ep : nu
 
 end
 
@@ -138,11 +130,7 @@ function _enrich!(::KS, sc_, ex, is_, mo_)
 
     n, no0, no1 = _get_0_1_normalizer(sc_, ex, is_)
 
-    cu = 0.0
-
-    et = 0.0
-
-    eta = 0.0
+    cu = et = eta = 0.0
 
     for id in 1:n
 
@@ -182,9 +170,7 @@ function _enrich!(::KSa, sc_, ex, is_, mo_)
 
     n, no0, no1 = _get_0_1_normalizer(sc_, ex, is_)
 
-    cu = 0.0
-
-    ar = 0.0
+    cu = ar = 0.0
 
     for id in 1:n
 
@@ -220,25 +206,15 @@ function _enrich!(::KLi1, sc_, ex, is_, mo_)
 
     rid = 1 / n
 
-    le = 1.0 + 1 / n
+    le = 1.0 + rid
 
     le1 = 1.0
 
-    ar = 0.0
-
-    pr1 = 0.0
+    ar = pr1 = 0.0
 
     for id in 1:n
 
-        if is_[id]
-
-            ri1d = _absolute_exponentiate(sc_[id], ex) * no1
-
-        else
-
-            ri1d = 0.0
-
-        end
+        ri1d = is_[id] ? _absolute_exponentiate(sc_[id], ex) * no1 : 0.0
 
         en = Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
             ri1 += ri1d,
@@ -271,23 +247,13 @@ function _enrich!(::KLi, sc_, ex, is_, mo_)
 
     le = le1 = 1.0
 
-    ar = 0.0
-
-    pr = pr1 = 0.0
+    ar = pr = pr1 = 0.0
 
     for id in 1:n
 
         ab = _absolute_exponentiate(sc_[id], ex)
 
-        if is_[id]
-
-            ri1d = ab * no1
-
-        else
-
-            ri1d = 0.0
-
-        end
+        ri1d = is_[id] ? ab * no1 : 0.0
 
         rid = ab * noa
 
@@ -326,9 +292,7 @@ function _enrich!(::KLioM, sc_, ex, is_, mo_)
 
     le = le1 = le0 = 1.0
 
-    ar = 0.0
-
-    pr = pr1 = pr0 = 0.0
+    ar = pr = pr1 = pr0 = 0.0
 
     for id in 1:n
 
@@ -400,9 +364,7 @@ function _enrich!(::KLioP, sc_, ex, is_, mo_)
 
     le = le1 = le0 = 1.0
 
-    ar = 0.0
-
-    pr = pr1 = pr0 = 0.0
+    ar = pr = pr1 = pr0 = 0.0
 
     for id in 1:n
 
@@ -533,7 +495,7 @@ function plot(
             scatter,
             Dict(
                 "name" => "- Score",
-                "y" => ifelse.(sc_ .< 0, sc_, 0),
+                "y" => (sc -> sc < 0 ? sc : 0).(sc_),
                 "line" => Dict("width" => 0.4, "color" => Nucleus.Color.HEBL),
                 "fillcolor" => Nucleus.Color.HEBL,
             ),
@@ -542,7 +504,7 @@ function plot(
             scatter,
             Dict(
                 "name" => "+ Score",
-                "y" => ifelse.(0 .< sc_, sc_, 0),
+                "y" => (sc -> 0 < sc ? sc : 0).(sc_),
                 "line" => Dict("width" => 0.4, "color" => Nucleus.Color.HERE),
                 "fillcolor" => Nucleus.Color.HERE,
             ),
@@ -688,17 +650,7 @@ function enrich(al, fe_, sc_::AbstractVector, fe1___; mi = 1, ex = 1)
 
         is_ = Nucleus.Dict.is_in(fe_id, fe1_)
 
-        if sum(is_) < mi
-
-            en = NaN
-
-        else
-
-            en = _enrich!(al, sc_, ex, is_, nothing)
-
-        end
-
-        en_[id] = en
+        en_[id] = sum(is_) < mi ? NaN : _enrich!(al, sc_, ex, is_, nothing)
 
     end
 
@@ -706,7 +658,7 @@ function enrich(al, fe_, sc_::AbstractVector, fe1___; mi = 1, ex = 1)
 
 end
 
-function enrich(al, fe_, fe_x_sa_x_sc::AbstractMatrix, fe1___; mi = 1, ex = 1)
+function enrich(al, fe_, fe_x_sa_x_sc, fe1___; mi = 1, ex = 1)
 
     se_x_sa_x_en = Matrix{Float64}(undef, lastindex(fe1___), size(fe_x_sa_x_sc, 2))
 
@@ -1094,17 +1046,7 @@ function _write(
 
         for (id, ra) in enumerate(ra_)
 
-            if Nucleus.Number.is_negative(ra)
-
-                fa = nef
-
-            else
-
-                fa = pof
-
-            end
-
-            ra_[id] *= fa
+            ra_[id] *= Nucleus.Number.is_negative(ra) ? nef : pof
 
         end
 
@@ -1112,23 +1054,7 @@ function _write(
 
     idl = findlast(Nucleus.Number.is_negative, en_)
 
-    enn_ = Vector{Float64}(undef, n_se)
-
-    for id in eachindex(en_)
-
-        if id <= idl
-
-            fa_ = nef_
-
-        else
-
-            fa_ = pof_
-
-        end
-
-        enn_[id] = en_[id] * fa_[id]
-
-    end
+    enn_ = [en * (id <= idl ? nef_ : pof_)[id] for (id, en) in enumerate(en_)]
 
     se_x_st_x_nu[:, 2] = enn_
 
@@ -1341,7 +1267,7 @@ end
 
 function _get_standard_deviation(nu_, me)
 
-    max(abs(me) * 0.2, std(nu_; corrected = true))
+    max(0.2abs(me), std(nu_; corrected = true))
 
 end
 

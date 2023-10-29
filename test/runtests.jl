@@ -35,12 +35,12 @@ for (al, re) in zip(AL_, ("KS", "KSa", "KLi1", "KLi", "KLioM", "KLioP"))
 
     @test GSEA.make_string(al) === re
 
-    # 419.387 ns (9 allocations: 360 bytes)
-    # 423.789 ns (9 allocations: 360 bytes)
-    # 433.500 ns (9 allocations: 360 bytes)
-    # 425.040 ns (9 allocations: 360 bytes)
-    # 438.338 ns (9 allocations: 360 bytes)
-    # 440.657 ns (9 allocations: 360 bytes)
+    # 408.750 ns (9 allocations: 360 bytes)
+    # 404.165 ns (9 allocations: 360 bytes)
+    # 414.784 ns (9 allocations: 360 bytes)
+    # 406.875 ns (9 allocations: 360 bytes)
+    # 417.296 ns (9 allocations: 360 bytes)
+    # 418.131 ns (9 allocations: 360 bytes)
     #@btime GSEA.make_string($al)
 
 end
@@ -193,10 +193,10 @@ for (al, re) in zip(AL_, (-0.5, 0, 0, 0, 0, 0))
 
     # 19.433 ns (0 allocations: 0 bytes)
     # 17.869 ns (0 allocations: 0 bytes)
-    # 117.601 ns (0 allocations: 0 bytes)
-    # 126.484 ns (0 allocations: 0 bytes)
-    # 225.700 ns (0 allocations: 0 bytes)
-    # 225.707 ns (0 allocations: 0 bytes)
+    # 118.359 ns (0 allocations: 0 bytes)
+    # 126.633 ns (0 allocations: 0 bytes)
+    # 225.103 ns (0 allocations: 0 bytes)
+    # 225.069 ns (0 allocations: 0 bytes)
     #@btime GSEA._enrich!($al, SCC_, EX, ISC_, nothing)
 
 end
@@ -241,12 +241,12 @@ for (al, re) in zip(
 
     @test isapprox(GSEA._enrich!(al, SC_, EX, IS_, nothing), re; atol = 0.000000000001)
 
-    # 43.375 μs (0 allocations: 0 bytes)
-    # 37.583 μs (0 allocations: 0 bytes)
-    # 164.750 μs (0 allocations: 0 bytes)
-    # 186.292 μs (0 allocations: 0 bytes)
-    # 326.125 μs (0 allocations: 0 bytes)
-    # 326.000 μs (0 allocations: 0 bytes)
+    # 45.208 μs (0 allocations: 0 bytes)
+    # 37.500 μs (0 allocations: 0 bytes)
+    # 164.833 μs (0 allocations: 0 bytes)
+    # 186.208 μs (0 allocations: 0 bytes)
+    # 325.833 μs (0 allocations: 0 bytes)
+    # 326.042 μs (0 allocations: 0 bytes)
     #@btime GSEA._enrich!($al, SC_, EX, IS_, nothing)
 
 end
@@ -267,12 +267,12 @@ const FE1___ = collect(values(SE_FE1_))
 
 for al in AL_
 
-    # 2.927 ms (108 allocations: 934.22 KiB)
+    # 3.022 ms (108 allocations: 934.22 KiB)
     # 2.649 ms (108 allocations: 934.22 KiB)
-    # 9.011 ms (108 allocations: 934.22 KiB)
-    # 10.083 ms (108 allocations: 934.22 KiB)
-    # 17.190 ms (108 allocations: 934.22 KiB)
-    # 17.178 ms (108 allocations: 934.22 KiB)
+    # 9.001 ms (108 allocations: 934.22 KiB)
+    # 10.139 ms (108 allocations: 934.22 KiB)
+    # 17.202 ms (108 allocations: 934.22 KiB)
+    # 17.186 ms (108 allocations: 934.22 KiB)
     #@btime GSEA.enrich($al, FE_, SC_, FE1___; ex = EX)
 
 end
@@ -285,12 +285,12 @@ const FE_X_SA_X_SC = hcat(SC_, SC_ * 10, fill(0.8, lastindex(FE_)))
 
 for al in AL_
 
-    # 9.243 ms (370 allocations: 5.51 MiB)
-    # 8.434 ms (370 allocations: 5.51 MiB)
-    # 27.555 ms (370 allocations: 5.51 MiB)
-    # 30.750 ms (370 allocations: 5.51 MiB)
-    # 52.127 ms (370 allocations: 5.51 MiB)
-    # 52.263 ms (370 allocations: 5.51 MiB)
+    # 9.572 ms (370 allocations: 5.51 MiB)
+    # 8.382 ms (370 allocations: 5.51 MiB)
+    # 27.547 ms (370 allocations: 5.51 MiB)
+    # 30.802 ms (370 allocations: 5.51 MiB)
+    # 52.180 ms (370 allocations: 5.51 MiB)
+    # 52.183 ms (370 allocations: 5.51 MiB)
     #@btime GSEA.enrich($al, FE_, FE_X_SA_X_SC, FE1___; ex = EX)
 
 end
@@ -334,7 +334,6 @@ const JS = joinpath(DA, "set_features.json")
 
 for (fe_, mi, ma, fr) in (
     (String[], 33, 36, 0),
-    # TODO: Benchmark with `Set`.
     (unique(vcat(values(Nucleus.Dict.read(JS))...)), 33, 36, 0),
     (["SHH", "XIST"], 1, 5656, 0),
 )
@@ -483,10 +482,10 @@ for (nu1_, nu2_, re) in (
 
     @test GSEA._get_signal_to_noise_ratio(nu1_, nu2_) === re
 
-    # 55.725 ns (0 allocations: 0 bytes)
-    # 43.855 ns (0 allocations: 0 bytes)
-    # 56.868 ns (0 allocations: 0 bytes)
-    # 56.784 ns (0 allocations: 0 bytes)
+    # 55.752 ns (0 allocations: 0 bytes)
+    # 43.897 ns (0 allocations: 0 bytes)
+    # 57.546 ns (0 allocations: 0 bytes)
+    # 56.361 ns (0 allocations: 0 bytes)
     #@btime GSEA._get_signal_to_noise_ratio($nu1_, $nu2_)
 
 end
