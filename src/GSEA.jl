@@ -118,7 +118,7 @@ end
 
 end
 
-@inline function _floor(nu)
+@inline function _clip(nu)
 
     ep = eps()
 
@@ -218,9 +218,9 @@ function _enrich!(::KLi1, sc_, ex, is_, mo_)
 
         en = Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
             ri1 += ri1d,
-            _floor(le1 -= pr1),
+            _clip(le1 -= pr1),
             ri += rid,
-            _floor(le -= rid),
+            _clip(le -= rid),
         )
 
         ar += en
@@ -259,9 +259,9 @@ function _enrich!(::KLi, sc_, ex, is_, mo_)
 
         en = Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
             ri1 += ri1d,
-            _floor(le1 -= pr1),
+            _clip(le1 -= pr1),
             ri += rid,
-            _floor(le -= pr),
+            _clip(le -= pr),
         )
 
         ar += en
@@ -329,9 +329,9 @@ function _enrich!(::KLioM, sc_, ex, is_, mo_)
         en =
             Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(ri1, ri0, ri) -
             Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
-                _floor(le1),
-                _floor(le0),
-                _floor(le),
+                _clip(le1),
+                _clip(le0),
+                _clip(le),
             )
 
         ar += en
@@ -401,9 +401,9 @@ function _enrich!(::KLioP, sc_, ex, is_, mo_)
         en =
             Nucleus.Information.get_symmetric_kullback_leibler_divergence(ri1, ri0, ri) -
             Nucleus.Information.get_symmetric_kullback_leibler_divergence(
-                _floor(le1),
-                _floor(le0),
-                _floor(le),
+                _clip(le1),
+                _clip(le0),
+                _clip(le),
             )
 
         ar += en
