@@ -40,47 +40,71 @@ const DIB = joinpath(dirname(@__DIR__), "benchmark")
 
 # ---- #
 
-function log(is_, py, ju, st)
+const TE_ = String[]
+
+# ---- #
+
+const PE_ = Float64[]
+
+# ---- #
+
+function log(te, is_, py, ju)
 
     if any(is_)
 
-        @warn "$st $(@sprintf "%.3g" 100 - 100 * sum(is_) / size(py, 1))%" view(py, is_, :) view(
-            ju,
-            is_,
-            :,
-        )
+        pe = 100 - 100sum(is_) / size(py, 1)
+
+        pyi = view(py, is_, :)
+
+        jui = view(ju, is_, :)
+
+        @warn "$te $(@sprintf "%.3g" pe)%" pyi jui
+
+    else
+
+        pe = 100.0
+
+        pyi = nothing
+
+        jui = nothing
 
     end
 
-end
+    push!(TE_, te)
 
-# ---- #
-
-function compare(st, py, pyi, ju, jui)
-
-    log(.!isequal.(py[!, pyi], ju[!, jui]), py, ju, st)
+    push!(PE_, pe)
 
 end
 
 # ---- #
 
-function compare(st, py, pyi, ju, jui, atol)
+function compare(jsk, al, st, py, pyi, ju, jui)
+
+    log("$jsk $al $st", py[!, pyi] .!= ju[!, jui], py, ju)
+
+end
+
+# ---- #
+
+function compare(jsk, al, st, py, pyi, ju, jui, atol)
 
     log(
+        "$jsk $al $st",
         .!isapprox.(
+            # TODO
             (fl -> fl isa AbstractString ? parse(Float64, lstrip(fl, '≤')) : fl).(py[!, pyi]),
             ju[!, jui];
             atol,
         ),
         py,
         ju,
-        st,
     )
 
 end
 
 # ---- #
 
+# TODO
 const BA_ = Set((
     "CCLE_STAT3_vs_mRNA.json", # Number of sets differ.
     "CCLE_YAP_vs_mRNA.json", # Number of sets differ.
@@ -113,11 +137,13 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
     end
 
-    ke_va = Nucleus.Dict.read(joinpath(DIJ, js))[view(js, 1:(lastindex(js) - 5))]
-
     @info "$idb $js"
 
-    di = joinpath(DIB, Nucleus.Path.clean(chop(js; tail = 5)))
+    jsk = view(js, 1:(lastindex(js) - 5))
+
+    ke_va = Nucleus.Dict.read(joinpath(DIJ, js))[jsk]
+
+    di = joinpath(DIB, Nucleus.Path.clean(jsk))
 
     #Nucleus.Path.remake_directory(di)
 
@@ -148,7 +174,7 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
     for (al, pr, no) in
         zip(AL_, ke_va["results_files_prefix"], ke_va["standardize_genes_before_gene_sel"])
 
-        @info "$idb $al"
+        @info al
 
         dio = joinpath(di, "output_$al")
 
@@ -164,23 +190,13 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
         if !isfile(tsm)
 
-            if no
-
-                normalization_dimension = 1
-
-            else
-
-                normalization_dimension = 0
-
-            end
-
             GSEA.metric_rank(
                 dio,
                 tst,
                 tsf,
                 jss;
                 algorithm = al,
-                normalization_dimension,
+                normalization_dimension = Int(no),
                 normalization_standard_deviation = 3.0,
                 number_of_permutations = 0,
             )
@@ -193,6 +209,8 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
         ju = Nucleus.DataFrame.read(tsm)
 
+        # TODO
+
         n_ch = 50
 
         py[!, 1] = Nucleus.String.limit.(py[!, 1], n_ch)
@@ -203,11 +221,9 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
         sort!(ju)
 
-        @test size(py, 1) === size(ju, 1)
+        compare(jsk, al, "Gene", py, 1, ju, 1)
 
-        compare("Gene", py, 1, ju, 1)
-
-        compare("Signal-to-Noise Ratio", py, 2, ju, 2, 0.00001)
+        compare(jsk, al, "Signal-to-Noise Ratio", py, 2, ju, 2, 0.00001)
 
         if !isfile(tss)
 
@@ -225,18 +241,39 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
         ju = sort!(Nucleus.DataFrame.read(tss))
 
-        @test size(py, 1) === size(ju, 1)
+        compare(jsk, al, "Set", py, 1, ju, 1)
 
-        compare("Set", py, 1, ju, 1)
+        compare(jsk, al, "Enrichment", py, 3, ju, 2, 0.01)
 
-        compare("Enrichment", py, 3, ju, 2, 0.01)
+        compare(jsk, al, "Normalized Enrichment", py, 2, ju, 3, 0.01)
 
-        compare("Normalized Enrichment", py, 2, ju, 3, 0.01)
+        compare(jsk, al, "P-Value", py, 4, ju, 4, 0.01)
 
-        compare("P-Value", py, 4, ju, 4, 0.01)
-
-        compare("Adjusted P-Value", py, 5, ju, 5, 0.1)
+        compare(jsk, al, "Adjusted P-Value", py, 5, ju, 5, 0.1)
 
     end
+
+end
+
+# ---- #
+
+const ST_ = ("Enrichment", "Normalized Enrichment", "P-Value", "Adjusted P-Value")
+
+# ---- #
+
+for al in AL_
+
+    is___ = (findall(endswith("$al $st"), TE_) for st in ST_)
+
+    Nucleus.Plot.plot_bar(
+        joinpath(DIB, "summary_$al.html"),
+        Tuple(view(PE_, is_) for is_ in is___),
+        Tuple(Nucleus.String.split_get.(view(TE_, is_), ' ', 1) for is_ in is___),
+        name_ = ST_,
+        layout = Dict(
+            "title" => Dict("text" => al),
+            "yaxis" => Dict("title" => Dict("text" => "% Match")),
+        ),
+    )
 
 end
