@@ -8,6 +8,10 @@ using Nucleus
 
 # ---- #
 
+const TE = mkdir(joinpath(Nucleus.TE, "GSEA"))
+
+# ---- #
+
 const DA = joinpath(dirname(@__DIR__), "data")
 
 # ---- #
@@ -318,14 +322,6 @@ GSEA.plot(
 
 # ---- #
 
-const TE = joinpath(tempdir(), "GSEA")
-
-# ---- #
-
-Nucleus.Path.remake_directory(TE)
-
-# ---- #
-
 const JS = joinpath(DA, "set_features.json")
 
 # ---- #
@@ -364,11 +360,7 @@ const TSF = joinpath(DA, "feature_x_sample_x_number.tsv")
 
 # ---- #
 
-const OUD = joinpath(TE, "data_rank")
-
-# ---- #
-
-Nucleus.Path.remake_directory(OUD)
+const OUD = mkdir(joinpath(TE, "data_rank"))
 
 # ---- #
 
@@ -417,11 +409,7 @@ end
 
 # ---- #
 
-const OUU = joinpath(TE, "user_rank")
-
-# ---- #
-
-Nucleus.Path.remake_directory(OUU)
+const OUU = mkdir(joinpath(TE, "user_rank"))
 
 # ---- #
 
@@ -494,11 +482,7 @@ const TST = joinpath(DA, "target_x_sample_x_number.tsv")
 
 # ---- #
 
-const OUM = joinpath(TE, "metric_rank")
-
-# ---- #
-
-Nucleus.Path.remake_directory(OUM)
+const OUM = mkdir(joinpath(TE, "metric_rank"))
 
 # ---- #
 
@@ -536,11 +520,7 @@ test_html(OUM, 8)
 
 # ---- #
 
-const OUMS = joinpath(TE, "metric_rank_small")
-
-# ---- #
-
-Nucleus.Path.remake_directory(OUMS)
+const OUMS = mkdir(joinpath(TE, "metric_rank_small"))
 
 # ---- #
 

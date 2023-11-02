@@ -8,6 +8,18 @@ using GSEA
 
 # ---- #
 
+function make(di)
+
+    if !isdir()
+
+        mkdir(di)
+
+    end
+
+end
+
+# ---- #
+
 const DIP = joinpath(homedir(), "Desktop", "benchmark")
 
 # ---- #
@@ -32,11 +44,7 @@ const AL_ = ("ks", "kli", "kli1", "kliom", "kliop")
 
 # ---- #
 
-const DIB = joinpath(dirname(@__DIR__), "benchmark")
-
-# ---- #
-
-#Nucleus.Path.make_directory(DIB)
+const DIB = make(joinpath(dirname(@__DIR__), "benchmark"))
 
 # ---- #
 
@@ -74,6 +82,8 @@ function log(te, is_, py, ju)
 
     push!(PE_, pe)
 
+    nothing
+
 end
 
 # ---- #
@@ -104,7 +114,6 @@ end
 
 # ---- #
 
-# TODO
 const BA_ = Set((
     "CCLE_STAT3_vs_mRNA.json", # Number of sets differ.
     "CCLE_YAP_vs_mRNA.json", # Number of sets differ.
@@ -143,13 +152,9 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
     ke_va = Nucleus.Dict.read(joinpath(DIJ, js))[jsk]
 
-    di = joinpath(DIB, Nucleus.Path.clean(jsk))
+    di = make(joinpath(DIB, Nucleus.Path.clean(jsk)))
 
-    #Nucleus.Path.remake_directory(di)
-
-    dii = joinpath(di, "input")
-
-    #Nucleus.Path.remake_directory(dii)
+    dii = make(joinpath(di, "input"))
 
     tst = joinpath(dii, "target_x_sample_x_number.tsv")
 
@@ -176,9 +181,7 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
         @info al
 
-        dio = joinpath(di, "output_$al")
-
-        #Nucleus.Path.remake_directory(dio)
+        dio = make(joinpath(di, "output_$al"))
 
         txm = joinpath(dir, "$(pr)_gene_selection_scores.txt")
 

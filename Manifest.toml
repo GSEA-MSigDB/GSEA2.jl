@@ -458,7 +458,7 @@ version = "0.4.0"
 deps = ["CSV", "Clustering", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "Distances", "Distributed", "Distributions", "Downloads", "GZip", "JSON", "KernelDensity", "LinearAlgebra", "Mmap", "MultipleTesting", "NMF", "OrderedCollections", "Printf", "ProgressMeter", "Random", "Statistics", "StatsBase", "TOML", "XLSX"]
 path = "../Nucleus.jl"
 uuid = "ef0d6b11-c3c3-4448-b7ee-336ac2b00706"
-version = "0.15.2"
+version = "0.15.3"
 
 [[deps.OffsetArrays]]
 deps = ["Adapt"]
@@ -609,9 +609,9 @@ version = "0.7.0"
 
 [[deps.Scratch]]
 deps = ["Dates"]
-git-tree-sha1 = "30449ee12237627992a99d5e30ae63e4d78cd24a"
+git-tree-sha1 = "3bac05bc7e74a75fd9cba4295cde4045d9fe2386"
 uuid = "6c6a2e73-6563-6170-7368-637461726353"
-version = "1.2.0"
+version = "1.2.1"
 
 [[deps.SentinelArrays]]
 deps = ["Dates", "Random"]
