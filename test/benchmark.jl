@@ -10,7 +10,7 @@ using GSEA
 
 function make(di)
 
-    if !isdir()
+    if !isdir(di)
 
         mkdir(di)
 
