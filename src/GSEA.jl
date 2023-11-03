@@ -981,6 +981,66 @@ Run data-rank (single-sample) GSEA.
 
 end
 
+function _normalize_enrichment(nu, nem, pom)
+
+    Nucleus.Number.is_negative(nu) ? -nu / nem : nu / pom
+
+end
+
+function _normalize_enrichment(nu, nem, pom, nes, pos)
+
+    Nucleus.Number.is_negative(nu) ? -1 + (nu - nem) / 3nes : 1 + (nu - pom) / 3pos
+
+end
+
+function _normalize_enrichment!(::Union{KS, KSa}, en_, se_x_id_x_ra)
+
+    enn_ = Vector{Float64}(undef, lastindex(en_))
+
+    for (id, (en, ra_)) in enumerate(zip(en_, eachrow(se_x_id_x_ra)))
+
+        ne_, po_ = Nucleus.Number.separate(ra_)
+
+        nem = mean(ne_)
+
+        pom = mean(po_)
+
+        enn_[id] = _normalize_enrichment(en, nem, pom)
+
+        ra_ .= _normalize_enrichment.(ra_, nem, pom)
+
+    end
+
+    enn_
+
+end
+
+function _normalize_enrichment!(::Union{KLi1, KLi, KLioM, KLioP}, en_, se_x_id_x_ra)
+
+    enn_ = Vector{Float64}(undef, lastindex(en_))
+
+    for (id, (en, ra_)) in enumerate(zip(en_, eachrow(se_x_id_x_ra)))
+
+        ne_, po_ = Nucleus.Number.separate(ra_)
+
+        nem = mean(ne_)
+
+        pom = mean(po_)
+
+        nes = std(ne_)
+
+        pos = std(po_)
+
+        enn_[id] = _normalize_enrichment(en, nem, pom, nes, pos)
+
+        ra_ .= _normalize_enrichment.(ra_, nem, pom, nes, pos)
+
+    end
+
+    enn_
+
+end
+
 function _write(
     ou,
     wr,
@@ -1028,35 +1088,11 @@ function _write(
 
     se_x_st_x_nu[:, 1] = en_
 
-    nef_ = Vector{Float64}(undef, n_se)
-
-    pof_ = Vector{Float64}(undef, n_se)
-
-    for (id, ra_) in enumerate(eachrow(se_x_id_x_ra))
-
-        ne_, po_ = Nucleus.Number.separate(ra_)
-
-        nef = -1 / mean(ne_)
-
-        pof = 1 / mean(po_)
-
-        nef_[id] = nef
-
-        pof_[id] = pof
-
-        for (id, ra) in enumerate(ra_)
-
-            ra_[id] *= Nucleus.Number.is_negative(ra) ? nef : pof
-
-        end
-
-    end
-
-    idl = findlast(Nucleus.Number.is_negative, en_)
-
-    enn_ = [en * (id <= idl ? nef_ : pof_)[id] for (id, en) in enumerate(en_)]
+    enn_ = _normalize_enrichment!(al, en_, se_x_id_x_ra)
 
     se_x_st_x_nu[:, 2] = enn_
+
+    idl = findlast(Nucleus.Number.is_negative, en_)
 
     nei_ = 1:idl
 

@@ -4,6 +4,8 @@ using GSEA
 
 # ----------------------------------------------------------------------------------------------- #
 
+using Random: seed!
+
 using Nucleus
 
 # ---- #
@@ -272,7 +274,7 @@ for al in AL_
     # 3.022 ms (108 allocations: 934.22 KiB)
     # 2.649 ms (108 allocations: 934.22 KiB)
     # 9.001 ms (108 allocations: 934.22 KiB)
-    # 10.139 ms (108 allocations: 934.22 KiB)
+    # 10.127 ms (108 allocations: 934.22 KiB)
     # 17.202 ms (108 allocations: 934.22 KiB)
     # 17.186 ms (108 allocations: 934.22 KiB)
     #@btime GSEA.enrich($al, FE_, SC_, FE1___; ex = EX)
@@ -287,7 +289,7 @@ const FE_X_SA_X_SC = hcat(SC_, SC_ * 10, fill(0.8, lastindex(FE_)))
 
 for al in AL_
 
-    # 9.572 ms (370 allocations: 5.51 MiB)
+    # 9.548 ms (370 allocations: 5.51 MiB)
     # 8.382 ms (370 allocations: 5.51 MiB)
     # 27.547 ms (370 allocations: 5.51 MiB)
     # 30.802 ms (370 allocations: 5.51 MiB)
@@ -387,6 +389,24 @@ const SET_X_SAMPLE_X_ENRICHMENT =
     "HALLMARK_HYPOXIA",
     "HALLMARK_GLYCOLYSIS",
 ]
+
+# ---- #
+
+for al in (AL_[1], AL_[end])
+
+    seed!(20231103)
+
+    en_ = randn(100)
+
+    se_x_id_x_ra = randn(100, 1000)
+
+    GSEA._normalize_enrichment!(al, en_, se_x_id_x_ra)
+
+    # 737.209 μs (1001 allocations: 1.47 MiB)
+    # 803.333 μs (1001 allocations: 1.47 MiB)
+    #@btime GSEA._normalize_enrichment!($al, $en_, $se_x_id_x_ra)
+
+end
 
 # ---- #
 

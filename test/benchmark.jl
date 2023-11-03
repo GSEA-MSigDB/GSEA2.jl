@@ -16,6 +16,8 @@ function make(di)
 
     end
 
+    di
+
 end
 
 # ---- #
@@ -134,6 +136,8 @@ const BA_ = Set((
     "PIK3CA mut and wt vs RNA.json", # Enrichments differ.
     "Regulation of ZBTB18 in glioblastoma.json", # Target directionalities differ.
     "Stroma_senescence.json", # Genes are duplicates.
+    #
+    "PI3K_Inhibition.json",
 ))
 
 # ---- #
@@ -202,6 +206,7 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
                 normalization_dimension = Int(no),
                 normalization_standard_deviation = 3.0,
                 number_of_permutations = 0,
+                number_of_sets_to_plot = 0,
             )
 
             Nucleus.Path.remove(tss)
@@ -236,6 +241,7 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
                 jss;
                 algorithm = al,
                 permutation = joinpath(dir, "$(pr)_rand_perm_gene_scores.txt"),
+                number_of_sets_to_plot = 0,
             )
 
         end
