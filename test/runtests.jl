@@ -310,7 +310,7 @@ const SE_X_SA_X_EN = GSEA.enrich(AL, FE_, FE_X_SA_X_SC, FE1___; ex = EX)
 # ---- #
 
 GSEA.plot(
-    Nucleus.TE,
+    TE,
     AL,
     FE_,
     FE_X_SA_X_SC,

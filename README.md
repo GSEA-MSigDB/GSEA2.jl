@@ -93,7 +93,7 @@ using GSEA
 const DI = joinpath("example", "sarcopenia")
 
 GSEA.metric_rank(
-    mkdir(joinpath(homedir(), "Downloads", "gsea")),
+    mkpath(joinpath(homedir(), "Downloads", "gsea")),
     joinpath(DI, "target_x_sample_x_number.tsv"),
     joinpath(DI, "feature_x_sample_x_number.tsv"),
     joinpath(DI, "set_features.json"),

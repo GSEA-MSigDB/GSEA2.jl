@@ -714,16 +714,16 @@ function plot(di, al, fe_, fe_x_sa_x_sc, fe1___, nac, se_, sa_, se_x_sa_x_en; ex
 
         so_ = sortperm(scn_; rev = true)
 
-        pr = "$(sa_[id2]) Enriching $(se_[id1])"
+        title_text = "$(sa_[id2]) Enriching $(se_[id1])"
 
         plot(
-            joinpath(di, "$(Nucleus.Path.clean(pr)).html"),
+            joinpath(di, "$(Nucleus.Path.clean(title_text)).html"),
             al,
             view(fe_, no_)[so_],
             scn_[so_],
             fe1___[id1];
             ex,
-            title_text = "$pr ($(_format(se_x_sa_x_en[id1, id2])))",
+            title_text,
         )
 
     end

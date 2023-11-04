@@ -8,20 +8,6 @@ using GSEA
 
 # ---- #
 
-function make(di)
-
-    if !isdir(di)
-
-        mkdir(di)
-
-    end
-
-    di
-
-end
-
-# ---- #
-
 const DIP = joinpath(homedir(), "Desktop", "benchmark")
 
 # ---- #
@@ -46,7 +32,7 @@ const AL_ = ("ks", "kli", "kli1", "kliom", "kliop")
 
 # ---- #
 
-const DIB = make(joinpath(dirname(@__DIR__), "benchmark"))
+const DIB = Nucleus.Path.establish(joinpath(dirname(@__DIR__), "benchmark"))
 
 # ---- #
 
@@ -156,9 +142,9 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
     ke_va = Nucleus.Dict.read(joinpath(DIJ, js))[jsk]
 
-    di = make(joinpath(DIB, Nucleus.Path.clean(jsk)))
+    di = Nucleus.Path.establish(joinpath(DIB, Nucleus.Path.clean(jsk)))
 
-    dii = make(joinpath(di, "input"))
+    dii = Nucleus.Path.establish(joinpath(di, "input"))
 
     tst = joinpath(dii, "target_x_sample_x_number.tsv")
 
@@ -185,7 +171,7 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
         @info al
 
-        dio = make(joinpath(di, "output_$al"))
+        dio = Nucleus.Path.establish(joinpath(di, "output_$al"))
 
         txm = joinpath(dir, "$(pr)_gene_selection_scores.txt")
 
@@ -209,7 +195,7 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
                 number_of_sets_to_plot = 0,
             )
 
-            Nucleus.Path.remove(tss)
+            rm(tss)
 
         end
 
