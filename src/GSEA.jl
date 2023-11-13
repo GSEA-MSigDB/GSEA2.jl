@@ -1301,6 +1301,12 @@ Run user-rank (pre-rank) GSEA.
 
 end
 
+function _get_mean_difference(nu1_, nu2_)
+
+    mean(nu1_) - mean(nu2_)
+
+end
+
 function _get_standard_deviation(nu_, me)
 
     max(0.2abs(me), std(nu_; corrected = true))
@@ -1344,7 +1350,7 @@ Run metric-rank (standard) GSEA.
   - `--minimum-set-fraction`: = 0.0.
   - `--normalization-dimension`: = 0. 0 (not normalizing) | 1 | 2.
   - `--normalization-standard-deviation`: = 4.
-  - `--metric`: = "signal-to-noise-ratio". "signal-to-noise-ratio" | (coming soon).
+  - `--metric`: = "signal-to-noise-ratio". "mean-difference" | "signal-to-noise-ratio".
   - `--algorithm`: = "ks". "ks" | "ksa" | "kli1" | "kli" | "kliom" | "kliop".
   - `--exponent`: = 1.0.
   - `--permutation`: = "sample". "sample" | "set" | feature_x_index_x_random.tsv.
@@ -1412,13 +1418,17 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    if metric == "signal-to-noise-ratio"
+    if metric == "mean-difference"
+
+        fu = _get_mean_difference
+
+    elseif metric == "signal-to-noise-ratio"
 
         fu = _get_signal_to_noise_ratio
 
     else
 
-        error("`$metric` is not \"signal-to-noise-ratio\".")
+        error("`$metric` is not \"mean-difference\" or \"signal-to-noise-ratio\".")
 
     end
 
