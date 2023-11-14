@@ -488,10 +488,10 @@ for (nu1_, nu2_, re) in (
 
     @test GSEA._get_signal_to_noise_ratio(nu1_, nu2_) === re
 
-    # 55.752 ns (0 allocations: 0 bytes)
-    # 43.897 ns (0 allocations: 0 bytes)
-    # 57.546 ns (0 allocations: 0 bytes)
-    # 56.361 ns (0 allocations: 0 bytes)
+    # 37.088 ns (0 allocations: 0 bytes)
+    # 21.439 ns (0 allocations: 0 bytes)
+    # 38.807 ns (0 allocations: 0 bytes)
+    # 39.396 ns (0 allocations: 0 bytes)
     #@btime GSEA._get_signal_to_noise_ratio($nu1_, $nu2_)
 
 end

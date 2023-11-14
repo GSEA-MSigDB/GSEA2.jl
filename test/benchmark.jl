@@ -102,26 +102,6 @@ end
 
 # ---- #
 
-const BA_ = Set((
-    "CCLE_STAT3_vs_mRNA.json", # 9850 & 8100.
-    "CCLE_YAP_vs_mRNA.json", # 24586 & 16450.
-    "CRISPR_FOXA1_vs_mRNA.json", # 9850 & 8100.
-    "CRISPR_NFE2L2_vs_mRNA.json", # 9850 & 8100.
-    "CRISPR_SOX10_vs_mRNA.json", # 9850 & 8100.
-    "Cyclin_D1.json", # 16973 & 9675.
-    "EBV_Arrested.json", # 6313 & 4772.
-    "ERbeta.json", # 5091 & 4342.
-    "Gender.json", # 24073 & 16005.
-    "MYC mut and wt vs RNA.json", # 6253 & 4659.
-    "NRF2_Liver_Cancer.json", # 9853 & 8069.
-    "NRF2_mouse_model.json", # 9526 & 7540.
-    "PI3K_Inhibition.json", # 9785 & 7959.
-    "PIK3CA mut and wt vs RNA.json", # 6442 & 4847.
-    "Stroma_senescence.json", # 21103 & 13174.
-))
-
-# ---- #
-
 for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
     @info "$idb $js"
@@ -153,6 +133,10 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
     end
 
     dir = joinpath(DIR, basename(ke_va["results_directory"]))
+
+    minimum_set_size = ke_va["min_gene_set_size"]
+
+    maximum_set_size = ke_va["max_gene_set_size"]
 
     for (al, pr, no, me) in zip(
         AL_,
@@ -190,6 +174,8 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
                 tst,
                 tsf,
                 jss;
+                minimum_set_size,
+                maximum_set_size,
                 normalization_dimension = Int(no),
                 normalization_standard_deviation = 3.0,
                 metric,
@@ -220,6 +206,8 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
                 dio,
                 txm,
                 jss;
+                minimum_set_size,
+                maximum_set_size,
                 algorithm = al,
                 permutation = joinpath(dir, "$(pr)_rand_perm_gene_scores.txt"),
                 number_of_sets_to_plot = 0,
@@ -230,14 +218,6 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
         py = sort!(Nucleus.DataFrame.read(txs; select = [1, 5, 4, 6, 7]))
 
         ju = sort!(Nucleus.DataFrame.read(tss))
-
-        if size(py, 1) != size(ju, 1)
-
-            @error "$(size(py, 1)) != $(size(ju, 1))."
-
-            continue
-
-        end
 
         compare(jsk, al, "Set", py, 1, ju, 1)
 
