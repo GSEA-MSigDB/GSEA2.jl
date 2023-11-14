@@ -460,7 +460,7 @@ version = "0.4.0"
 deps = ["CSV", "Clustering", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "Distances", "Distributed", "Distributions", "GZip", "JSON", "KernelDensity", "LinearAlgebra", "Mmap", "MultipleTesting", "NMF", "OrderedCollections", "Printf", "ProgressMeter", "Random", "Statistics", "StatsBase", "TOML", "XLSX"]
 path = "../Nucleus.jl"
 uuid = "ef0d6b11-c3c3-4448-b7ee-336ac2b00706"
-version = "0.15.4"
+version = "0.15.5"
 
 [[deps.OffsetArrays]]
 deps = ["Adapt"]
