@@ -2,7 +2,7 @@
 
 julia_version = "1.9.4"
 manifest_format = "2.0"
-project_hash = "68c7dbb5f477dd17e0c8c825d3ed5bba1c3ccad0"
+project_hash = "ace5038aa8d3d95a50d757711f470eecb32ffac5"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -457,10 +457,10 @@ uuid = "b7351bd1-99d9-5c5d-8786-f205a815c4d7"
 version = "0.4.0"
 
 [[deps.Nucleus]]
-deps = ["CSV", "Clustering", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "Distances", "Distributed", "Distributions", "GZip", "JSON", "KernelDensity", "LinearAlgebra", "Mmap", "MultipleTesting", "NMF", "OrderedCollections", "Printf", "ProgressMeter", "Random", "Statistics", "StatsBase", "TOML", "XLSX"]
+deps = ["CSV", "Clustering", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "Distances", "Distributions", "GZip", "JSON", "KernelDensity", "LinearAlgebra", "Mmap", "MultipleTesting", "NMF", "OrderedCollections", "Printf", "ProgressMeter", "Random", "Statistics", "StatsBase", "TOML", "XLSX"]
 path = "../Nucleus.jl"
 uuid = "ef0d6b11-c3c3-4448-b7ee-336ac2b00706"
-version = "0.15.5"
+version = "0.15.6"
 
 [[deps.OffsetArrays]]
 deps = ["Adapt"]
