@@ -2,8 +2,6 @@ module GSEA
 
 using Comonicon: @cast, @main
 
-using Printf: @sprintf
-
 using ProgressMeter: @showprogress
 
 using Random: seed!, shuffle!
@@ -452,12 +450,6 @@ function _get_extreme(nu_)
 
 end
 
-function _format(nu)
-
-    @sprintf "%.4g" nu
-
-end
-
 function plot(
     ht,
     al,
@@ -610,7 +602,7 @@ function plot(
                         "yref" => "paper",
                         "xref" => "paper",
                         "y" => 1.04,
-                        "text" => "Enrichment = <b>$(_format(en))</b>",
+                        "text" => "Enrichment = <b>$(Nucleus.Number.format(en))</b>",
                         "font" => Dict("size" => 20, "color" => "#224634"),
                         "borderpad" => 12.8,
                         "bordercolor" => Nucleus.Color.HEAY,
