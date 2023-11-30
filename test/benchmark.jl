@@ -1,7 +1,5 @@
 using Test: @test
 
-using Printf: @sprintf
-
 using Nucleus
 
 using GSEA
@@ -54,7 +52,7 @@ function log(te, is_, py, ju)
 
         jui = view(ju, is_, :)
 
-        @warn "$te $(@sprintf "%.5g" pe)%" pyi jui
+        @warn "$te $(Nucleus.Number.format4(pe))%" pyi jui
 
     else
 

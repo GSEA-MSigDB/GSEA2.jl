@@ -602,7 +602,7 @@ function plot(
                         "yref" => "paper",
                         "xref" => "paper",
                         "y" => 1.04,
-                        "text" => "Enrichment = <b>$(Nucleus.Number.format(en))</b>",
+                        "text" => "Enrichment = <b>$(Nucleus.Number.format4(en))</b>",
                         "font" => Dict("size" => 20, "color" => "#224634"),
                         "borderpad" => 12.8,
                         "bordercolor" => Nucleus.Color.HEAY,
