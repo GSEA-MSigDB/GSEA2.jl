@@ -244,7 +244,7 @@ for al in AL_
     Nucleus.Plot.plot_bar(
         joinpath(DIB, "summary_$al.html"),
         Tuple(view(PE_, is_) for is_ in is___),
-        Tuple(Nucleus.String.split_get.(view(TE_, is_), ' ', 1) for is_ in is___),
+        Tuple(Nucleus.String.split_get.(view(TE_, is_), ' ', 1) for is_ in is___);
         name_ = ST_,
         layout = Dict(
             "title" => Dict("text" => al),

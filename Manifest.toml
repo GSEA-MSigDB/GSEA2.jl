@@ -190,10 +190,10 @@ uuid = "863f3e99-da2a-4334-8734-de3dacbe5542"
 version = "1.0.6"
 
 [[deps.Compat]]
-deps = ["UUIDs"]
-git-tree-sha1 = "886826d76ea9e72b35fcd000e535588f7b60f21d"
+deps = ["TOML", "UUIDs"]
+git-tree-sha1 = "ed2ebb1ff7550226ddb584ba8352facf8d9ffb22"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.10.1"
+version = "4.11.0"
 weakdeps = ["Dates", "LinearAlgebra"]
 
     [deps.Compat.extensions]
@@ -612,9 +612,9 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[deps.LinearAlgebraX]]
 deps = ["LinearAlgebra", "Mods", "Permutations", "Primes", "SimplePolynomials"]
-git-tree-sha1 = "89ed93300377e0742ae8a7423f7543c8f5eb73a4"
+git-tree-sha1 = "1cb349a6a7656c2cbe2d288baabe863a208e46e3"
 uuid = "9b3f67b0-2d00-526e-9884-9e4938f8fb88"
-version = "0.2.5"
+version = "0.2.6"
 
 [[deps.LogExpFunctions]]
 deps = ["DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
@@ -653,9 +653,9 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
 [[deps.MathOptInterface]]
 deps = ["BenchmarkTools", "CodecBzip2", "CodecZlib", "DataStructures", "ForwardDiff", "JSON", "LinearAlgebra", "MutableArithmetics", "NaNMath", "OrderedCollections", "PrecompileTools", "Printf", "SparseArrays", "SpecialFunctions", "Test", "Unicode"]
-git-tree-sha1 = "372dfbc815ddd820ae9a83990e4f625d95c9bca9"
+git-tree-sha1 = "e2ae8cf5ac6daf5a3959f7f6ded9c2028b61d09d"
 uuid = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
-version = "1.25.0"
+version = "1.25.1"
 
 [[deps.MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -672,9 +672,9 @@ version = "1.1.0"
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[deps.Mods]]
-git-tree-sha1 = "f241641066029f1e35c1ce1814dbea4e5ca29582"
+git-tree-sha1 = "434092e0ad802727bc144c90f13764c7b31ad2f5"
 uuid = "7475f97c-0381-53b1-977b-4c60186c8d62"
-version = "2.2.2"
+version = "2.2.3"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
