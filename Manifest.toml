@@ -88,9 +88,9 @@ version = "1.4.0"
 
 [[deps.Bzip2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "19a35467a82e236ff51bc17a3a44b69ef35185a2"
+git-tree-sha1 = "9e2a6b69137e6969bab0152632dcb3bc108c8bdd"
 uuid = "6e34b625-4abd-537c-b88f-471c36dfa7a0"
-version = "1.0.8+0"
+version = "1.0.8+1"
 
 [[deps.CRlibm]]
 deps = ["CRlibm_jll"]
@@ -643,9 +643,9 @@ version = "2024.0.0+0"
 
 [[deps.MacroTools]]
 deps = ["Markdown", "Random"]
-git-tree-sha1 = "b211c553c199c111d998ecdaf7623d1b89b69f93"
+git-tree-sha1 = "2fa9ee3e63fd3a4f7a9a4f4744a52f4856de82df"
 uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
-version = "0.5.12"
+version = "0.5.13"
 
 [[deps.Markdown]]
 deps = ["Base64"]
@@ -672,9 +672,9 @@ version = "1.1.0"
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[deps.Mods]]
-git-tree-sha1 = "434092e0ad802727bc144c90f13764c7b31ad2f5"
+git-tree-sha1 = "924f962b524a71eef7a21dae1e6853817f9b658f"
 uuid = "7475f97c-0381-53b1-977b-4c60186c8d62"
-version = "2.2.3"
+version = "2.2.4"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
@@ -884,9 +884,9 @@ version = "1.9.0"
 
 [[deps.QuadGK]]
 deps = ["DataStructures", "LinearAlgebra"]
-git-tree-sha1 = "d2fd909b9579af2931fe709e8261a4feb4659bde"
+git-tree-sha1 = "9b23c31e76e333e6fb4c1595ae6afa74966a729e"
 uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
-version = "2.9.3"
+version = "2.9.4"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
