@@ -562,9 +562,9 @@ uuid = "4af54fe1-eca0-43a8-85a7-787d91b784e3"
 
 [[deps.LazySets]]
 deps = ["Distributed", "GLPK", "IntervalArithmetic", "JuMP", "LinearAlgebra", "Random", "ReachabilityBase", "RecipesBase", "Reexport", "Requires", "SharedArrays", "SparseArrays", "StaticArraysCore"]
-git-tree-sha1 = "8b6daff020df131aaf2c798ac8913cdd4751bbfc"
+git-tree-sha1 = "69545d6bdad4896e4b0cbfb9466409027f52eb11"
 uuid = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
-version = "2.11.3"
+version = "2.11.4"
 
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
