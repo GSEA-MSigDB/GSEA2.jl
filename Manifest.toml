@@ -445,12 +445,6 @@ deps = ["Artifacts", "Libdl"]
 uuid = "781609d7-10c4-51f6-84f2-b8444358ff6d"
 version = "6.2.1+2"
 
-[[deps.GZip]]
-deps = ["Libdl", "Zlib_jll"]
-git-tree-sha1 = "0085ccd5ec327c077ec5b91a5f937b759810ba62"
-uuid = "92fee26a-97fe-5a0c-ad85-20a5f3185b63"
-version = "0.6.2"
-
 [[deps.Glob]]
 git-tree-sha1 = "97285bbd5230dd766e9ef6749b80fc617126d496"
 uuid = "c27321d9-0574-5035-807b-f59d2c89b15c"
@@ -738,10 +732,10 @@ uuid = "b7351bd1-99d9-5c5d-8786-f205a815c4d7"
 version = "0.4.0"
 
 [[deps.Nucleus]]
-deps = ["CSV", "Clustering", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "DelaunayTriangulation", "Distances", "Distributions", "GZip", "JSON", "KernelDensity", "LazySets", "Mmap", "MultipleTesting", "MultivariateStats", "NMF", "NonNegLeastSquares", "OrderedCollections", "Printf", "ProgressMeter", "Random", "Statistics", "StatsBase", "TOML", "Test", "XLSX"]
+deps = ["CSV", "Clustering", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "DelaunayTriangulation", "Distances", "Distributions", "JSON", "KernelDensity", "LazySets", "Mmap", "MultipleTesting", "MultivariateStats", "NMF", "NonNegLeastSquares", "OrderedCollections", "Printf", "ProgressMeter", "Random", "Statistics", "StatsBase", "TOML", "Test", "XLSX"]
 path = "/Users/kwat/craft/jl/Nucleus.jl"
 uuid = "ef0d6b11-c3c3-4448-b7ee-336ac2b00706"
-version = "0.16.1"
+version = "0.16.2"
 
 [[deps.OffsetArrays]]
 git-tree-sha1 = "6a731f2b5c03157418a20c12195eb4b74c8f8621"
@@ -770,9 +764,9 @@ version = "0.5.5+0"
 
 [[deps.Optim]]
 deps = ["Compat", "FillArrays", "ForwardDiff", "LineSearches", "LinearAlgebra", "MathOptInterface", "NLSolversBase", "NaNMath", "Parameters", "PositiveFactorizations", "Printf", "SparseArrays", "StatsBase"]
-git-tree-sha1 = "47fea72de134f75b105a5d4a1abe5c6aec89d390"
+git-tree-sha1 = "d024bfb56144d947d4fafcd9cb5cafbe3410b133"
 uuid = "429524aa-4258-5aef-a3af-852621145aeb"
-version = "1.9.1"
+version = "1.9.2"
 
 [[deps.OrderedCollections]]
 git-tree-sha1 = "dfdf5519f235516220579f949664f1bf44e741c5"
