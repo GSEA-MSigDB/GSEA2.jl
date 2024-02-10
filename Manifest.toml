@@ -908,9 +908,9 @@ weakdeps = ["FixedPointNumbers"]
 
 [[deps.ReachabilityBase]]
 deps = ["ExprTools", "InteractiveUtils", "LinearAlgebra", "Random", "Requires", "SparseArrays"]
-git-tree-sha1 = "088663f184e833c28c672653bec214845a7f18b7"
+git-tree-sha1 = "4c776db838b12800dd289cdc26204f7f971be8d7"
 uuid = "379f33d0-9447-4353-bd03-d664070e549f"
-version = "0.2.2"
+version = "0.2.3"
 
 [[deps.RecipesBase]]
 deps = ["PrecompileTools"]
