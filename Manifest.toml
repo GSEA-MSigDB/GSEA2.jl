@@ -2,7 +2,7 @@
 
 julia_version = "1.9.4"
 manifest_format = "2.0"
-project_hash = "df9af2a1e525a497c99df5e51add29ac3c5fc652"
+project_hash = "418fb019a83122c1d9348aa53755f43894f03d2e"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -191,9 +191,9 @@ version = "1.0.6"
 
 [[deps.Compat]]
 deps = ["TOML", "UUIDs"]
-git-tree-sha1 = "75bd5b6fc5089df449b5d35fa501c846c9b6549b"
+git-tree-sha1 = "d2c021fbdde94f6cdaa799639adfeeaa17fd67f5"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.12.0"
+version = "4.13.0"
 weakdeps = ["Dates", "LinearAlgebra"]
 
     [deps.Compat.extensions]
@@ -612,9 +612,9 @@ version = "0.2.7"
 
 [[deps.LogExpFunctions]]
 deps = ["DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
-git-tree-sha1 = "7d6dd4e9212aebaeed356de34ccf262a3cd415aa"
+git-tree-sha1 = "18144f3e9cbe9b15b070288eef858f71b291ce37"
 uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
-version = "0.3.26"
+version = "0.3.27"
 
     [deps.LogExpFunctions.extensions]
     LogExpFunctionsChainRulesCoreExt = "ChainRulesCore"
@@ -733,9 +733,9 @@ version = "0.4.0"
 
 [[deps.Nucleus]]
 deps = ["CSV", "Clustering", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "DelaunayTriangulation", "Distances", "Distributions", "JSON", "KernelDensity", "LazySets", "Mmap", "MultipleTesting", "MultivariateStats", "NMF", "NonNegLeastSquares", "OrderedCollections", "Printf", "ProgressMeter", "Random", "Statistics", "StatsBase", "TOML", "Test", "XLSX"]
-path = "/Users/kwat/craft/jl/Nucleus.jl"
+path = "../Nucleus.jl"
 uuid = "ef0d6b11-c3c3-4448-b7ee-336ac2b00706"
-version = "0.16.3"
+version = "0.17.0"
 
 [[deps.OffsetArrays]]
 git-tree-sha1 = "6a731f2b5c03157418a20c12195eb4b74c8f8621"
