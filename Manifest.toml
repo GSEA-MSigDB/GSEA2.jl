@@ -22,9 +22,9 @@ version = "0.3.0"
 
 [[deps.Adapt]]
 deps = ["LinearAlgebra", "Requires"]
-git-tree-sha1 = "e2a9873379849ce2ac9f9fa34b0e37bde5d5fe0a"
+git-tree-sha1 = "cea4ac3f5b4bc4b3000aa55afb6e5626518948fa"
 uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
-version = "4.0.2"
+version = "4.0.3"
 weakdeps = ["StaticArrays"]
 
     [deps.Adapt.extensions]
@@ -840,9 +840,9 @@ version = "0.2.4"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
-git-tree-sha1 = "03b4c25b43cb84cee5c90aa9b5ea0a78fd848d2f"
+git-tree-sha1 = "5aa36f7049a63a1528fe8f7c3f2113413ffd4e1f"
 uuid = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
-version = "1.2.0"
+version = "1.2.1"
 
 [[deps.Preferences]]
 deps = ["TOML"]
