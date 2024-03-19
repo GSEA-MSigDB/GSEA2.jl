@@ -681,9 +681,11 @@ function plot(di, al, fe_, fe_x_sa_x_sc, fe1___, nac, se_, sa_, se_x_sa_x_en; ex
         se_x_sa_x_en;
         y = se_,
         x = sa_,
-        nar = "Set",
-        nac,
-        layout = Dict("title" => Dict("text" => "Enrichment using $(make_string(al))")),
+        layout = Dict(
+            "title" => Dict("text" => "Enrichment using $(make_string(al))"),
+            "yaxis" => Dict("title" => Dict("text" => "Set (n = $(lastindex(se_)))")),
+            "xaxis" => Dict("title" => Dict("text" => "$nac (n = $(lastindex(sa_)))")),
+        ),
     )
 
     noe = .!isnan.(se_x_sa_x_en)
