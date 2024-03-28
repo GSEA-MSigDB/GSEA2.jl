@@ -22,9 +22,9 @@ version = "0.3.0"
 
 [[deps.Adapt]]
 deps = ["LinearAlgebra", "Requires"]
-git-tree-sha1 = "cea4ac3f5b4bc4b3000aa55afb6e5626518948fa"
+git-tree-sha1 = "6a55b747d1812e699320963ffde36f1ebdda4099"
 uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
-version = "4.0.3"
+version = "4.0.4"
 weakdeps = ["StaticArrays"]
 
     [deps.Adapt.extensions]
@@ -212,9 +212,9 @@ version = "0.17.6"
 
 [[deps.ConstructionBase]]
 deps = ["LinearAlgebra"]
-git-tree-sha1 = "c53fc348ca4d40d7b371e71fd52251839080cbc9"
+git-tree-sha1 = "260fd2400ed2dab602a7c15cf10c1933c59930a2"
 uuid = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
-version = "1.5.4"
+version = "1.5.5"
 
     [deps.ConstructionBase.extensions]
     ConstructionBaseIntervalSetsExt = "IntervalSets"
@@ -647,9 +647,9 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
 [[deps.MathOptInterface]]
 deps = ["BenchmarkTools", "CodecBzip2", "CodecZlib", "DataStructures", "ForwardDiff", "JSON", "LinearAlgebra", "MutableArithmetics", "NaNMath", "OrderedCollections", "PrecompileTools", "Printf", "SparseArrays", "SpecialFunctions", "Test", "Unicode"]
-git-tree-sha1 = "679c1aec6934d322783bd15db4d18f898653be4f"
+git-tree-sha1 = "d268e82322cc5df142a3664d03d59adecd53abf9"
 uuid = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
-version = "1.27.0"
+version = "1.27.1"
 
 [[deps.MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -693,9 +693,9 @@ version = "0.10.2"
 
 [[deps.MutableArithmetics]]
 deps = ["LinearAlgebra", "SparseArrays", "Test"]
-git-tree-sha1 = "302fd161eb1c439e4115b51ae456da4e9984f130"
+git-tree-sha1 = "2d106538aebe1c165e16d277914e10c550e9d9b7"
 uuid = "d8a4904e-b15c-11e9-3269-09a3773c0cb0"
-version = "1.4.1"
+version = "1.4.2"
 
 [[deps.NLSolversBase]]
 deps = ["DiffResults", "Distributed", "FiniteDiff", "ForwardDiff"]
@@ -763,10 +763,14 @@ uuid = "efe28fd5-8261-553b-a9e1-b2916fc3738e"
 version = "0.5.5+0"
 
 [[deps.Optim]]
-deps = ["Compat", "FillArrays", "ForwardDiff", "LineSearches", "LinearAlgebra", "MathOptInterface", "NLSolversBase", "NaNMath", "Parameters", "PositiveFactorizations", "Printf", "SparseArrays", "StatsBase"]
-git-tree-sha1 = "d024bfb56144d947d4fafcd9cb5cafbe3410b133"
+deps = ["Compat", "FillArrays", "ForwardDiff", "LineSearches", "LinearAlgebra", "NLSolversBase", "NaNMath", "PackageExtensionCompat", "Parameters", "PositiveFactorizations", "Printf", "SparseArrays", "StatsBase"]
+git-tree-sha1 = "d1223e69af90b6d26cea5b6f3b289b3148ba702c"
 uuid = "429524aa-4258-5aef-a3af-852621145aeb"
-version = "1.9.2"
+version = "1.9.3"
+weakdeps = ["MathOptInterface"]
+
+    [deps.Optim.extensions]
+    OptimMOIExt = "MathOptInterface"
 
 [[deps.OrderedCollections]]
 git-tree-sha1 = "dfdf5519f235516220579f949664f1bf44e741c5"
@@ -784,6 +788,12 @@ deps = ["Artifacts", "Glob", "LazyArtifacts", "Libdl", "Pkg", "Printf", "Relocat
 git-tree-sha1 = "48d4429862157ad5500c4f61444db1b8c32e0a2b"
 uuid = "9b87118b-4619-50d2-8e1e-99f35a4d4d9d"
 version = "2.1.17"
+
+[[deps.PackageExtensionCompat]]
+git-tree-sha1 = "fb28e33b8a95c4cee25ce296c817d89cc2e53518"
+uuid = "65ce6f38-6b18-4e1d-a461-8949797d7930"
+version = "1.0.2"
+weakdeps = ["Requires", "TOML"]
 
 [[deps.Parameters]]
 deps = ["OrderedCollections", "UnPack"]
@@ -1134,9 +1144,9 @@ deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [[deps.TranscodingStreams]]
-git-tree-sha1 = "a09c933bebed12501890d8e92946bbab6a1690f1"
+git-tree-sha1 = "14389d51751169994b2e1317d5c72f7dc4f21045"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.10.5"
+version = "0.10.6"
 weakdeps = ["Random", "Test"]
 
     [deps.TranscodingStreams.extensions]
