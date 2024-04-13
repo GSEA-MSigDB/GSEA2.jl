@@ -188,10 +188,10 @@ uuid = "bbf7d656-a473-5ed7-a52c-81e309532950"
 version = "0.3.0"
 
 [[deps.Comonicon]]
-deps = ["Configurations", "ExproniconLite", "Libdl", "Logging", "Markdown", "OrderedCollections", "PackageCompiler", "Pkg", "Scratch", "TOML", "UUIDs"]
-git-tree-sha1 = "552667002fdd5602ca72e0aeac8bd099daa0e040"
+deps = ["Configurations", "ExproniconLite", "Libdl", "Logging", "Markdown", "OrderedCollections", "PackageCompiler", "Pkg", "REPL", "Scratch", "TOML", "UUIDs"]
+git-tree-sha1 = "a0da87adb73a45a22a5cf6a3f3e68315a0511999"
 uuid = "863f3e99-da2a-4334-8734-de3dacbe5542"
-version = "1.0.6"
+version = "1.0.7"
 
 [[deps.Compat]]
 deps = ["TOML", "UUIDs"]
@@ -246,9 +246,9 @@ version = "1.6.1"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
-git-tree-sha1 = "0f4b5d62a88d8f59003e43c25a8a90de9eb76317"
+git-tree-sha1 = "97d79461925cdb635ee32116978fc735b9463a39"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.18.18"
+version = "0.18.19"
 
 [[deps.DataValueInterfaces]]
 git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
@@ -656,9 +656,9 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
 [[deps.MathOptInterface]]
 deps = ["BenchmarkTools", "CodecBzip2", "CodecZlib", "DataStructures", "ForwardDiff", "JSON", "LinearAlgebra", "MutableArithmetics", "NaNMath", "OrderedCollections", "PrecompileTools", "Printf", "SparseArrays", "SpecialFunctions", "Test", "Unicode"]
-git-tree-sha1 = "9846d76b7a813d297084a2c2a92bb9d1be25c8da"
+git-tree-sha1 = "0958279282984a89e087fca415f01bee443154d5"
 uuid = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
-version = "1.28.0"
+version = "1.28.1"
 
 [[deps.MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
