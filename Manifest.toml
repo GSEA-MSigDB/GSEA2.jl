@@ -604,9 +604,9 @@ version = "0.10.2"
 
 [[deps.MutableArithmetics]]
 deps = ["LinearAlgebra", "SparseArrays", "Test"]
-git-tree-sha1 = "c2e2d748aea87f006a87c1654878349baa04aaf0"
+git-tree-sha1 = "a3589efe0005fc4718775d8641b2de9060d23f73"
 uuid = "d8a4904e-b15c-11e9-3269-09a3773c0cb0"
-version = "1.4.3"
+version = "1.4.4"
 
 [[deps.NMF]]
 deps = ["LinearAlgebra", "NonNegLeastSquares", "PrecompileTools", "Printf", "Random", "RandomizedLinAlg", "Statistics", "StatsBase"]
