@@ -1,6 +1,6 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.2"
+julia_version = "1.10.3"
 manifest_format = "2.0"
 project_hash = "f5c790a1377d45c197c78dfbb2acb391cc7c2584"
 
@@ -176,7 +176,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.1.0+0"
+version = "1.1.1+0"
 
 [[deps.Configurations]]
 deps = ["ExproniconLite", "OrderedCollections", "TOML"]
@@ -765,9 +765,9 @@ weakdeps = ["FixedPointNumbers"]
 
 [[deps.ReachabilityBase]]
 deps = ["ExprTools", "InteractiveUtils", "LinearAlgebra", "Random", "Requires", "SparseArrays"]
-git-tree-sha1 = "4c776db838b12800dd289cdc26204f7f971be8d7"
+git-tree-sha1 = "ecf3e09474d387a799aa07e227d0286c315eaf67"
 uuid = "379f33d0-9447-4353-bd03-d664070e549f"
-version = "0.2.3"
+version = "0.2.4"
 
 [[deps.RecipesBase]]
 deps = ["PrecompileTools"]
