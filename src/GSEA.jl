@@ -587,13 +587,16 @@ function plot(
                 "title" => Dict("text" => "<b>Δ Enrichment</b>"),
                 "showgrid" => false,
             ),
-            "xaxis" => merge(
-                Dict(
-                    "title" => Dict("text" => "<b>$naf ($n)</b>"),
-                    "zeroline" => false,
-                    "showgrid" => false,
-                ),
-                Nucleus.Plot.SPIKE,
+            "xaxis" => Dict(
+                "title" => Dict("text" => "<b>$naf ($n)</b>"),
+                "zeroline" => false,
+                "showgrid" => false,
+                "showspikes" => true,
+                "spikesnap" => "cursor",
+                "spikemode" => "across",
+                "spikedash" => "solid",
+                "spikethickness" => 1,
+                "spikecolor" => "#561649",
             ),
             "annotations" => (
                 merge(
