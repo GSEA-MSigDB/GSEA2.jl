@@ -217,9 +217,9 @@ uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
 [[deps.DelaunayTriangulation]]
 deps = ["EnumX", "ExactPredicates", "Random"]
-git-tree-sha1 = "1ef41f49ab90d95f545105c138d9340e4124d079"
+git-tree-sha1 = "3be245211e1a8d12d4579d4b79f51208a594fc93"
 uuid = "927a84f5-c5f4-47a5-9785-b46e178433df"
-version = "1.0.1"
+version = "1.0.2"
 
 [[deps.DiffResults]]
 deps = ["StaticArraysCore"]
