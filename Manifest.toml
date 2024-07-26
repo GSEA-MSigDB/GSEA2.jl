@@ -611,9 +611,9 @@ version = "1.4.5"
 
 [[deps.NMF]]
 deps = ["LinearAlgebra", "NonNegLeastSquares", "PrecompileTools", "Printf", "Random", "RandomizedLinAlg", "Statistics", "StatsBase"]
-git-tree-sha1 = "f036d3901d031e7dbc19c7ada06d7b86451cd2df"
+git-tree-sha1 = "d098a41cbc60447b430c32e1ac271193652205ee"
 uuid = "6ef6ca0d-6ad7-5ff6-b225-e928bfa0a386"
-version = "1.0.2"
+version = "1.0.3"
 
 [[deps.NaNMath]]
 deps = ["OpenLibm_jll"]
@@ -632,10 +632,10 @@ uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
 
 [[deps.NonNegLeastSquares]]
-deps = ["Distributed", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "1271344271ffae97e2855b0287356e6ea5c221cc"
+deps = ["LinearAlgebra", "SparseArrays"]
+git-tree-sha1 = "cdc11138e74a0dd0b82e7d64eb1350fdf049d3b1"
 uuid = "b7351bd1-99d9-5c5d-8786-f205a815c4d7"
-version = "0.4.0"
+version = "0.4.1"
 
 [[deps.Nucleus]]
 deps = ["CSV", "Clustering", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "Distances", "Distributions", "GLM", "JSON", "KernelDensity", "LazySets", "LinearAlgebra", "Mmap", "MultipleTesting", "MultivariateStats", "NMF", "NonNegLeastSquares", "OrderedCollections", "Printf", "ProgressMeter", "Random", "Statistics", "StatsBase", "TOML", "XLSX"]
@@ -741,9 +741,9 @@ version = "1.2.0"
 
 [[deps.QuadGK]]
 deps = ["DataStructures", "LinearAlgebra"]
-git-tree-sha1 = "9b23c31e76e333e6fb4c1595ae6afa74966a729e"
+git-tree-sha1 = "19ec4f9fdc44ed3fcdecd03d8d8a66aff1900f4d"
 uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
-version = "2.9.4"
+version = "2.10.0"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
