@@ -1,4 +1,4 @@
-The official command-line program for gene-set-enrichment analysis (GSEA) 🏔️
+Julia implementation of the next generation GSEA 🏔️
 
 ## Quick Start
 
