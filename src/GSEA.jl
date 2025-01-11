@@ -325,8 +325,11 @@ function _enrich!(::KLioM, sc_, ex, is_, mo_)
         le0 -= pr0
 
         en =
-            Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(ri1, ri0, ri) -
             Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
+                ri1,
+                ri0,
+                ri,
+            ) - Nucleus.Information.get_antisymmetric_kullback_leibler_divergence(
                 _clip(le1),
                 _clip(le0),
                 _clip(le),
@@ -569,7 +572,8 @@ function plot(
             "showlegend" => false,
             "title" => Dict(
                 "text" => "<b>$(Nucleus.String.limit(title_text, 80))</b>",
-                "font" => Dict("size" => 32, "family" => "Relaway", "color" => "#2b2028"),
+                "font" =>
+                    Dict("size" => 32, "family" => "Relaway", "color" => "#2b2028"),
             ),
             "yaxis" => Dict(
                 "domain" => (0, 0.24),
@@ -675,7 +679,19 @@ function enrich(al, fe_, fe_x_sa_x_sc, fe1___; mi = 1, ex = 1)
 
 end
 
-function plot(di, al, fe_, fe_x_sa_x_sc, fe1___, nac, se_, sa_, se_x_sa_x_en; ex = 1, n_pl = 4)
+function plot(
+    di,
+    al,
+    fe_,
+    fe_x_sa_x_sc,
+    fe1___,
+    nac,
+    se_,
+    sa_,
+    se_x_sa_x_en;
+    ex = 1,
+    n_pl = 4,
+)
 
     Nucleus.Error.error_missing(di)
 
@@ -868,7 +884,13 @@ Convert `.cls` and `.gct` to `.tsv`s.
 
     _error(fe_, fe_x_sa_x_nu)
 
-    Nucleus.DataFrame.write(target_x_sample_x_number_tsv, "Target", ta_, sa_, ta_x_sa_x_nu .- 1)
+    Nucleus.DataFrame.write(
+        target_x_sample_x_number_tsv,
+        "Target",
+        ta_,
+        sa_,
+        ta_x_sa_x_nu .- 1,
+    )
 
     Nucleus.DataFrame.write(feature_x_sample_x_score_tsv, "Feature", fe_, sa_, fe_x_sa_x_nu)
 
@@ -886,7 +908,10 @@ Convert one or more `.gmt`s to a `.json`.
 """
 @cast function convert_gmt(set_features_json, gmt_...)
 
-    Nucleus.Dict.write(set_features_json, merge!((Nucleus.GMT.read(gmt) for gmt in gmt_)...))
+    Nucleus.Dict.write(
+        set_features_json,
+        merge!((Nucleus.GMT.read(gmt) for gmt in gmt_)...),
+    )
 
 end
 
@@ -949,11 +974,22 @@ Run data-rank (single-sample) GSEA.
 
     al = _set_algorithm(algorithm)
 
-    se_, fe1___ =
-        _read_set(set_features_json, fe_, minimum_set_size, maximum_set_size, minimum_set_fraction)
+    se_, fe1___ = _read_set(
+        set_features_json,
+        fe_,
+        minimum_set_size,
+        maximum_set_size,
+        minimum_set_fraction,
+    )
 
-    se_x_sa_x_en =
-        enrich(al, fe_, fe_x_sa_x_sc, fe1___; mi = post_skip_minimum_set_size, ex = exponent)
+    se_x_sa_x_en = enrich(
+        al,
+        fe_,
+        fe_x_sa_x_sc,
+        fe1___;
+        mi = post_skip_minimum_set_size,
+        ex = exponent,
+    )
 
     Nucleus.DataFrame.write(
         joinpath(output_directory, "set_x_sample_x_enrichment.tsv"),
@@ -1259,13 +1295,25 @@ Run user-rank (pre-rank) GSEA.
 
     fe_ = fe_[so_]
 
-    se_, fe1___ =
-        _read_set(set_features_json, fe_, minimum_set_size, maximum_set_size, minimum_set_fraction)
+    se_, fe1___ = _read_set(
+        set_features_json,
+        fe_,
+        minimum_set_size,
+        maximum_set_size,
+        minimum_set_fraction,
+    )
 
     if permutation == "set"
 
-        se_x_id_x_ra =
-            _permute_set(number_of_permutations, random_seed, al, fe_, sc_, fe1___, exponent)
+        se_x_id_x_ra = _permute_set(
+            number_of_permutations,
+            random_seed,
+            al,
+            fe_,
+            sc_,
+            fe1___,
+            exponent,
+        )
 
     elseif isfile(permutation)
 
@@ -1441,8 +1489,13 @@ Run metric-rank (standard) GSEA.
         reshape(sc_, :, 1),
     )
 
-    se_, fe1___ =
-        _read_set(set_features_json, fe_, minimum_set_size, maximum_set_size, minimum_set_fraction)
+    se_, fe1___ = _read_set(
+        set_features_json,
+        fe_,
+        minimum_set_size,
+        maximum_set_size,
+        minimum_set_fraction,
+    )
 
     al = _set_algorithm(algorithm)
 
@@ -1468,8 +1521,15 @@ Run metric-rank (standard) GSEA.
 
     elseif permutation == "set"
 
-        se_x_id_x_ra =
-            _permute_set(number_of_permutations, random_seed, al, fe_, sc_, fe1___, exponent)
+        se_x_id_x_ra = _permute_set(
+            number_of_permutations,
+            random_seed,
+            al,
+            fe_,
+            sc_,
+            fe1___,
+            exponent,
+        )
 
     elseif isfile(permutation)
 

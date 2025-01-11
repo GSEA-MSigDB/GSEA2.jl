@@ -1,6 +1,6 @@
 using Test: @test
 
-using Nucleus
+using Omics
 
 using GSEA
 
@@ -88,7 +88,9 @@ function compare(jsk, al, st, py, pyi, ju, jui, atol)
         "$(Nucleus.String.clean(jsk)) $al $st",
         .!isapprox.(
             # TODO
-            (fl -> fl isa AbstractString ? parse(Float64, lstrip(fl, '≤')) : fl).(py[!, pyi]),
+            (
+                fl -> fl isa AbstractString ? parse(Float64, lstrip(fl, '≤')) : fl
+            ).(py[!, pyi]),
             ju[!, jui];
             atol,
         ),
@@ -118,7 +120,12 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
     if !isfile(tst) || !isfile(tsf)
 
-        GSEA.convert_cls_gct(tst, tsf, joinpath(DID, ke_va["cls"]), joinpath(DID, ke_va["ds"]))
+        GSEA.convert_cls_gct(
+            tst,
+            tsf,
+            joinpath(DID, ke_va["cls"]),
+            joinpath(DID, ke_va["ds"]),
+        )
 
     end
 
@@ -126,7 +133,10 @@ for (idb, js) in enumerate(Nucleus.Path.read(DIJ))
 
     if !isfile(jss)
 
-        GSEA.convert_gmt(jss, (joinpath(DIS, gm) for gm in ke_va["gene_sets_collections"])...)
+        GSEA.convert_gmt(
+            jss,
+            (joinpath(DIS, gm) for gm in ke_va["gene_sets_collections"])...,
+        )
 
     end
 

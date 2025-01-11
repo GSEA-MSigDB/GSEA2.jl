@@ -1,165 +1,73 @@
-Julia implementation of the next generation GSEA 🏔️
+# Gene set enrichment analysis 🏔️
 
-## Quick Start
+## Julia
 
-#### 1. Go to `example` directory
+```julia
+]add https://github.com/GSEA-MSigDB/GSEA.jl
+
+using GSEA
+
+const SA = pkgdir(GSEA, "example", "sarcopenia")
+
+GSEA.metric_rank(
+    mkpath(joinpath(homedir(), "Downloads", "output")),
+    joinpath(SA, "target_x_sample_x_number.tsv"),
+    joinpath(SA, "feature_x_sample_x_number.tsv"),
+    joinpath(SA, "set_features.json"),
+    number_of_permutations = 10,
+    more_sets_to_plot = ["WP_DNA_MISMATCH_REPAIR", "WP_CELL_CYCLE"],
+)
+```
+
+## Command Line Interface
 
 ```bash
+mkdir ~/Downloads/output
+
 cd example/sarcopenia
-
-ls -l
-```
-
-#### 2. Make an output directory
-
-```bash
-mkdir ~/Downloads/gsea
-```
-
-#### 3. Run GSEA
-
-```bash
 gsea metric-rank \
-    ~/Downloads/gsea \
+    ~/Downloads/output \
     target_x_sample_x_number.tsv \
     feature_x_sample_x_number.tsv \
     set_features.json \
     --number-of-permutations 10 \
-    --more-sets-to-plot "WP_DNA_MISMATCH_REPAIR WP_CELL_CYCLE ALIEN"
-```
+    --more-sets-to-plot "WP_DNA_MISMATCH_REPAIR WP_CELL_CYCLE"
 
-#### 4. Look at the results
+cd ~/Downloads/output
 
-```bash
-cd ~/Downloads/gsea
-
-ls -l
-
-head -3 *.tsv
+head -4 *.tsv
 
 open *.html
 ```
 
-## Use `gsea` command-line interface
-
-#### Run `metric-rank` (standard) GSEA
-
-```bash
-gsea metric-rank
-```
-
-#### Run `user-rank` (pre-rank) GSEA
-
-```bash
-gsea user-rank
-```
-
-#### Run `data-rank` (single-sample) GSEA
-
-```bash
-gsea data-rank
-```
-
-#### Convert `.cls` and `.gct` to `.tsv`s
-
-```bash
-gsea convert-cls-gct
-```
-
-#### Convert one or more `.gmt`s to a `.json`
-
-```bash
-gsea convert-gmt
-```
-
-## Use in `julia`
-
-#### `]add`
-
-```julia
-]add https://github.com/KwatMDPhD/GSEA.jl
-```
-
-#### Use
-
-Each command-line-interface command has a corresponding function.
-Options and flags are keyword arguments.
-
-#### Reproduce [Quick Start](#quick-start) in `julia`
-
-```julia
-using GSEA
-
-const DI = joinpath("example", "sarcopenia")
-
-GSEA.metric_rank(
-    mkpath(joinpath(homedir(), "Downloads", "gsea")),
-    joinpath(DI, "target_x_sample_x_number.tsv"),
-    joinpath(DI, "feature_x_sample_x_number.tsv"),
-    joinpath(DI, "set_features.json"),
-    number_of_permutations = 10,
-    more_sets_to_plot = ["WP_DNA_MISMATCH_REPAIR", "WP_CELL_CYCLE", "ALIEN"],
-)
-```
-
 ## Install
 
-1. Download the latest [release](https://github.com/KwatMDPhD/GSEA.jl/releases/latest) and extract it.
+We plan to sign this app for macOS soon.
+In the meantime, please [enable third-party apps](https://support.apple.com/en-us/102445#openanyway).
 
-2. Path
+Download and extract the latest [release](https://github.com/GSEA-MSigDB/GSEA.jl/releases/latest).
 
 ```bash
 PATH=$(pwd)/gsea/bin:$PATH
-```
 
-3. Use
-
-We plan to sign the app soon. Meanwhile, enable 3rd-party apps on your macOS.
-
-```bash
 gsea --help
 ```
-
-🎉
 
 ## Build
 
-If installation is unavailable or fails, try building.
-
-#### 1. Download
-
-```bash
-git clone https://github.com/KwatMDPhD/GSEA.jl
-```
-
-#### 2. Instantiate
-
-```bash
-cd GSEA.jl &&
-
-julia --project --eval "using Pkg; Pkg.instantiate()"
-```
-
-#### 3. Build
-
 ```bash
 julia --project deps/build.jl app tarball
-```
 
-#### 4. Path
-
-```bash
 PATH=$(pwd)/build/gsea/bin:$PATH
-```
 
-#### 5. Use
-
-```bash
 gsea --help
 ```
 
-🎊
+## Contact Us
+
+If you have any questions, issues, or concerns, please feel free to [open a GitHub issue](https://github.com/GSEA-MSigDB/GSEA2.jl/issues/new/choose).
+We will respond within 8 hours.
 
 ---
 
-Powered by https://github.com/KwatMDPhD/Kata.jl 🥋
+Made by [Kata](https://github.com/KwatMDPhD/Kata.jl) 🥋

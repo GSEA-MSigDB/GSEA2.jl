@@ -1,5 +1,0 @@
-[sysimg.precompile]
-execution_file = ["test/runtests.jl"]
-
-[application.precompile]
-execution_file = ["test/runtests.jl"]

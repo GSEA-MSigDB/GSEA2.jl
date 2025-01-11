@@ -1,12 +1,12 @@
-using Test: @test
-
 using GSEA
+
+using Test: @test
 
 # ----------------------------------------------------------------------------------------------- #
 
 using Random: seed!
 
-using Nucleus
+using Omics
 
 # ---- #
 
@@ -209,13 +209,17 @@ end
 
 const FE_, SC_ = eachcol(
     reverse!(
-        Nucleus.DataFrame.read(joinpath(DA, "gene_x_statistic_x_number.tsv"); select = [1, 2]),
+        Nucleus.DataFrame.read(
+            joinpath(DA, "gene_x_statistic_x_number.tsv");
+            select = [1, 2],
+        ),
     ),
 )
 
 # ---- #
 
-const FE1_ = Nucleus.GMT.read(joinpath(DA, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"]
+const FE1_ =
+    Nucleus.GMT.read(joinpath(DA, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"]
 
 # ---- #
 
@@ -523,7 +527,11 @@ const FEATURE_X_METRIC_X_SCORE =
 
 # ---- #
 
-@test isapprox(view(FEATURE_X_METRIC_X_SCORE, [1, 1000], 2), [1.83724, -1.7411]; atol = 0.00001)
+@test isapprox(
+    view(FEATURE_X_METRIC_X_SCORE, [1, 1000], 2),
+    [1.83724, -1.7411];
+    atol = 0.00001,
+)
 
 # ---- #
 
