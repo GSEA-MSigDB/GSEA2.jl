@@ -325,11 +325,8 @@ function _enrich!(::KLioM, sc_, ex, is_, mo_)
         le0 -= pr0
 
         en =
+            Omics.Information.get_antisymmetric_kullback_leibler_divergence(ri1, ri0, ri) -
             Omics.Information.get_antisymmetric_kullback_leibler_divergence(
-                ri1,
-                ri0,
-                ri,
-            ) - Omics.Information.get_antisymmetric_kullback_leibler_divergence(
                 _clip(le1),
                 _clip(le0),
                 _clip(le),
@@ -908,10 +905,7 @@ Convert one or more `.gmt`s to a `.json`.
 """
 @cast function convert_gmt(set_features_json, gmt_...)
 
-    Omics.Dict.write(
-        set_features_json,
-        merge!((Omics.GMT.read(gmt) for gmt in gmt_)...),
-    )
+    Omics.Dict.write(set_features_json, merge!((Omics.GMT.read(gmt) for gmt in gmt_)...))
 
 end
 
