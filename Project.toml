@@ -5,6 +5,7 @@ version = "0.18.8"
 
 [deps]
 Comonicon = "863f3e99-da2a-4334-8734-de3dacbe5542"
+Omics = "55404059-57b2-473d-9cce-582834f19b54"
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
