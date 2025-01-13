@@ -10,154 +10,103 @@ using Omics
 
 # ---- #
 
-const TE = mkdir(joinpath(Nucleus.TE, "GSEA"))
-
-# ---- #
-
-const DA = joinpath(dirname(@__DIR__), "data")
-
-# ---- #
-
-@test Nucleus.Path.read(DA) == [
-    "2set_features.json",
-    "c2.all.v7.1.symbols.gmt",
-    "feature_x_metric_x_score.tsv",
-    "feature_x_sample_x_number.tsv",
-    "gene_x_statistic_x_number.tsv",
-    "h.all.v7.1.symbols.gmt",
-    "set_features.json",
-    "target_x_sample_x_number.tsv",
-]
-
-# ---- #
-
-const AL_ = (GSEA.KS(), GSEA.KSa(), GSEA.KLi1(), GSEA.KLi(), GSEA.KLioM(), GSEA.KLioP())
-
-# ---- #
-
-for (al, re) in zip(AL_, ("KS", "KSa", "KLi1", "KLi", "KLioM", "KLioP"))
-
-    @test GSEA.make_string(al) === re
-
-    # 408.750 ns (9 allocations: 360 bytes)
-    # 404.165 ns (9 allocations: 360 bytes)
-    # 414.784 ns (9 allocations: 360 bytes)
-    # 406.875 ns (9 allocations: 360 bytes)
-    # 417.296 ns (9 allocations: 360 bytes)
-    # 418.131 ns (9 allocations: 360 bytes)
-    #@btime GSEA.make_string($al)
-
-end
-
-# ---- #
-
 const SC = -2.0
 
-# ---- #
-
-for ex in (-1, 0, 1, 2, 3, 4, 0.1, 0.5)
+# 3.666 ns (0 allocations: 0 bytes)
+# 1.750 ns (0 allocations: 0 bytes)
+# 11.386 ns (0 allocations: 0 bytes)
+# 11.386 ns (0 allocations: 0 bytes)
+# 1.458 ns (0 allocations: 0 bytes)
+# 3.958 ns (0 allocations: 0 bytes)
+for ex in (-1, 0, 0.1, 0.5, 1, 2)
 
     @test GSEA._absolute_exponentiate(SC, ex) === abs(SC)^ex
 
-    # 3.666 ns (0 allocations: 0 bytes)
-    # 1.750 ns (0 allocations: 0 bytes)
-    # 1.458 ns (0 allocations: 0 bytes)
-    # 3.958 ns (0 allocations: 0 bytes)
-    # 2.375 ns (0 allocations: 0 bytes)
-    # 4.875 ns (0 allocations: 0 bytes)
-    # 11.386 ns (0 allocations: 0 bytes)
-    # 11.386 ns (0 allocations: 0 bytes)
-    #@btime GSEA._absolute_exponentiate(SC, $ex)
+    @btime GSEA._absolute_exponentiate(SC, $ex)
 
 end
 
 # ---- #
 
-const SCS_ = [-2, -1, -0.5, 0, 0, 0.5, 1, 2, 3.4]
+const SC_ = [-2, -1, -0.5, 0, 0, 0.5, 1, 2, 3.4]
+
+const UF = lastindex(SC_)
+
+const BI_ = BitVector((1, 0, 1, 0, 1, 1, 0, 0, 1))
 
 # ---- #
 
-const N = lastindex(SCS_)
-
-# ---- #
-
-const ISS_ = BitVector((1, 0, 1, 0, 1, 1, 0, 0, 1))
-
-# ---- #
-
+# 63.350 ns (0 allocations: 0 bytes)
+# 63.350 ns (0 allocations: 0 bytes)
+# 63.350 ns (0 allocations: 0 bytes)
+# 9.510 ns (0 allocations: 0 bytes)
+# 20.687 ns (0 allocations: 0 bytes)
 for (ex, re) in (
-    (-0.5, (N, 0.0)),
-    (1, (N, 0.15625)),
-    (2, (N, 0.06226650062266501)),
-    (0.1, (N, 0.24581982412836917)),
-    (0.5, (N, 0.21402570288861142)),
+    (-0.5, (UF, 0.0)),
+    (0.1, (UF, 0.24581982412836917)),
+    (0.5, (UF, 0.21402570288861142)),
+    (1, (UF, 0.15625)),
+    (2, (UF, 0.06226650062266501)),
 )
 
-    @test GSEA._get_1_normalizer(SCS_, ex, ISS_) === re
+    @test GSEA._get_1_normalizer(SC_, ex, BI_) === re
 
-    # 63.350 ns (0 allocations: 0 bytes)
-    # 9.510 ns (0 allocations: 0 bytes)
-    # 20.687 ns (0 allocations: 0 bytes)
-    # 63.350 ns (0 allocations: 0 bytes)
-    # 63.350 ns (0 allocations: 0 bytes)
-    #@btime GSEA._get_1_normalizer(SCS_, $ex, ISS_)
+    @btime GSEA._get_1_normalizer(SC_, $ex, BI_)
 
 end
 
 # ---- #
 
-const NOA = 0.25
+const NO = 0.25
 
-# ---- #
-
+# 59.700 ns (0 allocations: 0 bytes)
+# 59.682 ns (0 allocations: 0 bytes)
+# 59.681 ns (0 allocations: 0 bytes)
+# 9.500 ns (0 allocations: 0 bytes)
+# 21.314 ns (0 allocations: 0 bytes)
 for (ex, re) in (
-    (-0.5, (N, NOA, 0.0)),
-    (1, (N, NOA, 0.15625)),
-    (2, (N, NOA, 0.06226650062266501)),
-    (0.1, (N, NOA, 0.24581982412836917)),
-    (0.5, (N, NOA, 0.21402570288861142)),
+    (-0.5, (UF, NO, 0.0)),
+    (0.1, (UF, NO, 0.24581982412836917)),
+    (0.5, (UF, NO, 0.21402570288861142)),
+    (1, (UF, NO, 0.15625)),
+    (2, (UF, NO, 0.06226650062266501)),
 )
 
-    @test GSEA._get_0_1_normalizer(SCS_, ex, ISS_) === re
+    @test GSEA._get_0_1_normalizer(SC_, ex, BI_) === re
 
-    # 59.700 ns (0 allocations: 0 bytes)
-    # 9.500 ns (0 allocations: 0 bytes)
-    # 21.314 ns (0 allocations: 0 bytes)
-    # 59.682 ns (0 allocations: 0 bytes)
-    # 59.681 ns (0 allocations: 0 bytes)
-    #@btime GSEA._get_0_1_normalizer(SCS_, $ex, ISS_)
+    @btime GSEA._get_0_1_normalizer(SC_, $ex, BI_)
 
 end
 
 # ---- #
 
+# 97.238 ns (0 allocations: 0 bytes)
+# 97.238 ns (0 allocations: 0 bytes)
+# 97.281 ns (0 allocations: 0 bytes)
+# 8.884 ns (0 allocations: 0 bytes)
+# 28.098 ns (0 allocations: 0 bytes)
 for (ex, re) in (
-    (-0.5, (N, 0.0, 0.0)),
-    (1, (N, 0.09615384615384615, 0.15625)),
-    (2, (N, 0.04533091568449683, 0.06226650062266501)),
-    (0.1, (N, 0.14006007078470165, 0.24581982412836917)),
-    (0.5, (N, 0.12366213677204271, 0.21402570288861142)),
+    (-0.5, (UF, 0.0, 0.0)),
+    (0.1, (UF, 0.14006007078470165, 0.24581982412836917)),
+    (0.5, (UF, 0.12366213677204271, 0.21402570288861142)),
+    (1, (UF, 0.09615384615384615, 0.15625)),
+    (2, (UF, 0.04533091568449683, 0.06226650062266501)),
 )
 
-    @test GSEA._get_all_1_normalizer(SCS_, ex, ISS_) === re
+    @test GSEA._get_all_1_normalizer(SC_, ex, BI_) === re
 
-    # 97.238 ns (0 allocations: 0 bytes)
-    # 8.884 ns (0 allocations: 0 bytes)
-    # 28.098 ns (0 allocations: 0 bytes)
-    # 97.238 ns (0 allocations: 0 bytes)
-    # 97.281 ns (0 allocations: 0 bytes)
-    #@btime GSEA._get_all_1_normalizer(SCS_, $ex, ISS_)
+    @btime GSEA._get_all_1_normalizer(SC_, $ex, BI_)
 
 end
 
 # ---- #
 
+# 1.458 ns (0 allocations: 0 bytes)
 for (noa, no1, re) in ((0.5, 1 / 3, -1.0),)
 
     @test GSEA._get_0_normalizer(noa, no1) === re
 
-    # 1.458 ns (0 allocations: 0 bytes)
-    #@btime GSEA._get_0_normalizer($noa, $no1)
+    @btime GSEA._get_0_normalizer($noa, $no1)
 
 end
 
@@ -165,17 +114,15 @@ end
 
 const FEC_ = ["K", "Q", "J", "X", "9", "8", "7", "6", "5", "4", "3", "2", "A"]
 
-# ---- #
-
 const SCC_ = [6.0, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6]
-
-# ---- #
 
 const FE1C_ = ["K", "A"]
 
+const EX = 1
+
 # ---- #
 
-const EX = 1
+const AL_ = GSEA.KS(), GSEA.KSa(), GSEA.KLi1(), GSEA.KLi(), GSEA.KLioM(), GSEA.KLioP()
 
 # ---- #
 
@@ -191,23 +138,27 @@ const ISC_ = in(Set(FE1C_)).(FEC_)
 
 # ---- #
 
+# 19.433 ns (0 allocations: 0 bytes)
+# 17.869 ns (0 allocations: 0 bytes)
+# 118.359 ns (0 allocations: 0 bytes)
+# 126.633 ns (0 allocations: 0 bytes)
+# 225.103 ns (0 allocations: 0 bytes)
+# 225.069 ns (0 allocations: 0 bytes)
 for (al, re) in zip(AL_, (-0.5, 0, 0, 0, 0, 0))
 
     @test isapprox(GSEA._enrich!(al, SCC_, EX, ISC_, nothing), re; atol = 0.000000000000001)
 
-    # 19.433 ns (0 allocations: 0 bytes)
-    # 17.869 ns (0 allocations: 0 bytes)
-    # 118.359 ns (0 allocations: 0 bytes)
-    # 126.633 ns (0 allocations: 0 bytes)
-    # 225.103 ns (0 allocations: 0 bytes)
-    # 225.069 ns (0 allocations: 0 bytes)
-    #@btime GSEA._enrich!($al, SCC_, EX, ISC_, nothing)
+    @btime GSEA._enrich!($al, SCC_, EX, ISC_, nothing)
 
 end
 
 # ---- #
 
-const FE_, SC_ = eachcol(
+const DA = pkgdir(GSEA, "data")
+
+# ---- #
+
+const FE_, SO_ = eachcol(
     reverse!(
         Nucleus.DataFrame.read(
             joinpath(DA, "gene_x_statistic_x_number.tsv");
@@ -225,7 +176,7 @@ const FE1_ =
 
 for al in AL_
 
-    GSEA.plot("", al, FE_, SC_, FE1_; ex = EX, title_text = GSEA.make_string(al))
+    GSEA.plot("", al, FE_, SO_, FE1_; ex = EX, title_text = GSEA.make_string(al))
 
 end
 
@@ -235,6 +186,12 @@ const IS_ = in(Set(FE1_)).(FE_)
 
 # ---- #
 
+# 45.208 μs (0 allocations: 0 bytes)
+# 37.500 μs (0 allocations: 0 bytes)
+# 164.833 μs (0 allocations: 0 bytes)
+# 186.208 μs (0 allocations: 0 bytes)
+# 325.833 μs (0 allocations: 0 bytes)
+# 326.042 μs (0 allocations: 0 bytes)
 for (al, re) in zip(
     AL_,
     (
@@ -247,15 +204,9 @@ for (al, re) in zip(
     ),
 )
 
-    @test isapprox(GSEA._enrich!(al, SC_, EX, IS_, nothing), re; atol = 0.000000000001)
+    @test isapprox(GSEA._enrich!(al, SO_, EX, IS_, nothing), re; atol = 0.000000000001)
 
-    # 45.208 μs (0 allocations: 0 bytes)
-    # 37.500 μs (0 allocations: 0 bytes)
-    # 164.833 μs (0 allocations: 0 bytes)
-    # 186.208 μs (0 allocations: 0 bytes)
-    # 325.833 μs (0 allocations: 0 bytes)
-    # 326.042 μs (0 allocations: 0 bytes)
-    #@btime GSEA._enrich!($al, SC_, EX, IS_, nothing)
+    @btime GSEA._enrich!($al, SO_, EX, IS_, nothing)
 
 end
 
@@ -273,33 +224,33 @@ const FE1___ = collect(values(SE_FE1_))
 
 # ---- #
 
+# 3.022 ms (108 allocations: 934.22 KiB)
+# 2.649 ms (108 allocations: 934.22 KiB)
+# 9.001 ms (108 allocations: 934.22 KiB)
+# 10.127 ms (108 allocations: 934.22 KiB)
+# 17.202 ms (108 allocations: 934.22 KiB)
+# 17.186 ms (108 allocations: 934.22 KiB)
 for al in AL_
 
-    # 3.022 ms (108 allocations: 934.22 KiB)
-    # 2.649 ms (108 allocations: 934.22 KiB)
-    # 9.001 ms (108 allocations: 934.22 KiB)
-    # 10.127 ms (108 allocations: 934.22 KiB)
-    # 17.202 ms (108 allocations: 934.22 KiB)
-    # 17.186 ms (108 allocations: 934.22 KiB)
-    #@btime GSEA.enrich($al, FE_, SC_, FE1___; ex = EX)
+    @btime GSEA.enrich($al, FE_, SO_, FE1___; ex = EX)
 
 end
 
 # ---- #
 
-const FE_X_SA_X_SC = hcat(SC_, SC_ * 10, fill(0.8, lastindex(FE_)))
+const FE_X_SA_X_SC = hcat(SO_, SO_ * 10, fill(0.8, lastindex(FE_)))
 
 # ---- #
 
+# 9.548 ms (370 allocations: 5.51 MiB)
+# 8.382 ms (370 allocations: 5.51 MiB)
+# 27.547 ms (370 allocations: 5.51 MiB)
+# 30.802 ms (370 allocations: 5.51 MiB)
+# 52.180 ms (370 allocations: 5.51 MiB)
+# 52.183 ms (370 allocations: 5.51 MiB)
 for al in AL_
 
-    # 9.548 ms (370 allocations: 5.51 MiB)
-    # 8.382 ms (370 allocations: 5.51 MiB)
-    # 27.547 ms (370 allocations: 5.51 MiB)
-    # 30.802 ms (370 allocations: 5.51 MiB)
-    # 52.180 ms (370 allocations: 5.51 MiB)
-    # 52.183 ms (370 allocations: 5.51 MiB)
-    #@btime GSEA.enrich($al, FE_, FE_X_SA_X_SC, FE1___; ex = EX)
+    @btime GSEA.enrich($al, FE_, FE_X_SA_X_SC, FE1___; ex = EX)
 
 end
 
@@ -310,6 +261,10 @@ const AL = GSEA.KS()
 # ---- #
 
 const SE_X_SA_X_EN = GSEA.enrich(AL, FE_, FE_X_SA_X_SC, FE1___; ex = EX)
+
+# ---- #
+
+const TE = tempdir()
 
 # ---- #
 
@@ -396,6 +351,8 @@ const SET_X_SAMPLE_X_ENRICHMENT =
 
 # ---- #
 
+# 737.209 μs (1001 allocations: 1.47 MiB)
+# 803.333 μs (1001 allocations: 1.47 MiB)
 for al in (AL_[1], AL_[end])
 
     seed!(20231103)
@@ -406,9 +363,7 @@ for al in (AL_[1], AL_[end])
 
     GSEA._normalize_enrichment!(al, en_, se_x_id_x_ra)
 
-    # 737.209 μs (1001 allocations: 1.47 MiB)
-    # 803.333 μs (1001 allocations: 1.47 MiB)
-    #@btime GSEA._normalize_enrichment!($al, $en_, $se_x_id_x_ra)
+    @btime GSEA._normalize_enrichment!($al, $en_, $se_x_id_x_ra)
 
 end
 
@@ -425,9 +380,9 @@ end
 
 # ---- #
 
-function test_html(ou, n)
+function test_html(ou, uh)
 
-    @test lastindex(Nucleus.Path.read(ou; ke_ = (r"html$",))) === n
+    @test lastindex(Nucleus.Path.read(ou; ke_ = (r"html$",))) === uh
 
 end
 
@@ -483,6 +438,10 @@ const ZE_ = fill(0, 3)
 
 # ---- #
 
+# 37.088 ns (0 allocations: 0 bytes)
+# 21.439 ns (0 allocations: 0 bytes)
+# 38.807 ns (0 allocations: 0 bytes)
+# 39.396 ns (0 allocations: 0 bytes)
 for (nu1_, nu2_, re) in (
     (fill(1, 3), fill(0.001, 3), 4.990009990009989),
     (collect(1:3), collect(10:10:30), -1.6363636363636365),
@@ -492,11 +451,7 @@ for (nu1_, nu2_, re) in (
 
     @test GSEA._get_signal_to_noise_ratio(nu1_, nu2_) === re
 
-    # 37.088 ns (0 allocations: 0 bytes)
-    # 21.439 ns (0 allocations: 0 bytes)
-    # 38.807 ns (0 allocations: 0 bytes)
-    # 39.396 ns (0 allocations: 0 bytes)
-    #@btime GSEA._get_signal_to_noise_ratio($nu1_, $nu2_)
+    @btime GSEA._get_signal_to_noise_ratio($nu1_, $nu2_)
 
 end
 

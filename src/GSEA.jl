@@ -4,12 +4,10 @@ using ProgressMeter: @showprogress
 
 using Omics
 
-include("1.jl")
+include("enrich.jl")
 
-include("2.jl")
+include("plot.jl")
 
-include("3.jl")
-
-include("4.jl")
+include("rank.jl")
 
 end
