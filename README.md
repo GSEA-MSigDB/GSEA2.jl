@@ -1,4 +1,5 @@
 # Gene set enrichment analysis 🏔️
+Julia implementation of the next generation GSEA
 
 ## Julia
 
@@ -66,8 +67,6 @@ gsea --help
 ## Contact Us
 
 If you have any questions, issues, or concerns, please feel free to [open a GitHub issue](https://github.com/GSEA-MSigDB/GSEA2.jl/issues/new/choose).
-We will respond within 8 hours.
 
----
 
-Made by [Kata](https://github.com/KwatMDPhD/Kata.jl) 🥋
+
