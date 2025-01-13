@@ -1,96 +1,84 @@
-@inline function _absolute_exponentiate(sc, ex)
-
-    ab = abs(sc)
-
-    if !isone(ex)
-
-        ab ^= ex
-
-    end
-
-    ab
-
-end
+# TODO: Benchmark without @inline
 
 @inline function _get_1_normalizer(sc_, ex, is_)
 
-    n = lastindex(sc_)
+    uf = lastindex(sc_)
 
-    su1 = 0.0
+    su = 0.0
 
-    for id in 1:n
+    for id in 1:uf
 
         if is_[id]
 
-            su1 += _absolute_exponentiate(sc_[id], ex)
+            su += abs(sc_[id])^ex
 
         end
 
     end
 
-    n, 1 / su1
+    uf, inv(su)
 
 end
 
 @inline function _get_0_1_normalizer(sc_, ex, is_)
 
-    n = lastindex(sc_)
+    uf = lastindex(sc_)
 
-    su0 = su1 = 0.0
+    s0 = s1 = 0.0
 
-    for id in 1:n
+    for id in 1:uf
 
         if is_[id]
 
-            su1 += _absolute_exponentiate(sc_[id], ex)
+            s1 += abs(sc_[id])^ex
 
         else
 
-            su0 += 1.0
+            s0 += 1.0
 
         end
 
     end
 
-    n, 1 / su0, 1 / su1
+    uf, inv(s0), inv(s1)
 
 end
 
 @inline function _get_all_1_normalizer(sc_, ex, is_)
 
-    n = lastindex(sc_)
+    uf = lastindex(sc_)
 
-    su = su1 = 0.0
+    su = s1 = 0.0
 
-    for id in 1:n
+    for id in 1:uf
 
-        ab = _absolute_exponentiate(sc_[id], ex)
+        ab = abs(sc_[id])^ex
 
         su += ab
 
         if is_[id]
 
-            su1 += ab
+            s1 += ab
 
         end
 
     end
 
-    n, 1 / su, 1 / su1
+    uf, inv(su), inv(s1)
 
 end
 
-@inline function _get_0_normalizer(noa, no1)
+@inline function _get_0_normalizer(su, s1)
 
-    1 / (1 / noa - 1 / no1)
+    inv(inv(su) - inv(s1))
 
 end
 
-@inline function _clip(nu)
+@inline function _clip(fl)
 
     ep = eps()
 
-    nu < ep ? ep : nu
+    fl < ep ? ep : fl
 
 end
 
@@ -108,15 +96,15 @@ struct KLioP end
 
 function _enrich!(::KS, sc_, ex, is_, mo_)
 
-    n, no0, no1 = _get_0_1_normalizer(sc_, ex, is_)
+    uf, no0, no1 = _get_0_1_normalizer(sc_, ex, is_)
 
     cu = et = eta = 0.0
 
-    for id in 1:n
+    for id in 1:uf
 
         if is_[id]
 
-            cu += _absolute_exponentiate(sc_[id], ex) * no1
+            cu += abs(sc_[id])^ex * no1
 
         else
 
@@ -148,15 +136,15 @@ end
 
 function _enrich!(::KSa, sc_, ex, is_, mo_)
 
-    n, no0, no1 = _get_0_1_normalizer(sc_, ex, is_)
+    uf, no0, no1 = _get_0_1_normalizer(sc_, ex, is_)
 
     cu = ar = 0.0
 
-    for id in 1:n
+    for id in 1:uf
 
         if is_[id]
 
-            cu += _absolute_exponentiate(sc_[id], ex) * no1
+            cu += abs(sc_[id])^ex * no1
 
         else
 
@@ -174,17 +162,17 @@ function _enrich!(::KSa, sc_, ex, is_, mo_)
 
     end
 
-    ar / n
+    ar / uf
 
 end
 
 function _enrich!(::KLi1, sc_, ex, is_, mo_)
 
-    n, no1 = _get_1_normalizer(sc_, ex, is_)
+    uf, no1 = _get_1_normalizer(sc_, ex, is_)
 
     ri = ri1 = eps()
 
-    rid = 1 / n
+    rid = inv(uf)
 
     le = 1.0 + rid
 
@@ -192,9 +180,9 @@ function _enrich!(::KLi1, sc_, ex, is_, mo_)
 
     ar = pr1 = 0.0
 
-    for id in 1:n
+    for id in 1:uf
 
-        ri1d = is_[id] ? _absolute_exponentiate(sc_[id], ex) * no1 : 0.0
+        ri1d = is_[id] ? abs(sc_[id])^ex * no1 : 0.0
 
         en = Omics.Information.get_antisymmetric_kullback_leibler_divergence(
             ri1 += ri1d,
@@ -215,13 +203,13 @@ function _enrich!(::KLi1, sc_, ex, is_, mo_)
 
     end
 
-    ar / n
+    ar / uf
 
 end
 
 function _enrich!(::KLi, sc_, ex, is_, mo_)
 
-    n, noa, no1 = _get_all_1_normalizer(sc_, ex, is_)
+    uf, noa, no1 = _get_all_1_normalizer(sc_, ex, is_)
 
     ri = ri1 = eps()
 
@@ -229,9 +217,9 @@ function _enrich!(::KLi, sc_, ex, is_, mo_)
 
     ar = pr = pr1 = 0.0
 
-    for id in 1:n
+    for id in 1:uf
 
-        ab = _absolute_exponentiate(sc_[id], ex)
+        ab = abs(sc_[id])^ex
 
         ri1d = is_[id] ? ab * no1 : 0.0
 
@@ -258,13 +246,13 @@ function _enrich!(::KLi, sc_, ex, is_, mo_)
 
     end
 
-    ar / n
+    ar / uf
 
 end
 
 function _enrich!(::KLioM, sc_, ex, is_, mo_)
 
-    n, noa, no1 = _get_all_1_normalizer(sc_, ex, is_)
+    uf, noa, no1 = _get_all_1_normalizer(sc_, ex, is_)
 
     no0 = _get_0_normalizer(noa, no1)
 
@@ -274,9 +262,9 @@ function _enrich!(::KLioM, sc_, ex, is_, mo_)
 
     ar = pr = pr1 = pr0 = 0.0
 
-    for id in 1:n
+    for id in 1:uf
 
-        ab = _absolute_exponentiate(sc_[id], ex)
+        ab = abs(sc_[id])^ex
 
         rid = ab * noa
 
@@ -330,13 +318,13 @@ function _enrich!(::KLioM, sc_, ex, is_, mo_)
 
     end
 
-    ar / n
+    ar / uf
 
 end
 
 function _enrich!(::KLioP, sc_, ex, is_, mo_)
 
-    n, noa, no1 = _get_all_1_normalizer(sc_, ex, is_)
+    uf, noa, no1 = _get_all_1_normalizer(sc_, ex, is_)
 
     no0 = _get_0_normalizer(noa, no1)
 
@@ -346,9 +334,9 @@ function _enrich!(::KLioP, sc_, ex, is_, mo_)
 
     ar = pr = pr1 = pr0 = 0.0
 
-    for id in 1:n
+    for id in 1:uf
 
-        ab = _absolute_exponentiate(sc_[id], ex)
+        ab = abs(sc_[id])^ex
 
         rid = ab * noa
 
@@ -402,7 +390,7 @@ function _enrich!(::KLioP, sc_, ex, is_, mo_)
 
     end
 
-    ar / n
+    ar / uf
 
 end
 

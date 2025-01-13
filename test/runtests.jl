@@ -10,26 +10,6 @@ using Omics
 
 # ---- #
 
-const SC = -2.0
-
-# 3.666 ns (0 allocations: 0 bytes)
-# 1.750 ns (0 allocations: 0 bytes)
-# 11.386 ns (0 allocations: 0 bytes)
-# 11.386 ns (0 allocations: 0 bytes)
-# 1.458 ns (0 allocations: 0 bytes)
-# 3.958 ns (0 allocations: 0 bytes)
-for ex in (-1, 0, 0.0, 0.1, 0.5, 1, 2)
-
-    @test GSEA._absolute_exponentiate(SC, ex) === abs(SC)^ex
-
-    @btime GSEA._absolute_exponentiate(SC, $ex)
-
-    @btime abs(SC)^$ex
-
-end
-
-# ---- #
-
 const SC_ = [-2, -1, -0.5, 0, 0, 0.5, 1, 2, 3.4]
 
 const UF = lastindex(SC_)
@@ -41,11 +21,14 @@ const IS_ = BitVector((1, 0, 1, 0, 1, 1, 0, 0, 1))
 
 # 63.350 ns (0 allocations: 0 bytes)
 # 63.350 ns (0 allocations: 0 bytes)
-# 63.350 ns (0 allocations: 0 bytes)
 # 9.510 ns (0 allocations: 0 bytes)
 # 20.687 ns (0 allocations: 0 bytes)
+#
+# 81.179 ns (0 allocations: 0 bytes)
+# 81.190 ns (0 allocations: 0 bytes)
+# 20.081 ns (0 allocations: 0 bytes)
+# 19.998 ns (0 allocations: 0 bytes)
 for (ex, re) in (
-    (-0.5, (UF, 0.0)),
     (0.1, (UF, 0.24581982412836917)),
     (0.5, (UF, 0.21402570288861142)),
     (1, (UF, 0.15625)),
@@ -60,19 +43,22 @@ end
 
 # ---- #
 
-const U2 = 0.25
+const U0 = 0.25
 
-# 59.700 ns (0 allocations: 0 bytes)
 # 59.682 ns (0 allocations: 0 bytes)
 # 59.681 ns (0 allocations: 0 bytes)
 # 9.500 ns (0 allocations: 0 bytes)
 # 21.314 ns (0 allocations: 0 bytes)
+#
+# 71.954 ns (0 allocations: 0 bytes)
+# 71.977 ns (0 allocations: 0 bytes)
+# 19.747 ns (0 allocations: 0 bytes)
+# 19.747 ns (0 allocations: 0 bytes)
 for (ex, re) in (
-    (-0.5, (UF, U2, 0.0)),
-    (0.1, (UF, U2, 0.24581982412836917)),
-    (0.5, (UF, U2, 0.21402570288861142)),
-    (1, (UF, U2, 0.15625)),
-    (2, (UF, U2, 0.06226650062266501)),
+    (0.1, (UF, U0, 0.24581982412836917)),
+    (0.5, (UF, U0, 0.21402570288861142)),
+    (1, (UF, U0, 0.15625)),
+    (2, (UF, U0, 0.06226650062266501)),
 )
 
     @test GSEA._get_0_1_normalizer(SC_, ex, IS_) === re
@@ -84,12 +70,15 @@ end
 # ---- #
 
 # 97.238 ns (0 allocations: 0 bytes)
-# 97.238 ns (0 allocations: 0 bytes)
 # 97.281 ns (0 allocations: 0 bytes)
 # 8.884 ns (0 allocations: 0 bytes)
 # 28.098 ns (0 allocations: 0 bytes)
+#
+# 119.054 ns (0 allocations: 0 bytes)
+# 119.009 ns (0 allocations: 0 bytes)
+# 25.602 ns (0 allocations: 0 bytes)
+# 26.857 ns (0 allocations: 0 bytes)
 for (ex, re) in (
-    (-0.5, (UF, 0.0, 0.0)),
     (0.1, (UF, 0.14006007078470165, 0.24581982412836917)),
     (0.5, (UF, 0.12366213677204271, 0.21402570288861142)),
     (1, (UF, 0.09615384615384615, 0.15625)),
@@ -105,23 +94,37 @@ end
 # ---- #
 
 # 1.458 ns (0 allocations: 0 bytes)
-for (noa, no1, re) in ((0.5, 1 / 3, -1.0),)
+#
+# 2.084 ns (0 allocations: 0 bytes)
+for (su, s1, re) in ((0.5, 1 / 3, -1.0),)
 
-    @test GSEA._get_0_normalizer(noa, no1) === re
+    @test GSEA._get_0_normalizer(su, s1) === re
 
-    @btime GSEA._get_0_normalizer($noa, $no1)
+    @btime GSEA._get_0_normalizer($su, $s1)
 
 end
 
 # ---- #
 
+const AL_ = GSEA.KS(), GSEA.KSa(), GSEA.KLi1(), GSEA.KLi(), GSEA.KLioM(), GSEA.KLioP()
+
+function strin(al)
+
+    string(al)[6:(end - 2)]
+
+end
+
+const EX = 1.0
+
+# ---- #
+
 const CA_ = ["K", "Q", "J", "X", "9", "8", "7", "6", "5", "4", "3", "2", "A"]
 
-const CR_ = [6.0, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6]
+const SO_ = [6.0, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6]
 
-const CD_ = ["K", "A"]
+const ME_ = ["K", "A"]
 
-const CC_ = map(in(Set(CD_)), CA_)
+const II_ = map(in(Set(ME_)), CA_)
 
 # ---- #
 
@@ -131,11 +134,18 @@ const CC_ = map(in(Set(CD_)), CA_)
 # 126.633 ns (0 allocations: 0 bytes)
 # 225.103 ns (0 allocations: 0 bytes)
 # 225.069 ns (0 allocations: 0 bytes)
+#
+# 31.942 ns (0 allocations: 0 bytes)
+# 31.816 ns (0 allocations: 0 bytes)
+# 165.308 ns (0 allocations: 0 bytes)
+# 258.069 ns (0 allocations: 0 bytes)
+# 403.750 ns (0 allocations: 0 bytes)
+# 403.750 ns (0 allocations: 0 bytes)
 for (al, re) in zip(AL_, (-0.5, 0.0, 0.0, 0.0, 0.0, 0.0))
 
-    @test isapprox(GSEA._enrich!(al, CR_, EX, CC_, nothing), re; atol=1e-15)
+    @test isapprox(GSEA._enrich!(al, SO_, EX, II_, nothing), re; atol = 1e-15)
 
-    @btime GSEA._enrich!($al, CR_, EX, CC_, nothing)
+    @btime GSEA._enrich!($al, SO_, EX, II_, nothing)
 
 end
 
@@ -143,23 +153,9 @@ end
 
 for al in AL_
 
-    GSEA.plot("", al, CA_, CR_, CD_; title_text = al)
+    GSEA.plot("", al, CA_, SO_, ME_; la = Dict("title" => Dict("text" => strin(al))))
 
 end
-
-# ---- #
-
-include("get_normalizer.jl")
-
-# ---- #
-
-const AL_ = GSEA.KS(), GSEA.KSa(), GSEA.KLi1(), GSEA.KLi(), GSEA.KLioM(), GSEA.KLioP()
-
-const EX = 1
-
-# ---- #
-
-include("card.jl")
 
 # ---- #
 
@@ -167,31 +163,25 @@ const DA = pkgdir(GSEA, "data")
 
 # ---- #
 
-const FE_, SO_ = eachcol(
+const FE_, SR_ = eachcol(
     reverse!(
-        Nucleus.DataFrame.read(
-            joinpath(DA, "gene_x_statistic_x_number.tsv");
-            select = [1, 2],
-        ),
+        Omics.Table.rea(joinpath(DA, "gene_x_statistic_x_number.tsv"); select = [1, 2]),
     ),
 )
 
-# ---- #
-
-const FE1_ =
-    Nucleus.GMT.read(joinpath(DA, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"]
+const MM_ = GSEA.rea(joinpath(DA, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"]
 
 # ---- #
 
 for al in AL_
 
-    GSEA.plot("", al, FE_, SO_, FE1_; ex = EX, title_text = GSEA.make_string(al))
+    GSEA.plot("", al, FE_, SR_, MM_; ex = EX, title_text = strin(al))
 
 end
 
 # ---- #
 
-const IS_ = in(Set(FE1_)).(FE_)
+const IS_ = in(Set(MM_)).(FE_)
 
 # ---- #
 
@@ -213,9 +203,9 @@ for (al, re) in zip(
     ),
 )
 
-    @test isapprox(GSEA._enrich!(al, SO_, EX, IS_, nothing), re; atol = 0.000000000001)
+    @test isapprox(GSEA._enrich!(al, SR_, EX, IS_, nothing), re; atol = 0.000000000001)
 
-    @btime GSEA._enrich!($al, SO_, EX, IS_, nothing)
+    @btime GSEA._enrich!($al, SR_, EX, IS_, nothing)
 
 end
 
@@ -241,13 +231,13 @@ const FE1___ = collect(values(SE_FE1_))
 # 17.186 ms (108 allocations: 934.22 KiB)
 for al in AL_
 
-    @btime GSEA.enrich($al, FE_, SO_, FE1___; ex = EX)
+    @btime GSEA.enrich($al, FE_, SR_, FE1___; ex = EX)
 
 end
 
 # ---- #
 
-const FE_X_SA_X_SC = hcat(SO_, SO_ * 10, fill(0.8, lastindex(FE_)))
+const FE_X_SA_X_SC = hcat(SR_, SR_ * 10, fill(0.8, lastindex(FE_)))
 
 # ---- #
 
