@@ -18,11 +18,13 @@ const SC = -2.0
 # 11.386 ns (0 allocations: 0 bytes)
 # 1.458 ns (0 allocations: 0 bytes)
 # 3.958 ns (0 allocations: 0 bytes)
-for ex in (-1, 0, 0.1, 0.5, 1, 2)
+for ex in (-1, 0, 0.0, 0.1, 0.5, 1, 2)
 
     @test GSEA._absolute_exponentiate(SC, ex) === abs(SC)^ex
 
     @btime GSEA._absolute_exponentiate(SC, $ex)
+
+    @btime abs(SC)^$ex
 
 end
 
@@ -32,7 +34,8 @@ const SC_ = [-2, -1, -0.5, 0, 0, 0.5, 1, 2, 3.4]
 
 const UF = lastindex(SC_)
 
-const BI_ = BitVector((1, 0, 1, 0, 1, 1, 0, 0, 1))
+# TODO: Benchmark Vector{Bool}
+const IS_ = BitVector((1, 0, 1, 0, 1, 1, 0, 0, 1))
 
 # ---- #
 
@@ -49,15 +52,15 @@ for (ex, re) in (
     (2, (UF, 0.06226650062266501)),
 )
 
-    @test GSEA._get_1_normalizer(SC_, ex, BI_) === re
+    @test GSEA._get_1_normalizer(SC_, ex, IS_) === re
 
-    @btime GSEA._get_1_normalizer(SC_, $ex, BI_)
+    @btime GSEA._get_1_normalizer(SC_, $ex, IS_)
 
 end
 
 # ---- #
 
-const NO = 0.25
+const U2 = 0.25
 
 # 59.700 ns (0 allocations: 0 bytes)
 # 59.682 ns (0 allocations: 0 bytes)
@@ -65,16 +68,16 @@ const NO = 0.25
 # 9.500 ns (0 allocations: 0 bytes)
 # 21.314 ns (0 allocations: 0 bytes)
 for (ex, re) in (
-    (-0.5, (UF, NO, 0.0)),
-    (0.1, (UF, NO, 0.24581982412836917)),
-    (0.5, (UF, NO, 0.21402570288861142)),
-    (1, (UF, NO, 0.15625)),
-    (2, (UF, NO, 0.06226650062266501)),
+    (-0.5, (UF, U2, 0.0)),
+    (0.1, (UF, U2, 0.24581982412836917)),
+    (0.5, (UF, U2, 0.21402570288861142)),
+    (1, (UF, U2, 0.15625)),
+    (2, (UF, U2, 0.06226650062266501)),
 )
 
-    @test GSEA._get_0_1_normalizer(SC_, ex, BI_) === re
+    @test GSEA._get_0_1_normalizer(SC_, ex, IS_) === re
 
-    @btime GSEA._get_0_1_normalizer(SC_, $ex, BI_)
+    @btime GSEA._get_0_1_normalizer(SC_, $ex, IS_)
 
 end
 
@@ -93,9 +96,9 @@ for (ex, re) in (
     (2, (UF, 0.04533091568449683, 0.06226650062266501)),
 )
 
-    @test GSEA._get_all_1_normalizer(SC_, ex, BI_) === re
+    @test GSEA._get_all_1_normalizer(SC_, ex, IS_) === re
 
-    @btime GSEA._get_all_1_normalizer(SC_, $ex, BI_)
+    @btime GSEA._get_all_1_normalizer(SC_, $ex, IS_)
 
 end
 
@@ -112,29 +115,13 @@ end
 
 # ---- #
 
-const FEC_ = ["K", "Q", "J", "X", "9", "8", "7", "6", "5", "4", "3", "2", "A"]
+const CA_ = ["K", "Q", "J", "X", "9", "8", "7", "6", "5", "4", "3", "2", "A"]
 
-const SCC_ = [6.0, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6]
+const CR_ = [6.0, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6]
 
-const FE1C_ = ["K", "A"]
+const CD_ = ["K", "A"]
 
-const EX = 1
-
-# ---- #
-
-const AL_ = GSEA.KS(), GSEA.KSa(), GSEA.KLi1(), GSEA.KLi(), GSEA.KLioM(), GSEA.KLioP()
-
-# ---- #
-
-for al in AL_
-
-    GSEA.plot("", al, FEC_, SCC_, FE1C_; ex = EX, title_text = GSEA.make_string(al))
-
-end
-
-# ---- #
-
-const ISC_ = in(Set(FE1C_)).(FEC_)
+const CC_ = map(in(Set(CD_)), CA_)
 
 # ---- #
 
@@ -144,13 +131,35 @@ const ISC_ = in(Set(FE1C_)).(FEC_)
 # 126.633 ns (0 allocations: 0 bytes)
 # 225.103 ns (0 allocations: 0 bytes)
 # 225.069 ns (0 allocations: 0 bytes)
-for (al, re) in zip(AL_, (-0.5, 0, 0, 0, 0, 0))
+for (al, re) in zip(AL_, (-0.5, 0.0, 0.0, 0.0, 0.0, 0.0))
 
-    @test isapprox(GSEA._enrich!(al, SCC_, EX, ISC_, nothing), re; atol = 0.000000000000001)
+    @test isapprox(GSEA._enrich!(al, CR_, EX, CC_, nothing), re; atol=1e-15)
 
-    @btime GSEA._enrich!($al, SCC_, EX, ISC_, nothing)
+    @btime GSEA._enrich!($al, CR_, EX, CC_, nothing)
 
 end
+
+# ---- #
+
+for al in AL_
+
+    GSEA.plot("", al, CA_, CR_, CD_; title_text = al)
+
+end
+
+# ---- #
+
+include("get_normalizer.jl")
+
+# ---- #
+
+const AL_ = GSEA.KS(), GSEA.KSa(), GSEA.KLi1(), GSEA.KLi(), GSEA.KLioM(), GSEA.KLioP()
+
+const EX = 1
+
+# ---- #
+
+include("card.jl")
 
 # ---- #
 
