@@ -19,11 +19,6 @@ const IS_ = BitVector((1, 0, 1, 0, 1, 1, 0, 0, 1))
 
 # ---- #
 
-# 63.350 ns (0 allocations: 0 bytes)
-# 63.350 ns (0 allocations: 0 bytes)
-# 9.510 ns (0 allocations: 0 bytes)
-# 20.687 ns (0 allocations: 0 bytes)
-#
 # 81.179 ns (0 allocations: 0 bytes)
 # 81.190 ns (0 allocations: 0 bytes)
 # 20.081 ns (0 allocations: 0 bytes)
@@ -43,22 +38,17 @@ end
 
 # ---- #
 
-const U0 = 0.25
+const N0 = 0.25
 
-# 59.682 ns (0 allocations: 0 bytes)
-# 59.681 ns (0 allocations: 0 bytes)
-# 9.500 ns (0 allocations: 0 bytes)
-# 21.314 ns (0 allocations: 0 bytes)
-#
 # 71.954 ns (0 allocations: 0 bytes)
 # 71.977 ns (0 allocations: 0 bytes)
 # 19.747 ns (0 allocations: 0 bytes)
 # 19.747 ns (0 allocations: 0 bytes)
 for (ex, re) in (
-    (0.1, (UF, U0, 0.24581982412836917)),
-    (0.5, (UF, U0, 0.21402570288861142)),
-    (1, (UF, U0, 0.15625)),
-    (2, (UF, U0, 0.06226650062266501)),
+    (0.1, (UF, N0, 0.24581982412836917)),
+    (0.5, (UF, N0, 0.21402570288861142)),
+    (1, (UF, N0, 0.15625)),
+    (2, (UF, N0, 0.06226650062266501)),
 )
 
     @test GSEA._get_0_1_normalizer(SC_, ex, IS_) === re
@@ -69,11 +59,6 @@ end
 
 # ---- #
 
-# 97.238 ns (0 allocations: 0 bytes)
-# 97.281 ns (0 allocations: 0 bytes)
-# 8.884 ns (0 allocations: 0 bytes)
-# 28.098 ns (0 allocations: 0 bytes)
-#
 # 119.054 ns (0 allocations: 0 bytes)
 # 119.009 ns (0 allocations: 0 bytes)
 # 25.602 ns (0 allocations: 0 bytes)
@@ -93,8 +78,6 @@ end
 
 # ---- #
 
-# 1.458 ns (0 allocations: 0 bytes)
-#
 # 2.084 ns (0 allocations: 0 bytes)
 for (su, s1, re) in ((0.5, 1 / 3, -1.0),)
 
@@ -124,17 +107,10 @@ const SO_ = [6.0, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6]
 
 const ME_ = ["K", "A"]
 
-const II_ = map(in(Set(ME_)), CA_)
+const IC_ = map(in(Set(ME_)), CA_)
 
 # ---- #
 
-# 19.433 ns (0 allocations: 0 bytes)
-# 17.869 ns (0 allocations: 0 bytes)
-# 118.359 ns (0 allocations: 0 bytes)
-# 126.633 ns (0 allocations: 0 bytes)
-# 225.103 ns (0 allocations: 0 bytes)
-# 225.069 ns (0 allocations: 0 bytes)
-#
 # 31.942 ns (0 allocations: 0 bytes)
 # 31.816 ns (0 allocations: 0 bytes)
 # 165.308 ns (0 allocations: 0 bytes)
@@ -143,9 +119,9 @@ const II_ = map(in(Set(ME_)), CA_)
 # 403.750 ns (0 allocations: 0 bytes)
 for (al, re) in zip(AL_, (-0.5, 0.0, 0.0, 0.0, 0.0, 0.0))
 
-    @test isapprox(GSEA._enrich!(al, SO_, EX, II_, nothing), re; atol = 1e-15)
+    @test isapprox(GSEA._enrich!(al, SO_, EX, IC_, nothing), re; atol = 1e-15)
 
-    @btime GSEA._enrich!($al, SO_, EX, II_, nothing)
+    @btime GSEA._enrich!($al, SO_, EX, IC_, nothing)
 
 end
 
