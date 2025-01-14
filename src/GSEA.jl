@@ -16,6 +16,28 @@ struct KLi end
 
 struct KLi1 end
 
+function _is_in(fe_, me_)
+
+    map(in(Set(me_)), fe_)
+
+end
+
+function _is_in!(bi_, fe_id, me_)
+
+    for me in me_
+
+        id = get(fe_id, me, nothing)
+
+        if !isnothing(id)
+
+            bi_[id] = true
+
+        end
+
+    end
+
+end
+
 function _exponentiate(sc, ex)
 
     ab = abs(sc)
@@ -24,13 +46,13 @@ function _exponentiate(sc, ex)
 
 end
 
-function _get_0_1(sc_, ex, is_)
+function _get_0_1(sc_, ex, bo_)
 
     s0 = s1 = 0.0
 
     for id in eachindex(sc_)
 
-        if is_[id]
+        if bo_[id]
 
             s1 += _exponentiate(sc_[id], ex)
 
@@ -46,7 +68,7 @@ function _get_0_1(sc_, ex, is_)
 
 end
 
-function _get_all_1(sc_, ex, is_)
+function _get_all_1(sc_, ex, bo_)
 
     su = s1 = 0.0
 
@@ -56,7 +78,7 @@ function _get_all_1(sc_, ex, is_)
 
         su += so
 
-        if is_[id]
+        if bo_[id]
 
             s1 += so
 
@@ -74,13 +96,13 @@ function _get_0(no, n1)
 
 end
 
-function _get_1(sc_, ex, is_)
+function _get_1(sc_, ex, bo_)
 
     su = 0.0
 
     for id in eachindex(sc_)
 
-        if is_[id]
+        if bo_[id]
 
             su += _exponentiate(sc_[id], ex)
 
@@ -100,15 +122,15 @@ function _clip(fl)
 
 end
 
-function _enrich!(::KS, sc_, ex, is_, mo_)
+function _enrich!(::KS, sc_, ex, bo_, mo_)
 
-    n0, n1 = _get_0_1(sc_, ex, is_)
+    n0, n1 = _get_0_1(sc_, ex, bo_)
 
     mo = ea = em = 0.0
 
     for id in eachindex(sc_)
 
-        mo += is_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
+        mo += bo_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
 
         if !isnothing(mo_)
 
@@ -132,15 +154,15 @@ function _enrich!(::KS, sc_, ex, is_, mo_)
 
 end
 
-function _enrich!(::KSa, sc_, ex, is_, mo_)
+function _enrich!(::KSa, sc_, ex, bo_, mo_)
 
-    n0, n1 = _get_0_1(sc_, ex, is_)
+    n0, n1 = _get_0_1(sc_, ex, bo_)
 
     mo = ar = 0.0
 
     for id in eachindex(sc_)
 
-        ar += mo += is_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
+        ar += mo += bo_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
 
         if !isnothing(mo_)
 
@@ -154,25 +176,25 @@ function _enrich!(::KSa, sc_, ex, is_, mo_)
 
 end
 
-function _enrich!(::KLioM, sc_, ex, is_, mo_)
+function _enrich!(::KLioM, sc_, ex, bo_, mo_)
 
-    no, n1 = _get_all_1(sc_, ex, is_)
+    no, n1 = _get_all_1(sc_, ex, bo_)
 
     n0 = _get_0(no, n1)
 
-    ri = r0 = r1 = eps()
+    ra = r0 = r1 = eps()
 
-    pr = p0 = p1 = ar = 0.0
+    pa = p0 = p1 = ar = 0.0
 
-    le = l0 = l1 = 1.0
+    la = l0 = l1 = 1.0
 
     for id in eachindex(sc_)
 
         so = _exponentiate(sc_[id], ex)
 
-        de = so * no
+        da = so * no
 
-        if is_[id]
+        if bo_[id]
 
             d0 = 0.0
 
@@ -185,18 +207,27 @@ function _enrich!(::KLioM, sc_, ex, is_, mo_)
             d1 = 0.0
 
         end
+
+        ra += da
+
+        r0 += d0
+
+        r1 += d1
+
+        la = _clip(la - pa)
+
+        l1 = _clip(l1 - p1)
+
+        l0 = _clip(l0 - p0)
 
         ar +=
             mo =
                 Omics.Information.get_antisymmetric_kullback_leibler_divergence(
-                    r1 += d1,
-                    r0 += d0,
-                    ri += de,
-                ) - Omics.Information.get_antisymmetric_kullback_leibler_divergence(
-                    _clip(l1 -= p1),
-                    _clip(l0 -= p0),
-                    _clip(le -= pr),
-                )
+                    r1,
+                    r0,
+                    ra,
+                ) -
+                Omics.Information.get_antisymmetric_kullback_leibler_divergence(l1, l0, la)
 
         if !isnothing(mo_)
 
@@ -204,7 +235,7 @@ function _enrich!(::KLioM, sc_, ex, is_, mo_)
 
         end
 
-        pr = de
+        pa = da
 
         p0 = d0
 
@@ -216,25 +247,25 @@ function _enrich!(::KLioM, sc_, ex, is_, mo_)
 
 end
 
-function _enrich!(::KLioP, sc_, ex, is_, mo_)
+function _enrich!(::KLioP, sc_, ex, bo_, mo_)
 
-    no, n1 = _get_all_1(sc_, ex, is_)
+    no, n1 = _get_all_1(sc_, ex, bo_)
 
     n0 = _get_0(no, n1)
 
-    ri = r0 = r1 = eps()
+    ra = r0 = r1 = eps()
 
-    pr = p0 = p1 = ar = 0.0
+    pa = p0 = p1 = ar = 0.0
 
-    le = l0 = l1 = 1.0
+    la = l0 = l1 = 1.0
 
     for id in eachindex(sc_)
 
         so = _exponentiate(sc_[id], ex)
 
-        de = so * no
+        da = so * no
 
-        if is_[id]
+        if bo_[id]
 
             d0 = 0.0
 
@@ -248,17 +279,22 @@ function _enrich!(::KLioP, sc_, ex, is_, mo_)
 
         end
 
+        ra += da
+
+        r0 += d0
+
+        r1 += d1
+
+        la = _clip(la - pa)
+
+        l1 = _clip(l1 - p1)
+
+        l0 = _clip(l0 - p0)
+
         ar +=
             mo =
-                Omics.Information.get_symmetric_kullback_leibler_divergence(
-                    r1 += d1,
-                    r0 += d0,
-                    ri += de,
-                ) - Omics.Information.get_symmetric_kullback_leibler_divergence(
-                    _clip(l1 -= p1),
-                    _clip(l0 -= p0),
-                    _clip(le -= pr),
-                )
+                Omics.Information.get_symmetric_kullback_leibler_divergence(r1, r0, ra) -
+                Omics.Information.get_symmetric_kullback_leibler_divergence(l1, l0, la)
 
         if !isnothing(mo_)
 
@@ -266,7 +302,7 @@ function _enrich!(::KLioP, sc_, ex, is_, mo_)
 
         end
 
-        pr = de
+        pa = da
 
         p0 = d0
 
@@ -278,30 +314,38 @@ function _enrich!(::KLioP, sc_, ex, is_, mo_)
 
 end
 
-function _enrich!(::KLi, sc_, ex, is_, mo_)
+function _enrich!(::KLi, sc_, ex, bo_, mo_)
 
-    no, n1 = _get_all_1(sc_, ex, is_)
+    no, n1 = _get_all_1(sc_, ex, bo_)
 
-    ri = r1 = eps()
+    ra = r1 = eps()
 
-    pr = p1 = ar = 0.0
+    pa = p1 = ar = 0.0
 
-    le = l1 = 1.0
+    la = l1 = 1.0
 
     for id in eachindex(sc_)
 
         so = _exponentiate(sc_[id], ex)
 
-        de = so * no
+        da = so * no
 
-        d1 = is_[id] ? so * n1 : 0.0
+        d1 = bo_[id] ? so * n1 : 0.0
+
+        ra += da
+
+        r1 += d1
+
+        la = _clip(la - pa)
+
+        l1 = _clip(l1 - p1)
 
         ar +=
             mo = Omics.Information.get_antisymmetric_kullback_leibler_divergence(
-                r1 += d1,
-                _clip(l1 -= p1),
-                ri += de,
-                _clip(le -= pr),
+                r1,
+                l1,
+                ra,
+                la,
             )
 
         if !isnothing(mo_)
@@ -310,7 +354,7 @@ function _enrich!(::KLi, sc_, ex, is_, mo_)
 
         end
 
-        pr = de
+        pa = da
 
         p1 = d1
 
@@ -320,30 +364,38 @@ function _enrich!(::KLi, sc_, ex, is_, mo_)
 
 end
 
-function _enrich!(::KLi1, sc_, ex, is_, mo_)
+function _enrich!(::KLi1, sc_, ex, bo_, mo_)
 
-    n1 = _get_1(sc_, ex, is_)
+    n1 = _get_1(sc_, ex, bo_)
 
-    ri = r1 = eps()
+    ra = r1 = eps()
 
-    de = inv(lastindex(sc_))
+    da = inv(lastindex(sc_))
 
     p1 = ar = 0.0
 
-    le = 1.0 + de
+    la = 1.0 + da
 
     l1 = 1.0
 
     for id in eachindex(sc_)
 
-        d1 = is_[id] ? _exponentiate(sc_[id], ex) * n1 : 0.0
+        d1 = bo_[id] ? _exponentiate(sc_[id], ex) * n1 : 0.0
+
+        ra += da
+
+        r1 += d1
+
+        la = _clip(la - da)
+
+        l1 = _clip(l1 - p1)
 
         ar +=
             mo = Omics.Information.get_antisymmetric_kullback_leibler_divergence(
-                r1 += d1,
-                _clip(l1 -= p1),
-                ri += de,
-                _clip(le -= de),
+                r1,
+                l1,
+                ra,
+                la,
             )
 
         if !isnothing(mo_)
@@ -378,11 +430,11 @@ function plot(
 
     xc_ = collect(1:uf)
 
-    is_ = map(in(Set(me_)), fe_)
+    bo_ = _is_in(fe_, me_)
 
     mo_ = Vector{Float64}(undef, uf)
 
-    en = _enrich!(al, sc_, ex, is_, mo_)
+    en = _enrich!(al, sc_, ex, bo_, mo_)
 
     tr = Dict("mode" => "lines", "line" => Dict("width" => 0), "fill" => "tozeroy")
 
@@ -395,8 +447,8 @@ function plot(
         merge(tr, Dict("y" => sc_[ip_], "x" => xc_[ip_], "fillcolor" => Omics.Color.RE)),
         Dict(
             "yaxis" => "y2",
-            "y" => zeros(sum(is_)),
-            "x" => xc_[is_],
+            "y" => zeros(sum(bo_)),
+            "x" => xc_[bo_],
             "mode" => "markers",
             "marker" => Dict(
                 "symbol" => "line-ns",
@@ -422,7 +474,7 @@ function plot(
                 "x" => xc_[id_],
                 "mode" => "markers",
                 "marker" =>
-                    Dict("size" => 32, "color" => Omics.Color.hexify(Omics.Color.YE, 0.96)),
+                    Dict("size" => 32, "color" => Omics.Color.hexify(Omics.Color.HU, 0.72)),
             ),
         )
 
@@ -497,38 +549,21 @@ function plot(
 
 end
 
-function _is_in!(is_, an_id, a1_)
-    @assert !any(is_)
-
-    for a1 in a1_
-
-        id = get(an_id, a1, nothing)
-
-        if !isnothing(id)
-
-            is_[id] = true
-
-        end
-
-    end
-
-end
-
 function enrich(al, fe_, sc_::AbstractVector, me___; mi = 1, ex = 1)
 
     en_ = Vector{Float64}(undef, lastindex(me___))
 
-    is_ = falses(lastindex(fe_))
+    bi_ = falses(lastindex(fe_))
 
     fe_id = Dict(fe_[id] => id for id in eachindex(fe_))
 
     for id in eachindex(me___)
 
-        _is_in!(is_, fe_id, me___[id])
+        _is_in!(bi_, fe_id, me___[id])
 
-        en_[id] = sum(is_) < mi ? NaN : _enrich!(al, sc_, ex, is_, nothing)
+        en_[id] = sum(bi_) < mi ? NaN : _enrich!(al, sc_, ex, bi_, nothing)
 
-        is_[is_] .= false
+        bi_[bi_] .= false
 
     end
 
