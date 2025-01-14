@@ -1,5 +1,6 @@
 # Gene set enrichment analysis 🏔️
-Julia implementation of the next generation GSEA
+
+The Julia implementation of the next-generation GSEA is hundreds of times faster and incorporates new information-theoretic algorithms.
 
 ## Julia
 
@@ -68,5 +69,6 @@ gsea --help
 
 If you have any questions, issues, or concerns, please feel free to [open a GitHub issue](https://github.com/GSEA-MSigDB/GSEA2.jl/issues/new/choose).
 
+---
 
-
+Made by [Kata](https://github.com/KwatMDPhD/Kata.jl) 🥋
