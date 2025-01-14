@@ -282,7 +282,7 @@ Run data-rank (single-sample) GSEA.
         minimum_set_fraction,
     )
 
-    en = enrich(al, fe_, sc, me___; mi = post_skip_minimum_set_size, ex = exponent)
+    en = enrich(al, fe_, sc, me___; um = post_skip_minimum_set_size, ex = exponent)
 
     Omics.DataFrame.write(
         joinpath(output_directory, "set_x_sample_x_enrichment.tsv"),
@@ -356,7 +356,7 @@ function _normalize_enrichment!(::Union{KLi1, KLi, KLioM, KLioP}, en_, ra)
 
 end
 
-function _write(ou, wr, se_, en_, ra, up, pl_, al, fe_, sc_, me___, ex, naf, nas, nal, nah)
+function _write(ou, wr, se_, en_, ra, up, pl_, al, fe_, sc_, me___, ex, nf, ns, nl, nh)
 
     ue = lastindex(se_)
 
@@ -417,7 +417,7 @@ function _write(ou, wr, se_, en_, ra, up, pl_, al, fe_, sc_, me___, ex, naf, nas
 
         ti = "$id $(se_[id])"
 
-        plot(joinpath(ou, "$ti.html"), al, fe_, sc_, me___[id]; ex, ti, naf, nas, nal, nah)
+        plot(joinpath(ou, "$ti.html"), al, fe_, sc_, me___[id]; ex, ti, nf, ns, nl, nh)
 
     end
 
