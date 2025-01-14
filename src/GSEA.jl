@@ -40,9 +40,9 @@ end
 
 function _exponentiate(sc, ex)
 
-    ab = abs(sc)
+    ma = abs(sc)
 
-    isone(ex) ? ab : ab^ex
+    isone(ex) ? ma : ma^ex
 
 end
 
@@ -70,55 +70,47 @@ end
 
 function _get_all_1(sc_, ex, bo_)
 
-    su = s1 = 0.0
+    sa = s1 = 0.0
 
     for id in eachindex(sc_)
 
-        so = _exponentiate(sc_[id], ex)
+        ma = _exponentiate(sc_[id], ex)
 
-        su += so
+        sa += ma
 
         if bo_[id]
 
-            s1 += so
+            s1 += ma
 
         end
 
     end
 
-    inv(su), inv(s1)
+    inv(sa), inv(s1)
 
 end
 
-function _get_0(no, n1)
+function _get_0(na, n1)
 
-    inv(inv(no) - inv(n1))
+    inv(inv(na) - inv(n1))
 
 end
 
 function _get_1(sc_, ex, bo_)
 
-    su = 0.0
+    s1 = 0.0
 
     for id in eachindex(sc_)
 
         if bo_[id]
 
-            su += _exponentiate(sc_[id], ex)
+            s1 += _exponentiate(sc_[id], ex)
 
         end
 
     end
 
-    inv(su)
-
-end
-
-function _clip(fl)
-
-    ep = eps()
-
-    fl < ep ? ep : fl
+    inv(s1)
 
 end
 
@@ -126,7 +118,7 @@ function _enrich!(::KS, sc_, ex, bo_, mo_)
 
     n0, n1 = _get_0_1(sc_, ex, bo_)
 
-    mo = ea = em = 0.0
+    mo = be = bs = 0.0
 
     for id in eachindex(sc_)
 
@@ -138,19 +130,19 @@ function _enrich!(::KS, sc_, ex, bo_, mo_)
 
         end
 
-        ab = abs(mo)
+        cu = abs(mo)
 
-        if ea < ab
+        if be < cu
 
-            ea = ab
+            be = cu
 
-            em = mo
+            bs = mo
 
         end
 
     end
 
-    em
+    bs
 
 end
 
@@ -176,33 +168,35 @@ function _enrich!(::KSa, sc_, ex, bo_, mo_)
 
 end
 
+const ON = 1.0 + 1e-13
+
 function _enrich!(::KLioM, sc_, ex, bo_, mo_)
 
-    no, n1 = _get_all_1(sc_, ex, bo_)
+    na, n1 = _get_all_1(sc_, ex, bo_)
 
-    n0 = _get_0(no, n1)
+    n0 = _get_0(na, n1)
 
     ra = r0 = r1 = eps()
 
     pa = p0 = p1 = ar = 0.0
 
-    la = l0 = l1 = 1.0
+    la = l0 = l1 = ON
 
     for id in eachindex(sc_)
 
-        so = _exponentiate(sc_[id], ex)
+        ma = _exponentiate(sc_[id], ex)
 
-        da = so * no
+        da = ma * na
 
         if bo_[id]
 
             d0 = 0.0
 
-            d1 = so * n1
+            d1 = ma * n1
 
         else
 
-            d0 = so * n0
+            d0 = ma * n0
 
             d1 = 0.0
 
@@ -214,11 +208,11 @@ function _enrich!(::KLioM, sc_, ex, bo_, mo_)
 
         r1 += d1
 
-        la = _clip(la - pa)
+        la -= pa
 
-        l1 = _clip(l1 - p1)
+        l0 -= p0
 
-        l0 = _clip(l0 - p0)
+        l1 -= p1
 
         ar +=
             mo =
@@ -249,31 +243,31 @@ end
 
 function _enrich!(::KLioP, sc_, ex, bo_, mo_)
 
-    no, n1 = _get_all_1(sc_, ex, bo_)
+    na, n1 = _get_all_1(sc_, ex, bo_)
 
-    n0 = _get_0(no, n1)
+    n0 = _get_0(na, n1)
 
     ra = r0 = r1 = eps()
 
     pa = p0 = p1 = ar = 0.0
 
-    la = l0 = l1 = 1.0
+    la = l0 = l1 = ON
 
     for id in eachindex(sc_)
 
-        so = _exponentiate(sc_[id], ex)
+        ma = _exponentiate(sc_[id], ex)
 
-        da = so * no
+        da = ma * na
 
         if bo_[id]
 
             d0 = 0.0
 
-            d1 = so * n1
+            d1 = ma * n1
 
         else
 
-            d0 = so * n0
+            d0 = ma * n0
 
             d1 = 0.0
 
@@ -285,11 +279,11 @@ function _enrich!(::KLioP, sc_, ex, bo_, mo_)
 
         r1 += d1
 
-        la = _clip(la - pa)
+        la -= pa
 
-        l1 = _clip(l1 - p1)
+        l0 -= p0
 
-        l0 = _clip(l0 - p0)
+        l1 -= p1
 
         ar +=
             mo =
@@ -316,29 +310,29 @@ end
 
 function _enrich!(::KLi, sc_, ex, bo_, mo_)
 
-    no, n1 = _get_all_1(sc_, ex, bo_)
+    na, n1 = _get_all_1(sc_, ex, bo_)
 
     ra = r1 = eps()
 
     pa = p1 = ar = 0.0
 
-    la = l1 = 1.0
+    la = l1 = ON
 
     for id in eachindex(sc_)
 
-        so = _exponentiate(sc_[id], ex)
+        ma = _exponentiate(sc_[id], ex)
 
-        da = so * no
+        da = ma * na
 
-        d1 = bo_[id] ? so * n1 : 0.0
+        d1 = bo_[id] ? ma * n1 : 0.0
 
         ra += da
 
         r1 += d1
 
-        la = _clip(la - pa)
+        la -= pa
 
-        l1 = _clip(l1 - p1)
+        l1 -= p1
 
         ar +=
             mo = Omics.Information.get_antisymmetric_kullback_leibler_divergence(
@@ -366,17 +360,19 @@ end
 
 function _enrich!(::KLi1, sc_, ex, bo_, mo_)
 
+    uf = lastindex(sc_)
+
     n1 = _get_1(sc_, ex, bo_)
 
     ra = r1 = eps()
 
-    da = inv(lastindex(sc_))
+    da = inv(uf)
 
     p1 = ar = 0.0
 
-    la = 1.0 + da
+    la = ON + da
 
-    l1 = 1.0
+    l1 = ON
 
     for id in eachindex(sc_)
 
@@ -386,9 +382,9 @@ function _enrich!(::KLi1, sc_, ex, bo_, mo_)
 
         r1 += d1
 
-        la = _clip(la - da)
+        la -= da
 
-        l1 = _clip(l1 - p1)
+        l1 -= p1
 
         ar +=
             mo = Omics.Information.get_antisymmetric_kullback_leibler_divergence(
@@ -408,7 +404,31 @@ function _enrich!(::KLi1, sc_, ex, bo_, mo_)
 
     end
 
-    ar / lastindex(sc_)
+    ar / uf
+
+end
+
+function _get_extreme(mo_)
+
+    mi, ma = extrema(mo_)
+
+    ai = abs(mi)
+
+    aa = abs(ma)
+
+    if ai == aa
+
+        (mi, ma)
+
+    elseif aa < ai
+
+        (mi,)
+
+    else
+
+        (ma,)
+
+    end
 
 end
 
@@ -454,8 +474,8 @@ function plot(
                 "symbol" => "line-ns",
                 "size" => 24,
                 "line" => Dict(
-                    "width" => 1.32,
-                    "color" => Omics.Color.hexify(Omics.Color.SG, 0.8),
+                    "width" => 2,
+                    "color" => Omics.Color.hexify(Omics.Color.SG, 0.72),
                 ),
             ),
         ),
@@ -464,7 +484,7 @@ function plot(
 
     if typeof(al) == KS
 
-        id_ = findall(in(extrema(mo_)), mo_)
+        id_ = findall(in(_get_extreme(mo_)), mo_)
 
         push!(
             da_,
@@ -497,21 +517,21 @@ function plot(
         Omics.Dic.merg(
             Dict(
                 "showlegend" => false,
-                "yaxis" => Dict("domain" => (0, 0.24), "title" => Dict("text" => "$ns")),
+                "yaxis" => Dict("domain" => (0, 0.24), "title" => Dict("text" => ns)),
                 "yaxis2" => Dict(
-                    "domain" => (0.25, 0.31),
+                    "domain" => (0.248, 0.32),
                     "title" => Dict("text" => "Set"),
                     "tickvals" => (),
                 ),
                 "yaxis3" =>
-                    Dict("domain" => (0.32, 1), "title" => Dict("text" => "Δ Enrichment")),
+                    Dict("domain" => (0.328, 1), "title" => Dict("text" => "Δ Enrichment")),
                 "xaxis" => Dict(
-                    "title" => Dict("text" => "$nf ($uf)"),
+                    "title" => Dict("text" => Omics.Strin.coun(uf, nf)),
                     "showspikes" => true,
                     "spikesnap" => "cursor",
                     "spikemode" => "across",
                     "spikedash" => "solid",
-                    "spikethickness" => 1,
+                    "spikethickness" => 0.8,
                     "spikecolor" => "#000000",
                 ),
                 "annotations" => (
@@ -549,7 +569,7 @@ function plot(
 
 end
 
-function enrich(al, fe_, sc_::AbstractVector, me___; mi = 1, ex = 1)
+function enrich(al, fe_, sc_::AbstractVector, me___; um = 1, ex = 1)
 
     en_ = Vector{Float64}(undef, lastindex(me___))
 
@@ -561,7 +581,7 @@ function enrich(al, fe_, sc_::AbstractVector, me___; mi = 1, ex = 1)
 
         _is_in!(bi_, fe_id, me___[id])
 
-        en_[id] = sum(bi_) < mi ? NaN : _enrich!(al, sc_, ex, bi_, nothing)
+        en_[id] = sum(bi_) < um ? NaN : _enrich!(al, sc_, ex, bi_, nothing)
 
         bi_[bi_] .= false
 
@@ -571,25 +591,25 @@ function enrich(al, fe_, sc_::AbstractVector, me___; mi = 1, ex = 1)
 
 end
 
-function enrich(al, fe_, sc, me___; mi = 1, ex = 1)
+function enrich(al, fe_, sc, me___; um = 1, ex = 1)
 
     us = size(sc, 2)
 
     en = Matrix{Float64}(undef, lastindex(me___), us)
 
-    no_ = BitVector(undef, lastindex(fe_))
+    bi_ = BitVector(undef, lastindex(fe_))
 
     for id in 1:us
 
         sc_ = sc[:, id]
 
-        map!(sc -> !isnan(sc), no_, sc_)
+        map!(sc -> !isnan(sc), bi_, sc_)
 
-        so_ = sc_[no_]
+        so_ = sc_[bi_]
 
         id_ = sortperm(so_; rev = true)
 
-        en[:, id] = enrich(al, fe_[no_][id_], so_[id_], me___; mi, ex)
+        en[:, id] = enrich(al, fe_[bi_][id_], so_[id_], me___; um, ex)
 
     end
 
