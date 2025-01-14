@@ -4,6 +4,22 @@ const OU = joinpath(homedir(), "Downloads")
 
 # ---- #
 
+const AL = GSEA.KS()
+
+GSEA.plot(
+    tempdir(),
+    AL,
+    FE_,
+    SC,
+    ME___,
+    "Sample",
+    SE_,
+    ["Score", "Score x 10", "Constant"],
+    GSEA.enrich(AL, FE_, SC, ME___),
+)
+
+# ---- #
+
 for (fe_, mi, ma, fr) in (
     (String[], 33, 36, 0),
     (unique(vcat(values(Omics.Dic.rea(JS))...)), 33, 36, 0),

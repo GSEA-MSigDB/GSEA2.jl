@@ -1,5 +1,7 @@
 using Comonicon: @cast, @main
 
+using ProgressMeter: @showprogress
+
 using Random: seed!, shuffle!
 
 using StatsBase: mean, sample, std
