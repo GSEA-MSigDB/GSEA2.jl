@@ -42,18 +42,14 @@ Download and extract the latest [release](https://github.com/GSEA-MSigDB/GSEA.jl
 
 ```bash
 PATH=$(pwd)/gsea/bin:$PATH
-
-gsea --help
 ```
 
 ## Build
 
 ```bash
-julia --project deps/build.jl app tarball
+julia --project deps/build.jl
 
-PATH=$(pwd)/build/gsea/bin:$PATH
-
-gsea --help
+PATH=~/.julia/bin:$PATH
 ```
 
 ## Contact Us
