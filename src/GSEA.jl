@@ -1,7 +1,5 @@
 module GSEA
 
-# ---- #
-
 using Comonicon: @cast, @main
 
 using Printf: @sprintf
@@ -80,7 +78,7 @@ function _map_sort(fu, is_, sc, fe_)
 
     io_ = map(!, is_)
 
-    mt_ = map(sc_ -> fu(sc_[:, io_], sc_[:, is_]), eachrow(sc))
+    mt_ = map(sc_ -> fu(sc_[io_], sc_[is_]), eachrow(sc))
 
     id_ = sortperm(mt_; rev = true)
 
@@ -803,11 +801,9 @@ function _read_set(js, fe_, mi, ma, fr)
 
     se_me_ = Omics.Dic.rea(js)
 
-    se_ = collect(keys(se_me_))
-
     me___ = collect(values(se_me_))
 
-    ke_ = BitVector(undef, lastindex(se_))
+    ke_ = BitVector(undef, lastindex(me___))
 
     for id in eachindex(me___)
 
@@ -823,7 +819,7 @@ function _read_set(js, fe_, mi, ma, fr)
 
     end
 
-    se_[ke_], me___[ke_]
+    collect(keys(se_me_))[ke_], me___[ke_]
 
 end
 
@@ -902,10 +898,7 @@ Run data-rank (single-sample) GSEA.
 
     Omics.Table.writ(
         joinpath(output_directory, "set_x_sample_x_enrichment.tsv"),
-        "Set",
-        se_,
-        sa_,
-        en,
+        Omics.Table.make("Set", se_, sa_, en),
     )
 
     plot(output_directory, fe_, sc, al, se_, me___, "Sample", sa_, en; ex = exponent)
@@ -972,7 +965,7 @@ end
 
 # ---- #
 
-function _write(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns, nl, nh)
+function _write(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, nl, nh, ns)
 
     ue = lastindex(se_)
 
@@ -992,10 +985,7 @@ function _write(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns, 
 
         Omics.Table.writ(
             joinpath(ou, "set_x_index_x_random.tsv"),
-            "Set",
-            se_,
-            1:size(ra, 2),
-            ra,
+            Omics.Table.make("Set", se_, axes(ra, 2), ra),
         )
 
     end
@@ -1008,16 +998,18 @@ function _write(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns, 
 
     ip_ = (id + 1):ue
 
-    np_, nq_, pp_, pq_ = Omics.Statistics.get(ra, er_, ie_, ip_)
+    np_, nq_, pp_, pq_ = Omics.Significance.ge(ra, er_, ie_, ip_)
 
-    re = stack(en_, er_, vcat(np_, pp_), vcat(nq_, pq_))
+    re = stack((en_, er_, vcat(np_, pp_), vcat(nq_, pq_)))
 
     Omics.Table.writ(
         joinpath(ou, "set_x_statistic_x_result.tsv"),
-        "Set",
-        se_,
-        ["Enrichment", "Normalized Enrichment", "P-Value", "Q-Value"],
-        re,
+        Omics.Table.make(
+            "Set",
+            se_,
+            ["Enrichment", "Normalized Enrichment", "P-Value", "Q-Value"],
+            re,
+        ),
     )
 
     for id in unique!(vcat(Omics.Extreme.ge(er_, up), indexin(pl_, se_)))
@@ -1038,9 +1030,9 @@ function _write(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns, 
             me___[id];
             ex,
             nf,
-            ns,
             nl,
             nh,
+            ns,
             la = Dict("title" => Dict("text" => ti)),
         )
 
@@ -1119,9 +1111,9 @@ Run user-rank (pre-rank) GSEA.
   - `--number-of-sets-to-plot`: = 4.
   - `--more-sets-to-plot`: = "". Space-separated set names.
   - `--feature-name`: = "Gene".
-  - `--score-name`: = "User-Defined Score".
   - `--low-text`: = "Low".
   - `--high-text`: = "High".
+  - `--score-name`: = "Metric".
 
 # Flags
 
@@ -1143,9 +1135,9 @@ Run user-rank (pre-rank) GSEA.
     number_of_sets_to_plot::Int = 4,
     more_sets_to_plot = "",
     feature_name = "Gene",
-    score_name = "User-Defined Score",
     low_text = "Low",
     high_text = "High",
+    score_name = "User-Defined Score",
 )
 
     al = _set_algorithm(algorithm)
@@ -1194,9 +1186,9 @@ Run user-rank (pre-rank) GSEA.
         number_of_sets_to_plot,
         split(more_sets_to_plot),
         feature_name,
-        score_name,
         low_text,
         high_text,
+        score_name,
     )
 
 end
@@ -1229,9 +1221,9 @@ Run metric-rank (standard) GSEA.
   - `--number-of-sets-to-plot`: = 4.
   - `--more-sets-to-plot`: = "". Space-separated set names.
   - `--feature-name`: = "Gene".
-  - `--score-name`: = "Signal-to-Noise Ratio".
   - `--low-text`: = "Low".
   - `--high-text`: = "High".
+  - `--score-name`: = "Signal-to-Noise Ratio".
 
 # Flags
 
@@ -1257,16 +1249,16 @@ Run metric-rank (standard) GSEA.
     number_of_sets_to_plot::Int = 4,
     more_sets_to_plot = "",
     feature_name = "Gene",
-    score_name = "Signal-to-Noise Ratio",
     low_text = "Low",
     high_text = "High",
+    score_name = "Signal-to-Noise Ratio",
 )
 
     tt = Omics.Table.rea(target_x_sample_x_number_tsv)
 
     tf = Omics.Table.rea(feature_x_sample_x_score_tsv)
 
-    sc = Matrix(tf[!, indexin(names(tt), names(tf))])
+    sc = Matrix(tf[!, indexin(names(tt)[2:end], names(tf))])
 
     if !iszero(normalization_dimension)
 
@@ -1284,16 +1276,13 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    is_ = convert(BitVector, tt[1, 2:end])
+    is_ = convert(BitVector, collect(tt[1, 2:end]))
 
-    fe_, mt_ = _map_sort(fu, is_, sc, fe_)
+    fe_, mt_ = _map_sort(fu, is_, sc, tf[!, 1])
 
     Omics.Table.writ(
         joinpath(output_directory, "feature_x_metric_x_score.tsv"),
-        "Feature",
-        fe_,
-        metric,
-        reshape(mt_, :, 1),
+        Omics.Table.make("Feature", fe_, [metric], reshape(mt_, :, 1)),
     )
 
     se_, me___ = _read_set(
@@ -1330,7 +1319,7 @@ Run metric-rank (standard) GSEA.
     elseif permutation == "set"
 
         ra =
-            _permute_set(number_of_permutations, random_seed, al, fe_, sc_, me___, exponent)
+            _permute_set(number_of_permutations, random_seed, al, fe_, mt_, me___, exponent)
 
     elseif isfile(permutation)
 
@@ -1343,29 +1332,25 @@ Run metric-rank (standard) GSEA.
         write_set_x_index_x_random_tsv,
         al,
         fe_,
-        sc_,
+        mt_,
         exponent,
         se_,
         me___,
-        enrich(al, fe_, sc_, me___; ex = exponent),
+        enrich(al, fe_, mt_, me___; ex = exponent),
         ra,
         number_of_sets_to_plot,
         split(more_sets_to_plot),
         feature_name,
-        score_name,
         low_text,
         high_text,
+        score_name,
     )
 
 end
 
 # ---- #
 
-"""
-Gene set enrichment analysis.
-"""
+# TODO
 @main
-
-# ---- #
 
 end

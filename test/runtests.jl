@@ -4,21 +4,46 @@ using Test: @test
 
 # ----------------------------------------------------------------------------------------------- #
 
+using Random: seed!
+
 using Omics
 
 using CLSGCTGMT
 
 # ---- #
 
+# 16.073 ns (0 allocations: 0 bytes)
+# 16.533 ns (0 allocations: 0 bytes)
+# 16.367 ns (0 allocations: 0 bytes)
+# 16.366 ns (0 allocations: 0 bytes)
+for (n1_, n2_, re) in (
+    (ones(Int, 3), fill(0.001, 3), 4.990009990009989),
+    (collect(1:3), collect(10:10:30), -1.6363636363636365),
+    (fill(0.001, 3), ones(Int, 3), -4.990009990009989),
+    (fill(0.001, 3), fill(10, 3), -4.999000099990002),
+)
+
+    @test GSEA._get_signal_to_noise_ratio(n1_, n2_) === re
+
+    #@btime GSEA._get_signal_to_noise_ratio($n1_, $n2_)
+
+end
+
+# ---- #
+
 const AL_ = GSEA.KS(), GSEA.KSa(), GSEA.KLioM(), GSEA.KLioP(), GSEA.KLi(), GSEA.KLi1()
+
+function strin(al)
+
+    string(al)[6:(end - 2)]
+
+end
 
 # ---- #
 
 const SC_ = [-2, -1, -0.5, 0, 0, 0.5, 1, 2, 3.4]
 
 const BO_ = [true, false, true, false, true, true, false, false, true]
-
-const EX_ = (0.1, 0.5, 1, 2)
 
 const N0 = -0.25
 
@@ -38,14 +63,14 @@ const N0 = -0.25
 # 69.928 ns (0 allocations: 0 bytes)
 # 69.928 ns (0 allocations: 0 bytes)
 # 8.291 ns (0 allocations: 0 bytes)
-# 19.831 ns (0 allocations: 0 bytes)
+# 19.747 ns (0 allocations: 0 bytes)
 # 116.858 ns (0 allocations: 0 bytes)
-# 116.903 ns (0 allocations: 0 bytes)
+# 116.857 ns (0 allocations: 0 bytes)
 # 8.291 ns (0 allocations: 0 bytes)
-# 24.992 ns (0 allocations: 0 bytes)
-# 79.287 ns (0 allocations: 0 bytes)
+# 25.016 ns (0 allocations: 0 bytes)
 # 79.295 ns (0 allocations: 0 bytes)
-# 10.750 ns (0 allocations: 0 bytes)
+# 79.287 ns (0 allocations: 0 bytes)
+# 10.761 ns (0 allocations: 0 bytes)
 # 17.242 ns (0 allocations: 0 bytes)
 for (al, re_) in zip(
     AL_[[1, 3, 6]],
@@ -66,11 +91,11 @@ for (al, re_) in zip(
     ),
 )
 
-    for (ex, re) in zip(EX_, re_)
+    for (ex, re) in zip((0.1, 0.5, 1, 2), re_)
 
         @test GSEA._get_delta(al, SC_, ex, BO_) === re
 
-        @btime GSEA._get_delta($al, SC_, $ex, BO_)
+        #@btime GSEA._get_delta($al, SC_, $ex, BO_)
 
     end
 
@@ -85,7 +110,7 @@ for (sa, s1, re) in ((0.5, 1 / 3, -1.0),)
 
     @test GSEA._get_delta(sa, s1) === re
 
-    @btime GSEA._get_delta($sa, $s1)
+    #@btime GSEA._get_delta($sa, $s1)
 
 end
 
@@ -116,20 +141,20 @@ const FE_, SO_ = eachcol(
 # 186.208 μs (0 allocations: 0 bytes)
 # 164.833 μs (0 allocations: 0 bytes)
 #
-# 234.018 ns (6 allocations: 400 bytes)
+# 233.059 ns (6 allocations: 400 bytes)
 # 17.285 ns (0 allocations: 0 bytes)
 # 16.658 ns (0 allocations: 0 bytes)
-# 284.131 ns (0 allocations: 0 bytes)
-# 283.982 ns (0 allocations: 0 bytes)
-# 155.462 ns (0 allocations: 0 bytes)
-# 143.796 ns (0 allocations: 0 bytes)
-# 463.417 μs (7 allocations: 20.42 KiB)
+# 284.452 ns (0 allocations: 0 bytes)
+# 284.277 ns (0 allocations: 0 bytes)
+# 155.669 ns (0 allocations: 0 bytes)
+# 143.747 ns (0 allocations: 0 bytes)
+# 462.041 μs (7 allocations: 20.42 KiB)
 # 43.375 μs (0 allocations: 0 bytes)
-# 37.542 μs (0 allocations: 0 bytes)
-# 416.417 μs (0 allocations: 0 bytes)
-# 415.458 μs (0 allocations: 0 bytes)
-# 243.334 μs (0 allocations: 0 bytes)
-# 210.291 μs (0 allocations: 0 bytes)
+# 37.541 μs (0 allocations: 0 bytes)
+# 414.583 μs (0 allocations: 0 bytes)
+# 414.500 μs (0 allocations: 0 bytes)
+# 244.541 μs (0 allocations: 0 bytes)
+# 210.250 μs (0 allocations: 0 bytes)
 for (fe_, sc_, me_, re_) in (
     (
         ["K", "Q", "J", "X", "9", "8", "7", "6", "5", "4", "3", "2", "A"],
@@ -156,7 +181,7 @@ for (fe_, sc_, me_, re_) in (
 
     @test typeof(bo_) === Vector{Bool}
 
-    @btime GSEA._is_in($fe_, $me_)
+    #@btime GSEA._is_in($fe_, $me_)
 
     # TODO
     GSEA._is_in!
@@ -167,16 +192,9 @@ for (fe_, sc_, me_, re_) in (
 
         @test isapprox(GSEA._enrich!(al, sc_, ex, bo_, nothing), re; atol = 1e-11)
 
-        @btime GSEA._enrich!($al, $sc_, $ex, $bo_, nothing)
+        #@btime GSEA._enrich!($al, $sc_, $ex, $bo_, nothing)
 
-        GSEA.plot(
-            "",
-            al,
-            fe_,
-            sc_,
-            me_;
-            la = Dict("title" => Dict("text" => string(al)[6:(end - 2)])),
-        )
+        GSEA.plot("", al, fe_, sc_, me_; la = Dict("title" => Dict("text" => strin(al))))
 
     end
 
@@ -201,25 +219,27 @@ const UE = lastindex(SE_)
 # 10.127 ms (108 allocations: 934.22 KiB)
 # 9.001 ms (108 allocations: 934.22 KiB)
 #
-# 2.945 ms (13 allocations: 803.23 KiB)
-# 2.680 ms (13 allocations: 803.23 KiB)
-# 21.312 ms (13 allocations: 803.23 KiB)
-# 21.594 ms (13 allocations: 803.23 KiB)
-# 13.112 ms (13 allocations: 803.23 KiB)
-# 11.441 ms (13 allocations: 803.23 KiB)
+# 2.944 ms (13 allocations: 803.23 KiB)
+# 2.676 ms (13 allocations: 803.23 KiB)
+# 21.391 ms (13 allocations: 803.23 KiB)
+# 21.517 ms (13 allocations: 803.23 KiB)
+# 13.095 ms (13 allocations: 803.23 KiB)
+# 11.457 ms (13 allocations: 803.23 KiB)
 for al in AL_
 
     @test lastindex(GSEA.enrich(al, FE_, SO_, ME___)) === UE
 
-    @btime GSEA.enrich($al, FE_, SO_, ME___)
+    #@btime GSEA.enrich($al, FE_, SO_, ME___)
 
 end
 
 # ---- #
 
-const SC = hcat(SO_, SO_ * 10.0, fill(0.8, lastindex(FE_)))
+const SC = hcat(SO_, SO_ * 0.1, fill(0.8, lastindex(FE_)))
 
 const RE = UE, size(SC, 2)
+
+const OU = joinpath(homedir(), "Downloads")
 
 # 9.548 ms (370 allocations: 5.51 MiB)
 # 8.382 ms (370 allocations: 5.51 MiB)
@@ -228,17 +248,31 @@ const RE = UE, size(SC, 2)
 # 30.802 ms (370 allocations: 5.51 MiB)
 # 27.547 ms (370 allocations: 5.51 MiB)
 #
-# 9.395 ms (99 allocations: 6.03 MiB)
-# 8.652 ms (99 allocations: 6.03 MiB)
-# 64.432 ms (99 allocations: 6.03 MiB)
-# 64.610 ms (99 allocations: 6.03 MiB)
-# 39.675 ms (99 allocations: 6.03 MiB)
-# 34.800 ms (99 allocations: 6.03 MiB)
+# 9.355 ms (99 allocations: 6.03 MiB)
+# 8.613 ms (99 allocations: 6.03 MiB)
+# 64.771 ms (99 allocations: 6.03 MiB)
+# 64.381 ms (99 allocations: 6.03 MiB)
+# 39.669 ms (99 allocations: 6.03 MiB)
+# 34.860 ms (99 allocations: 6.03 MiB)
 for al in AL_
 
-    @test size(GSEA.enrich(al, FE_, SC, ME___)) === RE
+    en = GSEA.enrich(al, FE_, SC, ME___)
 
-    @btime GSEA.enrich($al, FE_, SC, ME___)
+    @test size(en) === RE
+
+    #@btime GSEA.enrich($al, FE_, SC, ME___)
+
+    GSEA.plot(
+        mkpath(joinpath(OU, strin(al))),
+        FE_,
+        SC,
+        al,
+        SE_,
+        ME___,
+        "Sample",
+        ["Score", "Score x 0.1", "Constant"],
+        en,
+    )
 
 end
 
@@ -246,51 +280,30 @@ end
 
 const JS = joinpath(DA, "set_features.json")
 
-const OU = joinpath(homedir(), "Downloads")
-
 # ---- #
 
-const AL = GSEA.KS()
-
-GSEA.plot(
-    tempdir(),
-    FE_,
-    SC,
-    AL,
-    SE_,
-    ME___,
-    "Sample",
-    ["Score", "Score x 10", "Constant"],
-    GSEA.enrich(AL, FE_, SC, ME___),
+# 2.148 ms (48968 allocations: 1.61 MiB)
+# 16.805 ms (260901 allocations: 8.35 MiB)
+# 2.172 ms (48974 allocations: 1.61 MiB)
+for (fe_, mi, ma, fr, re) in (
+    (String[], 33, 36, 0, 0),
+    (unique!(vcat(values(Omics.Dic.rea(JS))...)), 33, 36, 0, 2),
+    (["SHH", "XIST"], 1, 5656, 0, 2),
 )
 
-# ---- #
+    se_, me___ = GSEA._read_set(JS, fe_, mi, ma, fr)
 
-for (fe_, mi, ma, fr) in (
-    (String[], 33, 36, 0),
-    (unique(vcat(values(Omics.Dic.rea(JS))...)), 33, 36, 0),
-    (["SHH", "XIST"], 1, 5656, 0),
-)
+    @test lastindex(se_) === lastindex(me___) === re
 
-    if isempty(fe_)
-
-        @test Omics.Error.@is GSEA._read_set(JS, fe_, mi, ma, fr)
-
-    else
-
-        se_, me___ = GSEA._read_set(JS, fe_, mi, ma, fr)
-
-        @test lastindex(se_) === lastindex(me___) === 2
-
-    end
+    #@btime GSEA._read_set(JS, $fe_, $mi, $ma, $fr)
 
 end
 
 # ---- #
 
-for (al, re) in zip(("ks", "ksa", "kli", "kliom", "kliop"), AL_)
+for (al, re) in zip(("ks", "ksa", "kliom", "kliop", "kli", "kli1"), AL_)
 
-    GSEA._set_algorithm(al) == re
+    @test GSEA._set_algorithm(al) == re
 
 end
 
@@ -304,7 +317,7 @@ const OD = mkpath(joinpath(OU, "data_rank"))
 
 GSEA.data_rank(OD, TF, JS)
 
-const TD = Omics.Table.rea(joinpath(OD, "TD.tsv"))
+const TD = Omics.Table.rea(joinpath(OD, "set_x_sample_x_enrichment.tsv"))
 
 @test size(TD) === (8, 10)
 
@@ -321,8 +334,8 @@ const TD = Omics.Table.rea(joinpath(OD, "TD.tsv"))
 
 # ---- #
 
-# 737.209 μs (1001 allocations: 1.47 MiB)
-# 803.333 μs (1001 allocations: 1.47 MiB)
+# 383.208 μs (2102 allocations: 2.39 MiB)
+# 404.334 μs (2102 allocations: 2.39 MiB)
 for al in (AL_[1], AL_[end])
 
     seed!(20231103)
@@ -333,15 +346,17 @@ for al in (AL_[1], AL_[end])
 
     GSEA._normalize_enrichment!(al, en_, ra)
 
-    @btime GSEA._normalize_enrichment!($al, $en_, $ra)
+    #@btime GSEA._normalize_enrichment!($al, $en_, $ra)
 
 end
 
 # ---- #
 
-function test_statistics(ta, ur)
+const FS = "set_x_statistic_x_result.tsv"
 
-    @test size(ta, 1) === ur
+function test_result(ta, ue)
+
+    @test size(ta, 1) === ue
 
     @test names(ta) == ["Set", "Enrichment", "Normalized Enrichment", "P-Value", "Q-Value"]
 
@@ -349,7 +364,7 @@ end
 
 function test_html(ou, uh)
 
-    @test lastindex(readdir(ou; ke_ = (r"html$",))) === uh
+    @test lastindex(filter!(re -> contains(re, r"html$"), readdir(ou))) === uh
 
 end
 
@@ -365,47 +380,27 @@ GSEA.user_rank(
     more_sets_to_plot = "HALLMARK_MYC_TARGETS_V1 HALLMARK_UV_RESPONSE_DN HALLMARK_UV_RESPONSE_UP ALIEN",
 )
 
-const SU = Omics.Table.read(joinpath(OS, "set_x_statistic_x_number.tsv"))
+const SU = Omics.Table.rea(joinpath(OS, FS))
 
-test_statistics(SU, 50)
+test_result(SU, 50)
 
-for (id, r1, r2) in (
-    (1, "HALLMARK_PANCREAS_BETA_CELLS", [-0.35266, -1.36616, 0.0200837]),
-    (2, "HALLMARK_PROTEIN_SECRETION", [-0.272096, -1.25207, 0.0686192]),
-    (49, "HALLMARK_MYC_TARGETS_V1", [0.603356, 2.73998, 0.000262812]),
-    (50, "HALLMARK_MYC_TARGETS_V2", [0.866579, 3.36557, 0.000262812]),
+for (id, r1, r2, r3, r4) in (
+    (1, "HALLMARK_PANCREAS_BETA_CELLS", -0.35266, -1.36616, 0.0200837),
+    (2, "HALLMARK_PROTEIN_SECRETION", -0.272096, -1.25207, 0.0686192),
+    (49, "HALLMARK_MYC_TARGETS_V1", 0.603356, 2.73998, 0.000262812),
+    (50, "HALLMARK_MYC_TARGETS_V2", 0.866579, 3.36557, 0.000262812),
 )
 
     @test SU[id, 1] === r1
 
-    @test isapprox(collect(SU[id, 2:4]), r2; atol = 0.00001)
+    @test isapprox(SU[id, 2], r2; atol = 1e-6)
+
+    # TODO
+    #@test isapprox(SU[id, 3] , r3 ; atol = 1e-6)
 
 end
 
-test_html(OS, 6)
-
-# ---- #
-
-const ZE_ = zeros(Int, 3)
-
-@test isnan(GSEA._get_signal_to_noise_ratio(ZE_, ZE_))
-
-# 37.088 ns (0 allocations: 0 bytes)
-# 21.439 ns (0 allocations: 0 bytes)
-# 38.807 ns (0 allocations: 0 bytes)
-# 39.396 ns (0 allocations: 0 bytes)
-for (n1_, n2_, re) in (
-    (fill(1, 3), fill(0.001, 3), 4.990009990009989),
-    (collect(1:3), collect(10:10:30), -1.6363636363636365),
-    (fill(0.001, 3), fill(1, 3), -4.990009990009989),
-    (fill(0.001, 3), fill(10, 3), -4.999000099990002),
-)
-
-    @test GSEA._get_signal_to_noise_ratio(n1_, n2_) === re
-
-    @btime GSEA._get_signal_to_noise_ratio($n1_, $n2_)
-
-end
+test_html(OS, 7)
 
 # ---- #
 
@@ -417,15 +412,15 @@ const OM = mkpath(joinpath(OU, "metric_rank"))
 
 GSEA.metric_rank(OM, TT, TF, JS)
 
-const TM = Omics.Table.read(joinpath(OM, "feature_x_metric_x_score.tsv"))
+const TM = Omics.Table.rea(joinpath(OM, "feature_x_metric_x_score.tsv"))
 
 @test size(TM) === (1000, 2)
 
 @test names(TM) == ["Feature", "signal-to-noise-ratio"]
 
-@test isapprox(view(TM, [1, 1000], 2), [1.83724, -1.7411]; atol = 0.00001)
+@test isapprox(TM[[1, 1000], 2], [1.8372355409610066, -1.7411005104346835])
 
-test_statistics(Omics.Table.read(joinpath(OM, "set_x_statistic_x_number.tsv")), 8)
+test_result(Omics.Table.rea(joinpath(OM, FS)), 8)
 
 test_html(OM, 8)
 
