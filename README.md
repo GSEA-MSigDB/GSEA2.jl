@@ -2,20 +2,18 @@
 
 The Julia implementation of the next-generation GSEA is hundreds of times faster and incorporates new information-theoretic algorithms.
 
+Check out [CLSGCTGMT.jl](https://github.com/GSEA-MSigDB/CLSGCTGMT.jl).
+
 ## Julia
 
 ```julia
-]add https://github.com/GSEA-MSigDB/GSEA.jl
-
 using GSEA
 
-const SA = pkgdir(GSEA, "example", "sarcopenia")
-
 GSEA.metric_rank(
-    mkpath(joinpath(homedir(), "Downloads", "output")),
-    joinpath(SA, "target_x_sample_x_number.tsv"),
-    joinpath(SA, "feature_x_sample_x_number.tsv"),
-    joinpath(SA, "set_features.json"),
+    joinpath(homedir(), "Downloads"),
+    joinpath("example", "sarcopenia", "target_x_sample_x_number.tsv"),
+    joinpath("example", "sarcopenia", "feature_x_sample_x_number.tsv"),
+    joinpath("example", "sarcopenia", "set_features.json");
     number_of_permutations = 10,
     more_sets_to_plot = ["WP_DNA_MISMATCH_REPAIR", "WP_CELL_CYCLE"],
 )
@@ -23,23 +21,16 @@ GSEA.metric_rank(
 
 ## Command Line Interface
 
-```bash
-mkdir ~/Downloads/output
+![The screenshot of the help command](media/help.png)
 
-cd example/sarcopenia
+```bash
 gsea metric-rank \
-    ~/Downloads/output \
-    target_x_sample_x_number.tsv \
-    feature_x_sample_x_number.tsv \
-    set_features.json \
+    ~/Downloads \
+    example/sarcopenia/target_x_sample_x_number.tsv \
+    example/sarcopenia/feature_x_sample_x_number.tsv \
+    example/sarcopenia/set_features.json \
     --number-of-permutations 10 \
     --more-sets-to-plot "WP_DNA_MISMATCH_REPAIR WP_CELL_CYCLE"
-
-cd ~/Downloads/output
-
-head -4 *.tsv
-
-open *.html
 ```
 
 ## Install
@@ -67,7 +58,7 @@ gsea --help
 
 ## Contact Us
 
-If you have any questions, issues, or concerns, please feel free to [open a GitHub issue](https://github.com/GSEA-MSigDB/GSEA2.jl/issues/new/choose).
+If you have any questions, issues, or concerns, please feel free to [open a GitHub issue](https://github.com/GSEA-MSigDB/GSEA.jl/issues/new/choose).
 
 ---
 

@@ -1,20 +1,20 @@
 module GSEA
 
+# ---- #
+
+using Comonicon: @cast, @main
+
 using Printf: @sprintf
+
+using ProgressMeter: @showprogress
+
+using Random: seed!, shuffle!
+
+using StatsBase: mean, sample, std
 
 using Omics
 
-struct KS end
-
-struct KSa end
-
-struct KLioM end
-
-struct KLioP end
-
-struct KLi end
-
-struct KLi1 end
+# ---- #
 
 function _is_in(fe_, me_)
 
@@ -38,6 +38,58 @@ function _is_in!(bi_, fe_id, me_)
 
 end
 
+# ---- #
+
+function _separate(nu_)
+
+    ie_ = findall(<(0), nu_)
+
+    ip_ = findall(>=(0), nu_)
+
+    nu_[ie_], nu_[ip_]
+
+end
+
+# ---- #
+
+function _get_mean_difference(n1_, n2_)
+
+    mean(n1_) - mean(n2_)
+
+end
+
+function _get_standard_deviation(nu_, me)
+
+    max(0.2 * abs(me), std(nu_; corrected = true))
+
+end
+
+function _get_signal_to_noise_ratio(n1_, n2_)
+
+    m1 = mean(n1_)
+
+    m2 = mean(n2_)
+
+    (m1 - m2) / (_get_standard_deviation(n1_, m1) + _get_standard_deviation(n2_, m2))
+
+end
+
+# ---- #
+
+function _map_sort(fu, is_, sc, fe_)
+
+    io_ = map(!, is_)
+
+    mt_ = map(sc_ -> fu(sc_[:, io_], sc_[:, is_]), eachrow(sc))
+
+    id_ = sortperm(mt_; rev = true)
+
+    fe_[id_], mt_[id_]
+
+end
+
+# ---- #
+
 function _exponentiate(sc, ex)
 
     ma = abs(sc)
@@ -46,7 +98,23 @@ function _exponentiate(sc, ex)
 
 end
 
-function _get_0_1(sc_, ex, bo_)
+# ---- #
+
+struct KS end
+
+struct KSa end
+
+struct KLioM end
+
+struct KLioP end
+
+struct KLi end
+
+struct KLi1 end
+
+# ---- #
+
+function _get_delta(::Union{KS, KSa}, sc_, ex, bo_)
 
     s0 = s1 = 0.0
 
@@ -68,7 +136,7 @@ function _get_0_1(sc_, ex, bo_)
 
 end
 
-function _get_all_1(sc_, ex, bo_)
+function _get_delta(::Union{KLioM, KLioP, KLi}, sc_, ex, bo_)
 
     sa = s1 = 0.0
 
@@ -90,13 +158,13 @@ function _get_all_1(sc_, ex, bo_)
 
 end
 
-function _get_0(na, n1)
+function _get_delta(na, n1)
 
     inv(inv(na) - inv(n1))
 
 end
 
-function _get_1(sc_, ex, bo_)
+function _get_delta(::KLi1, sc_, ex, bo_)
 
     s1 = 0.0
 
@@ -114,9 +182,11 @@ function _get_1(sc_, ex, bo_)
 
 end
 
-function _enrich!(::KS, sc_, ex, bo_, mo_)
+# ---- #
 
-    n0, n1 = _get_0_1(sc_, ex, bo_)
+function _enrich!(al::KS, sc_, ex, bo_, mo_)
+
+    n0, n1 = _get_delta(al, sc_, ex, bo_)
 
     mo = be = bs = 0.0
 
@@ -146,9 +216,9 @@ function _enrich!(::KS, sc_, ex, bo_, mo_)
 
 end
 
-function _enrich!(::KSa, sc_, ex, bo_, mo_)
+function _enrich!(al::KSa, sc_, ex, bo_, mo_)
 
-    n0, n1 = _get_0_1(sc_, ex, bo_)
+    n0, n1 = _get_delta(al, sc_, ex, bo_)
 
     mo = ar = 0.0
 
@@ -168,13 +238,15 @@ function _enrich!(::KSa, sc_, ex, bo_, mo_)
 
 end
 
+# ---- #
+
 const ON = 1.0 + 1e-13
 
-function _enrich!(::KLioM, sc_, ex, bo_, mo_)
+function _enrich!(al::KLioM, sc_, ex, bo_, mo_)
 
-    na, n1 = _get_all_1(sc_, ex, bo_)
+    na, n1 = _get_delta(al, sc_, ex, bo_)
 
-    n0 = _get_0(na, n1)
+    n0 = _get_delta(na, n1)
 
     ra = r0 = r1 = eps()
 
@@ -241,11 +313,11 @@ function _enrich!(::KLioM, sc_, ex, bo_, mo_)
 
 end
 
-function _enrich!(::KLioP, sc_, ex, bo_, mo_)
+function _enrich!(al::KLioP, sc_, ex, bo_, mo_)
 
-    na, n1 = _get_all_1(sc_, ex, bo_)
+    na, n1 = _get_delta(al, sc_, ex, bo_)
 
-    n0 = _get_0(na, n1)
+    n0 = _get_delta(na, n1)
 
     ra = r0 = r1 = eps()
 
@@ -308,9 +380,11 @@ function _enrich!(::KLioP, sc_, ex, bo_, mo_)
 
 end
 
-function _enrich!(::KLi, sc_, ex, bo_, mo_)
+# ---- #
 
-    na, n1 = _get_all_1(sc_, ex, bo_)
+function _enrich!(al::KLi, sc_, ex, bo_, mo_)
+
+    na, n1 = _get_delta(al, sc_, ex, bo_)
 
     ra = r1 = eps()
 
@@ -358,11 +432,13 @@ function _enrich!(::KLi, sc_, ex, bo_, mo_)
 
 end
 
-function _enrich!(::KLi1, sc_, ex, bo_, mo_)
+# ---- #
+
+function _enrich!(al::KLi1, sc_, ex, bo_, mo_)
 
     uf = lastindex(sc_)
 
-    n1 = _get_1(sc_, ex, bo_)
+    n1 = _get_delta(al, sc_, ex, bo_)
 
     ra = r1 = eps()
 
@@ -408,6 +484,8 @@ function _enrich!(::KLi1, sc_, ex, bo_, mo_)
 
 end
 
+# ---- #
+
 function _get_extreme(mo_)
 
     mi, ma = extrema(mo_)
@@ -440,9 +518,9 @@ function plot(
     me_;
     ex = 1.0,
     nf = "Feature",
-    ns = "Score",
     nl = "Low",
     nh = "High",
+    ns = "Score",
     la = Dict{String, Any}(),
 )
 
@@ -569,6 +647,8 @@ function plot(
 
 end
 
+# ---- #
+
 function enrich(al, fe_, sc_::AbstractVector, me___; um = 1, ex = 1)
 
     en_ = Vector{Float64}(undef, lastindex(me___))
@@ -617,15 +697,7 @@ function enrich(al, fe_, sc, me___; um = 1, ex = 1)
 
 end
 
-using Comonicon: @cast, @main
-
-using ProgressMeter: @showprogress
-
-using Random: seed!, shuffle!
-
-using StatsBase: mean, sample, std
-
-using CLSGCTGMT
+# ---- #
 
 function plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 4)
 
@@ -675,6 +747,8 @@ function plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 4)
 
 end
 
+# ---- #
+
 function _standardize_clamp!(ma, di, st)
 
     if isone(di)
@@ -693,33 +767,7 @@ function _standardize_clamp!(ma, di, st)
 
 end
 
-function _read_set(js, fe_, mi, ma, fr)
-
-    se_me_ = Omics.Dic.rea(js)
-
-    se_ = collect(keys(se_me_))
-
-    me___ = collect(values(se_me_))
-
-    ke_ = BitVector(undef, lastindex(se_))
-
-    for id in eachindex(me___)
-
-        me_ = me___[id]
-
-        ub = lastindex(me_)
-
-        intersect!(me_, fe_)
-
-        ua = lastindex(me_)
-
-        ke_[id] = mi <= ua <= ma && fr <= ua / ub
-
-    end
-
-    se_[ke_], me___[ke_]
-
-end
+# ---- #
 
 function _set_algorithm(al)
 
@@ -751,60 +799,35 @@ function _set_algorithm(al)
 
 end
 
-"""
-Convert `.cls` and `.gct` to two `.tsv`s.
+function _read_set(js, fe_, mi, ma, fr)
 
-# Args
+    se_me_ = Omics.Dic.rea(js)
 
-  - `target_x_sample_x_number_tsv`: Output target `.tsv`.
-  - `feature_x_sample_x_score_tsv`: Output feature `.tsv`.
-  - `cls`: Input `.cls`.
-  - `gct`: Input `.gct`.
-"""
-@cast function convert_cls_gct(
-    target_x_sample_x_number_tsv,
-    feature_x_sample_x_score_tsv,
-    cls,
-    gct,
-)
+    se_ = collect(keys(se_me_))
 
-    cl = CLSGCTGMT.read_cls(cls)
+    me___ = collect(values(se_me_))
 
-    gc = CLSGCTGMT.read_gct(gct)
+    ke_ = BitVector(undef, lastindex(se_))
 
-    sa_ = names(gc)[2:end]
+    for id in eachindex(me___)
 
-    nu = Matrix(cl[:, 2:end])
+        me_ = me___[id]
 
-    map!(nm -> nm - 1.0, nu, nu)
+        ub = lastindex(me_)
 
-    Omics.Table.writ(target_x_sample_x_number_tsv, "Target", cl[:, 1], sa_, nu)
+        intersect!(me_, fe_)
 
-    Omics.Table.writ(
-        feature_x_sample_x_score_tsv,
-        "Feature",
-        gc[:, 1],
-        sa_,
-        Matrix(gc[:, 2:end]),
-    )
+        ua = lastindex(me_)
 
-    target_x_sample_x_number_tsv, feature_x_sample_x_score_tsv
+        ke_[id] = mi <= ua <= ma && fr <= ua / ub
+
+    end
+
+    se_[ke_], me___[ke_]
 
 end
 
-"""
-Convert (merging) `.gmt`s to `.json`.
-
-# Args
-
-  - `set_features_json`: Output `.json`.
-  - `gmt_`: Input `.gmt`s.
-"""
-@cast function convert_gmt(set_features_json, gmt_...)
-
-    Omics.Dic.writ(set_features_json, reduce(merge!, gmt_))
-
-end
+# ---- #
 
 """
 Run data-rank (single-sample) GSEA.
@@ -889,25 +912,17 @@ Run data-rank (single-sample) GSEA.
 
 end
 
-function _separate(nu_)
+# ---- #
 
-    ie_ = findall(<(0.0), nu_)
+function _normalize_enrichment(::Union{KS, KSa}, en, mn, mp, ::Any, ::Any)
 
-    ip_ = findall(>=(0.0), nu_)
-
-    nu_[ie_], nu_[ip_]
+    en / en < 0.0 ? -mn : mp
 
 end
 
-function _normalize_enrichment(nu, mn, mp)
+function _normalize_enrichment(::Any, en, mn, mp, sn, sp)
 
-    nu / nu < 0.0 ? -mn : mp
-
-end
-
-function _normalize_enrichment(nu, mn, mp, sn, sp)
-
-    if nu < 0.0
+    if en < 0.0
 
         me = mn
 
@@ -921,37 +936,11 @@ function _normalize_enrichment(nu, mn, mp, sn, sp)
 
     end
 
-    1.0 + (nu - me) / 3.0 * st
+    1.0 + (en - me) / 3.0 * st
 
 end
 
-function _normalize_enrichment!(::Union{KS, KSa}, en_, ra)
-
-    er_ = Vector{Float64}(undef, lastindex(en_))
-
-    for id in eachindex(en_)
-
-        en = en_[id]
-
-        ra_ = ra[id, :]
-
-        ne_, po_ = _separate(ra_)
-
-        mn = mean(ne_)
-
-        mp = mean(po_)
-
-        er_[id] = _normalize_enrichment(en, mn, mp)
-
-        map!(ra -> _normalize_enrichment(ra, mn, mp), ra_, ra_)
-
-    end
-
-    er_
-
-end
-
-function _normalize_enrichment!(::Union{KLi1, KLi, KLioM, KLioP}, en_, ra)
+function _normalize_enrichment!(al, en_, ra)
 
     er_ = Vector{Float64}(undef, lastindex(en_))
 
@@ -971,15 +960,17 @@ function _normalize_enrichment!(::Union{KLi1, KLi, KLioM, KLioP}, en_, ra)
 
         sp = std(po_)
 
-        er_[id] = _normalize_enrichment(en, mn, mp, sn, sp)
+        er_[id] = _normalize_enrichment(al, en, mn, mp, sn, sp)
 
-        map!(ra -> _normalize_enrichment(ra, mn, mp, sn, sp), ra_, ra_)
+        map!(ra -> _normalize_enrichment(al, ra, mn, mp, sn, sp), ra_, ra_)
 
     end
 
     er_
 
 end
+
+# ---- #
 
 function _write(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns, nl, nh)
 
@@ -1057,6 +1048,8 @@ function _write(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns, 
 
 end
 
+# ---- #
+
 function _permute_set(ur, se, al, fe_, sc_, me___, ex)
 
     ra = Matrix{Float64}(undef, lastindex(me___), ur)
@@ -1101,6 +1094,8 @@ function _use_permutation(permutation, al, fe_, me___, ex)
     ra
 
 end
+
+# ---- #
 
 """
 Run user-rank (pre-rank) GSEA.
@@ -1206,39 +1201,7 @@ Run user-rank (pre-rank) GSEA.
 
 end
 
-function _get_mean_difference(n1_, n2_)
-
-    mean(n1_) - mean(n2_)
-
-end
-
-function _get_standard_deviation(nu_, me)
-
-    max(0.2 * abs(me), std(nu_; corrected = true))
-
-end
-
-function _get_signal_to_noise_ratio(n1_, n2_)
-
-    m1 = mean(n1_)
-
-    m2 = mean(n2_)
-
-    (m1 - m2) / (_get_standard_deviation(n1_, m1) + _get_standard_deviation(n2_, m2))
-
-end
-
-function _target_sort(fu, is_, sc, fe_)
-
-    io_ = map(!, is_)
-
-    mt_ = map(sc_ -> fu(sc_[:, io_], sc_[:, is_]), eachrow(sc))
-
-    id_ = sortperm(mt_; rev = true)
-
-    fe_[id_], mt_[id_]
-
-end
+# ---- #
 
 """
 Run metric-rank (standard) GSEA.
@@ -1323,7 +1286,7 @@ Run metric-rank (standard) GSEA.
 
     is_ = convert(BitVector, tt[1, 2:end])
 
-    fe_, mt_ = _target_sort(fu, is_, sc, fe_)
+    fe_, mt_ = _map_sort(fu, is_, sc, fe_)
 
     Omics.Table.writ(
         joinpath(output_directory, "feature_x_metric_x_score.tsv"),
@@ -1355,7 +1318,7 @@ Run metric-rank (standard) GSEA.
 
                 ra[:, id] = enrich(
                     al,
-                    _target_sort(fu, shuffle!(is_), sc, fe_)...,
+                    _map_sort(fu, shuffle!(is_), sc, fe_)...,
                     me___;
                     ex = exponent,
                 )
@@ -1396,9 +1359,13 @@ Run metric-rank (standard) GSEA.
 
 end
 
+# ---- #
+
 """
-# Gene set enrichment analysis 🏔️
+Gene set enrichment analysis.
 """
 @main
+
+# ---- #
 
 end

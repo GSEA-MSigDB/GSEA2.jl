@@ -10,11 +10,15 @@ using CLSGCTGMT
 
 # ---- #
 
+const AL_ = GSEA.KS(), GSEA.KSa(), GSEA.KLioM(), GSEA.KLioP(), GSEA.KLi(), GSEA.KLi1()
+
+# ---- #
+
 const SC_ = [-2, -1, -0.5, 0, 0, 0.5, 1, 2, 3.4]
 
 const BO_ = [true, false, true, false, true, true, false, false, true]
 
-# ---- #
+const EX_ = (0.1, 0.5, 1, 2)
 
 const N0 = -0.25
 
@@ -22,45 +26,53 @@ const N0 = -0.25
 # 59.681 ns (0 allocations: 0 bytes)
 # 9.500 ns (0 allocations: 0 bytes)
 # 21.314 ns (0 allocations: 0 bytes)
+# 97.238 ns (0 allocations: 0 bytes)
+# 97.281 ns (0 allocations: 0 bytes)
+# 8.884 ns (0 allocations: 0 bytes)
+# 28.098 ns (0 allocations: 0 bytes)
+# 63.350 ns (0 allocations: 0 bytes)
+# 63.350 ns (0 allocations: 0 bytes)
+# 9.510 ns (0 allocations: 0 bytes)
+# 20.687 ns (0 allocations: 0 bytes)
 #
 # 69.928 ns (0 allocations: 0 bytes)
 # 69.928 ns (0 allocations: 0 bytes)
 # 8.291 ns (0 allocations: 0 bytes)
 # 19.831 ns (0 allocations: 0 bytes)
-for (ex, re) in (
-    (0.1, (N0, 0.24581982412836917)),
-    (0.5, (N0, 0.21402570288861142)),
-    (1, (N0, 0.15625)),
-    (2, (N0, 0.06226650062266501)),
-)
-
-    @test GSEA._get_0_1(SC_, ex, BO_) === re
-
-    #@btime GSEA._get_0_1(SC_, $ex, BO_)
-
-end
-
-# ---- #
-
-# 97.238 ns (0 allocations: 0 bytes)
-# 97.281 ns (0 allocations: 0 bytes)
-# 8.884 ns (0 allocations: 0 bytes)
-# 28.098 ns (0 allocations: 0 bytes)
-#
 # 116.858 ns (0 allocations: 0 bytes)
 # 116.903 ns (0 allocations: 0 bytes)
 # 8.291 ns (0 allocations: 0 bytes)
 # 24.992 ns (0 allocations: 0 bytes)
-for (ex, re) in (
-    (0.1, (0.14006007078470165, 0.24581982412836917)),
-    (0.5, (0.12366213677204271, 0.21402570288861142)),
-    (1, (0.09615384615384615, 0.15625)),
-    (2, (0.04533091568449683, 0.06226650062266501)),
+# 79.287 ns (0 allocations: 0 bytes)
+# 79.295 ns (0 allocations: 0 bytes)
+# 10.750 ns (0 allocations: 0 bytes)
+# 17.242 ns (0 allocations: 0 bytes)
+for (al, re_) in zip(
+    AL_[[1, 3, 6]],
+    (
+        (
+            (N0, 0.24581982412836917),
+            (N0, 0.21402570288861142),
+            (N0, 0.15625),
+            (N0, 0.06226650062266501),
+        ),
+        (
+            (0.14006007078470165, 0.24581982412836917),
+            (0.12366213677204271, 0.21402570288861142),
+            (0.09615384615384615, 0.15625),
+            (0.04533091568449683, 0.06226650062266501),
+        ),
+        (0.24581982412836917, 0.21402570288861142, 0.15625, 0.06226650062266501),
+    ),
 )
 
-    @test GSEA._get_all_1(SC_, ex, BO_) === re
+    for (ex, re) in zip(EX_, re_)
 
-    #@btime GSEA._get_all_1(SC_, $ex, BO_)
+        @test GSEA._get_delta(al, SC_, ex, BO_) === re
+
+        @btime GSEA._get_delta($al, SC_, $ex, BO_)
+
+    end
 
 end
 
@@ -71,39 +83,11 @@ end
 # 2.083 ns (0 allocations: 0 bytes)
 for (sa, s1, re) in ((0.5, 1 / 3, -1.0),)
 
-    @test GSEA._get_0(sa, s1) === re
+    @test GSEA._get_delta(sa, s1) === re
 
-    #@btime GSEA._get_0($sa, $s1)
-
-end
-
-# ---- #
-
-# 63.350 ns (0 allocations: 0 bytes)
-# 63.350 ns (0 allocations: 0 bytes)
-# 9.510 ns (0 allocations: 0 bytes)
-# 20.687 ns (0 allocations: 0 bytes)
-#
-# 79.287 ns (0 allocations: 0 bytes)
-# 79.295 ns (0 allocations: 0 bytes)
-# 10.750 ns (0 allocations: 0 bytes)
-# 17.242 ns (0 allocations: 0 bytes)
-for (ex, re) in (
-    (0.1, (0.24581982412836917)),
-    (0.5, (0.21402570288861142)),
-    (1, (0.15625)),
-    (2, (0.06226650062266501)),
-)
-
-    @test GSEA._get_1(SC_, ex, BO_) === re
-
-    #@btime GSEA._get_1(SC_, $ex, BO_)
+    @btime GSEA._get_delta($sa, $s1)
 
 end
-
-# ---- #
-
-const AL_ = GSEA.KS(), GSEA.KSa(), GSEA.KLioM(), GSEA.KLioP(), GSEA.KLi(), GSEA.KLi1()
 
 # ---- #
 
@@ -132,19 +116,19 @@ const FE_, SO_ = eachcol(
 # 186.208 μs (0 allocations: 0 bytes)
 # 164.833 μs (0 allocations: 0 bytes)
 #
-# 239.904 ns (6 allocations: 400 bytes)
+# 234.018 ns (6 allocations: 400 bytes)
 # 17.285 ns (0 allocations: 0 bytes)
 # 16.658 ns (0 allocations: 0 bytes)
-# 285.187 ns (0 allocations: 0 bytes)
-# 285.187 ns (0 allocations: 0 bytes)
-# 155.514 ns (0 allocations: 0 bytes)
-# 143.777 ns (0 allocations: 0 bytes)
-# 460.000 μs (7 allocations: 20.42 KiB)
+# 284.131 ns (0 allocations: 0 bytes)
+# 283.982 ns (0 allocations: 0 bytes)
+# 155.462 ns (0 allocations: 0 bytes)
+# 143.796 ns (0 allocations: 0 bytes)
+# 463.417 μs (7 allocations: 20.42 KiB)
 # 43.375 μs (0 allocations: 0 bytes)
-# 37.541 μs (0 allocations: 0 bytes)
-# 413.083 μs (0 allocations: 0 bytes)
-# 413.166 μs (0 allocations: 0 bytes)
-# 243.416 μs (0 allocations: 0 bytes)
+# 37.542 μs (0 allocations: 0 bytes)
+# 416.417 μs (0 allocations: 0 bytes)
+# 415.458 μs (0 allocations: 0 bytes)
+# 243.334 μs (0 allocations: 0 bytes)
 # 210.291 μs (0 allocations: 0 bytes)
 for (fe_, sc_, me_, re_) in (
     (
@@ -172,7 +156,7 @@ for (fe_, sc_, me_, re_) in (
 
     @test typeof(bo_) === Vector{Bool}
 
-    #@btime GSEA._is_in($fe_, $me_)
+    @btime GSEA._is_in($fe_, $me_)
 
     # TODO
     GSEA._is_in!
@@ -183,7 +167,7 @@ for (fe_, sc_, me_, re_) in (
 
         @test isapprox(GSEA._enrich!(al, sc_, ex, bo_, nothing), re; atol = 1e-11)
 
-        #@btime GSEA._enrich!($al, $sc_, $ex, $bo_, nothing)
+        @btime GSEA._enrich!($al, $sc_, $ex, $bo_, nothing)
 
         GSEA.plot(
             "",
@@ -218,16 +202,16 @@ const UE = lastindex(SE_)
 # 9.001 ms (108 allocations: 934.22 KiB)
 #
 # 2.945 ms (13 allocations: 803.23 KiB)
-# 2.683 ms (13 allocations: 803.23 KiB)
-# 21.294 ms (13 allocations: 803.23 KiB)
-# 21.374 ms (13 allocations: 803.23 KiB)
-# 13.060 ms (13 allocations: 803.23 KiB)
-# 11.431 ms (13 allocations: 803.23 KiB)
+# 2.680 ms (13 allocations: 803.23 KiB)
+# 21.312 ms (13 allocations: 803.23 KiB)
+# 21.594 ms (13 allocations: 803.23 KiB)
+# 13.112 ms (13 allocations: 803.23 KiB)
+# 11.441 ms (13 allocations: 803.23 KiB)
 for al in AL_
 
     @test lastindex(GSEA.enrich(al, FE_, SO_, ME___)) === UE
 
-    #@btime GSEA.enrich($al, FE_, SO_, ME___)
+    @btime GSEA.enrich($al, FE_, SO_, ME___)
 
 end
 
@@ -244,17 +228,17 @@ const RE = UE, size(SC, 2)
 # 30.802 ms (370 allocations: 5.51 MiB)
 # 27.547 ms (370 allocations: 5.51 MiB)
 #
-# 9.463 ms (99 allocations: 6.03 MiB)
-# 8.600 ms (99 allocations: 6.03 MiB)
-# 64.487 ms (99 allocations: 6.03 MiB)
-# 64.616 ms (99 allocations: 6.03 MiB)
-# 39.478 ms (99 allocations: 6.03 MiB)
-# 34.835 ms (99 allocations: 6.03 MiB)
+# 9.395 ms (99 allocations: 6.03 MiB)
+# 8.652 ms (99 allocations: 6.03 MiB)
+# 64.432 ms (99 allocations: 6.03 MiB)
+# 64.610 ms (99 allocations: 6.03 MiB)
+# 39.675 ms (99 allocations: 6.03 MiB)
+# 34.800 ms (99 allocations: 6.03 MiB)
 for al in AL_
 
     @test size(GSEA.enrich(al, FE_, SC, ME___)) === RE
 
-    #@btime GSEA.enrich($al, FE_, SC, ME___)
+    @btime GSEA.enrich($al, FE_, SC, ME___)
 
 end
 
