@@ -6,16 +6,16 @@ using Random: seed!, shuffle!
 
 using StatsBase: mean, sample, std
 
-function plot(ou, al, fe_, sc, me___, ns, se_, sa_, en; ex = 1.0, up = 4)
+using CLSGCTGMT
 
-    Omics.Error.error_missing(ou)
+function plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 4)
 
     Omics.Plot.plot_heat_map(
-        joinpath(ou, "set_x_$(ns)_x_enrichment.html"),
+        joinpath(ou, "set_x_sample_x_enrichment.html"),
         en;
-        y = se_,
-        x = sa_,
-        layout = Dict(
+        ro_ = se_,
+        co_ = sa_,
+        la = Dict(
             "title" => Dict("text" => "Enrichment using $(string(al)[6:(end - 2)])"),
             "yaxis" =>
                 Dict("title" => Dict("text" => Omics.Strin.coun(lastindex(se_), "Set"))),
@@ -24,35 +24,39 @@ function plot(ou, al, fe_, sc, me___, ns, se_, sa_, en; ex = 1.0, up = 4)
         ),
     )
 
-    ge_ = .!isnan.(en)
+    ge_ = map(!isnan, en)
 
     gs_ = BitVector(undef, lastindex(fe_))
 
-    for id_ in
-        view(view(CartesianIndices(en), ge_), sortperm(view(en, ge_)))[Omics.Rank.get_extreme(
-        sum(ge_),
-        up,
-    )]
+    for id_ in CartesianIndices(en)[ge_][Omics.Extreme.ge(en[ge_], up)]
 
         ie, ia = Tuple(id_)
 
-        sc_ = view(sc, :, ia)
+        sc_ = sc[:, ia]
 
-        gs_ .= .!isnan.(sc_)
+        map!(!isnan, gs_, sc_)
 
-        so_ = view(sc_, gs_)
+        so_ = sc_[gs_]
 
         id_ = sortperm(so_; rev = true)
 
         ti = "$(sa_[ia]) Enriching $(se_[ie])"
 
-        plot(joinpath(ou, "$ti.html"), al, view(fe_, gs_)[id_], so_[id_], me___[ie]; ex, ti)
+        plot(
+            joinpath(ou, "$ti.html"),
+            al,
+            fe_[gs_][id_],
+            so_[id_],
+            me___[ie];
+            ex,
+            la = Dict("title" => Dict("text" => ti)),
+        )
 
     end
 
 end
 
-function _normalize!(ma, di, st)
+function _standardize_clamp!(ma, di, st)
 
     if isone(di)
 
@@ -62,13 +66,7 @@ function _normalize!(ma, di, st)
 
         ea = eachcol
 
-    else
-
-        error("dimension is not 1 or 2.")
-
     end
-
-    @info "Normalizing dimension $di using standard-deviation $st"
 
     foreach(Omics.Normalization.normalize_with_0!, ea(ma))
 
@@ -84,13 +82,11 @@ function _read_set(js, fe_, mi, ma, fr)
 
     me___ = collect(values(se_me_))
 
-    ue = lastindex(se_)
+    ke_ = BitVector(undef, lastindex(se_))
 
-    @info "Selecting ($mi <= N <= $ma && $fr <= %) from $(Omics.Strin.coun(ue, "set"))"
+    for id in eachindex(me___)
 
-    ke_ = BitVector(undef, ue)
-
-    for (id, me_) in enumerate(me___)
+        me_ = me___[id]
 
         ub = lastindex(me_)
 
@@ -101,18 +97,6 @@ function _read_set(js, fe_, mi, ma, fr)
         ke_[id] = mi <= ua <= ma && fr <= ua / ub
 
     end
-
-    uk = sum(ke_)
-
-    me = "Selected $(Omics.String.count(uk, "set"))."
-
-    if iszero(uk)
-
-        error(me)
-
-    end
-
-    @info me
 
     se_[ke_], me___[ke_]
 
@@ -144,26 +128,14 @@ function _set_algorithm(al)
 
         KLi1()
 
-    else
-
-        error("`$al` is not \"ks\", \"ksa\", \"kliom\", \"kliop\", \"kli\", or \"kli1\".")
-
     end
 
 end
 
-function _error(fe_, nu_)
-
-    Omics.Error.error_duplicate(fe_)
-
-    Omics.Error.error_bad(!isfinite, nu_)
-
-end
-
 """
-Convert `.cls` and `.gct` to `.tsv`s.
+Convert `.cls` and `.gct` to two `.tsv`s.
 
-# Arguments
+# Args
 
   - `target_x_sample_x_number_tsv`: Output target `.tsv`.
   - `feature_x_sample_x_score_tsv`: Output feature `.tsv`.
@@ -177,48 +149,48 @@ Convert `.cls` and `.gct` to `.tsv`s.
     gct,
 )
 
-    _, ta_, _sa_, nu = Omics.DataFrame.separate(Omics.CLS.read(cls))
+    cl = CLSGCTGMT.read_cls(cls)
 
-    _, fe_, sa_, sc = Omics.DataFrame.separate(Omics.GCT.read(gct))
+    gc = CLSGCTGMT.read_gct(gct)
 
-    ut = lastindex(_sa_)
+    sa_ = names(gc)[2:end]
 
-    uf = lastindex(sa_)
+    nu = Matrix(cl[:, 2:end])
 
-    if ut != uf
+    map!(nm -> nm - 1.0, nu, nu)
 
-        error("numbers of samples differ. $ut (`.cls`) != $uf (`.gct`).")
+    Omics.Table.writ(target_x_sample_x_number_tsv, "Target", cl[:, 1], sa_, nu)
 
-    end
-
-    _error(fe_, sc)
-
-    Omics.DataFrame.write(target_x_sample_x_number_tsv, "Target", ta_, sa_, nu .- 1.0)
-
-    Omics.DataFrame.write(feature_x_sample_x_score_tsv, "Feature", fe_, sa_, sc)
+    Omics.Table.writ(
+        feature_x_sample_x_score_tsv,
+        "Feature",
+        gc[:, 1],
+        sa_,
+        Matrix(gc[:, 2:end]),
+    )
 
     target_x_sample_x_number_tsv, feature_x_sample_x_score_tsv
 
 end
 
 """
-Convert one or more `.gmt`s to a `.json`.
+Convert (merging) `.gmt`s to `.json`.
 
-# Arguments
+# Args
 
   - `set_features_json`: Output `.json`.
   - `gmt_`: Input `.gmt`s.
 """
 @cast function convert_gmt(set_features_json, gmt_...)
 
-    Omics.Dic.write(set_features_json, merge!((Omics.GMT.read(gmt) for gmt in gmt_)...))
+    Omics.Dic.writ(set_features_json, reduce(merge!, gmt_))
 
 end
 
 """
 Run data-rank (single-sample) GSEA.
 
-# Arguments
+# Args
 
   - `output_directory`:
   - `feature_x_sample_x_score_tsv`:
@@ -228,14 +200,14 @@ Run data-rank (single-sample) GSEA.
 
   - `--normalization-dimension`: = 0. 0 (not normalizing) | 1 | 2.
   - `--normalization-standard-deviation`: = 4.
+  - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
+  - `--exponent`: = 1.0.
+  - `--post-skip-minimum-set-size`: = 1.
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
   - `--minimum-set-fraction`: = 0.0.
-  - `--algorithm`: = "ks". "ks" | "ksa" | "kli1" | "kli" | "kliom" | "kliop".
-  - `--post-skip-minimum-set-size`: = 1.
-  - `--exponent`: = 1.0.
 
-# Flags
+Flags
 
   - `--skip-0`: = false. Set this to true for single-cell or other sparse data.
 """
@@ -246,19 +218,21 @@ Run data-rank (single-sample) GSEA.
     skip_0::Bool = false,
     normalization_dimension::Int = 0,
     normalization_standard_deviation::Float64 = 4.0,
+    algorithm = "ks",
+    exponent::Float64 = 1.0,
+    post_skip_minimum_set_size::Int = 1,
     minimum_set_size::Int = 15,
     maximum_set_size::Int = 500,
     minimum_set_fraction::Float64 = 0.0,
-    algorithm = "ks",
-    post_skip_minimum_set_size::Int = 1,
-    exponent::Float64 = 1.0,
 )
 
-    Omics.Error.error_missing(output_directory)
+    fe = Omics.Table.rea(feature_x_sample_x_score_tsv)
 
-    _, fe_, sa_, sc = Omics.DataFrame.separate(feature_x_sample_x_score_tsv)
+    fe_ = fe[:, 1]
 
-    _error(fe_, sc)
+    sa_ = names(fe)[2:end]
+
+    sc = Matrix(fe[:, 2:end])
 
     if skip_0
 
@@ -268,7 +242,7 @@ Run data-rank (single-sample) GSEA.
 
     if !iszero(normalization_dimension)
 
-        _normalize!(sc, normalization_dimension, normalization_standard_deviation)
+        _standardize_clamp!(sc, normalization_dimension, normalization_standard_deviation)
 
     end
 
@@ -284,7 +258,7 @@ Run data-rank (single-sample) GSEA.
 
     en = enrich(al, fe_, sc, me___; um = post_skip_minimum_set_size, ex = exponent)
 
-    Omics.DataFrame.write(
+    Omics.Table.writ(
         joinpath(output_directory, "set_x_sample_x_enrichment.tsv"),
         "Set",
         se_,
@@ -292,7 +266,7 @@ Run data-rank (single-sample) GSEA.
         en,
     )
 
-    plot(output_directory, al, fe_, sc, me___, "Sample", se_, sa_, en; ex = exponent)
+    plot(output_directory, fe_, sc, al, se_, me___, "Sample", sa_, en; ex = exponent)
 
 end
 
@@ -374,7 +348,7 @@ function _write(ou, wr, se_, en_, ra, up, pl_, al, fe_, sc_, me___, ex, nf, ns, 
 
     if wr
 
-        Omics.DataFrame.write(
+        Omics.Table.writ(
             joinpath(ou, "set_x_index_x_random.tsv"),
             "Set",
             se_,
@@ -399,7 +373,7 @@ function _write(ou, wr, se_, en_, ra, up, pl_, al, fe_, sc_, me___, ex, nf, ns, 
     re[il_, 3], re[il_, 4], re[ig_, 3], re[ig_, 4] =
         Omics.Statistics.get(ra_, er_, il_, ig_)
 
-    Omics.DataFrame.write(
+    Omics.Table.writ(
         joinpath(ou, "set_x_statistic_x_number.tsv"),
         "Set",
         se_,
@@ -450,7 +424,7 @@ end
 
 function _use_permutation(permutation, al, fe_, me___, ex)
 
-    _, ro_, id_, rn = Omics.DataFrame.separate(permutation)
+    _, ro_, id_, rn = Omics.Table.separate(permutation)
 
     fe_x_id_x_ra = view(rn, indexin(fe_, ro_), :)
 
@@ -475,7 +449,7 @@ end
 """
 Run user-rank (pre-rank) GSEA.
 
-# Arguments
+# Args
 
   - `output_directory`:
   - `feature_x_metric_x_score_tsv`:
@@ -483,11 +457,11 @@ Run user-rank (pre-rank) GSEA.
 
 # Options
 
+  - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
+  - `--exponent`: = 1.0.
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
   - `--minimum-set-fraction`: = 0.0.
-  - `--algorithm`: = "ks". "ks" | "ksa" | "kli1" | "kli" | "kliom" | "kliop".
-  - `--exponent`: = 1.0.
   - `--permutation`: = "set". "set" | feature_x_index_x_random.tsv.
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
@@ -495,8 +469,8 @@ Run user-rank (pre-rank) GSEA.
   - `--more-sets-to-plot`: = "". Space-separated set names.
   - `--feature-name`: = "Gene".
   - `--score-name`: = "User-Defined Score".
-  - `--low-text`: = "Low Side".
-  - `--high-text`: = "High Side".
+  - `--low-text`: = "Low".
+  - `--high-text`: = "High".
 
 # Flags
 
@@ -506,11 +480,11 @@ Run user-rank (pre-rank) GSEA.
     output_directory,
     feature_x_metric_x_score_tsv,
     set_features_json;
+    algorithm = "ks",
+    exponent::Float64 = 1.0,
     minimum_set_size::Int = 15,
     maximum_set_size::Int = 500,
     minimum_set_fraction::Float64 = 0.0,
-    algorithm = "ks",
-    exponent::Float64 = 1.0,
     permutation = "set",
     number_of_permutations::Int = 100,
     random_seed::Int = 20150603,
@@ -519,21 +493,17 @@ Run user-rank (pre-rank) GSEA.
     more_sets_to_plot = "",
     feature_name = "Gene",
     score_name = "User-Defined Score",
-    low_text = "Low Side",
-    high_text = "High Side",
+    low_text = "Low",
+    high_text = "High",
 )
-
-    Omics.Error.error_missing(output_directory)
 
     al = _set_algorithm(algorithm)
 
-    feature_x_metric_x_score = Omics.DataFrame.read(feature_x_metric_x_score_tsv)
+    feature_x_metric_x_score = Omics.Table.read(feature_x_metric_x_score_tsv)
 
     fe_ = feature_x_metric_x_score[!, 1]
 
     sc_ = feature_x_metric_x_score[!, 2]
-
-    _error(fe_, sc_)
 
     id_ = sortperm(sc_; rev = true)
 
@@ -557,10 +527,6 @@ Run user-rank (pre-rank) GSEA.
     elseif isfile(permutation)
 
         ra = _use_permutation(permutation, al, fe_, me___, exponent)
-
-    else
-
-        error("`$permutation` is not \"set\" or feature_x_index_x_random.tsv.")
 
     end
 
@@ -620,7 +586,7 @@ end
 """
 Run metric-rank (standard) GSEA.
 
-# Arguments
+# Args
 
   - `output_directory`:
   - `target_x_sample_x_number_tsv`:
@@ -629,14 +595,14 @@ Run metric-rank (standard) GSEA.
 
 # Options
 
+  - `--normalization-dimension`: = 0. 0 (not normalizing) | 1 | 2.
+  - `--normalization-standard-deviation`: = 4.
+  - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
+  - `--exponent`: = 1.0.
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
   - `--minimum-set-fraction`: = 0.0.
-  - `--normalization-dimension`: = 0. 0 (not normalizing) | 1 | 2.
-  - `--normalization-standard-deviation`: = 4.
   - `--metric`: = "signal-to-noise-ratio". "mean-difference" | "signal-to-noise-ratio".
-  - `--algorithm`: = "ks". "ks" | "ksa" | "kli1" | "kli" | "kliom" | "kliop".
-  - `--exponent`: = 1.0.
   - `--permutation`: = "sample". "sample" | "set" | feature_x_index_x_random.tsv.
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
@@ -644,8 +610,8 @@ Run metric-rank (standard) GSEA.
   - `--more-sets-to-plot`: = "". Space-separated set names.
   - `--feature-name`: = "Gene".
   - `--score-name`: = "Signal-to-Noise Ratio".
-  - `--low-text`: = "Low Side".
-  - `--high-text`: = "High Side".
+  - `--low-text`: = "Low".
+  - `--high-text`: = "High".
 
 # Flags
 
@@ -656,14 +622,14 @@ Run metric-rank (standard) GSEA.
     target_x_sample_x_number_tsv,
     feature_x_sample_x_score_tsv,
     set_features_json;
+    normalization_dimension::Int = 0,
+    normalization_standard_deviation::Float64 = 4.0,
+    algorithm = "ks",
+    exponent::Float64 = 1.0,
+    metric = "signal-to-noise-ratio",
     minimum_set_size::Int = 15,
     maximum_set_size::Int = 500,
     minimum_set_fraction::Float64 = 0.0,
-    normalization_dimension::Int = 0,
-    normalization_standard_deviation::Float64 = 4.0,
-    metric = "signal-to-noise-ratio",
-    algorithm = "ks",
-    exponent::Float64 = 1.0,
     permutation = "sample",
     number_of_permutations::Int = 100,
     random_seed::Int = 20150603,
@@ -672,33 +638,21 @@ Run metric-rank (standard) GSEA.
     more_sets_to_plot = "",
     feature_name = "Gene",
     score_name = "Signal-to-Noise Ratio",
-    low_text = "Low Side",
-    high_text = "High Side",
+    low_text = "Low",
+    high_text = "High",
 )
 
-    Omics.Error.error_missing(output_directory)
-
-    _, ta_, st_, nu = Omics.DataFrame.separate(target_x_sample_x_number_tsv)
-
-    _error(ta_, nu)
+    _, ta_, st_, nu = Omics.Table.separate(target_x_sample_x_number_tsv)
 
     un_ = Set(nu)
 
-    if un_ != Set((0, 1))
-
-        error("target numbers are not all 0 or 1. $un_.")
-
-    end
-
-    _, fe_, sf_, sc = Omics.DataFrame.separate(feature_x_sample_x_score_tsv)
+    _, fe_, sf_, sc = Omics.Table.separate(feature_x_sample_x_score_tsv)
 
     sc = sc[:, indexin(st_, sf_)]
 
-    _error(fe_, sc)
-
     if !iszero(normalization_dimension)
 
-        _normalize!(sc, normalization_dimension, normalization_standard_deviation)
+        _standardize_clamp!(sc, normalization_dimension, normalization_standard_deviation)
 
     end
 
@@ -710,17 +664,13 @@ Run metric-rank (standard) GSEA.
 
         fu = _get_signal_to_noise_ratio
 
-    else
-
-        error("`$metric` is not \"mean-difference\" or \"signal-to-noise-ratio\".")
-
     end
 
     is_ = convert(BitVector, view(nu, 1, :))
 
     sc_, fe_ = _target_sort(fu, is_, sc, fe_)
 
-    Omics.DataFrame.write(
+    Omics.Table.writ(
         joinpath(output_directory, "feature_x_metric_x_score.tsv"),
         "Feature",
         fe_,
@@ -766,10 +716,6 @@ Run metric-rank (standard) GSEA.
     elseif isfile(permutation)
 
         ra = _use_permutation(permutation, al, fe_, me___, exponent)
-
-    else
-
-        error("`$permutation` is not \"sample\", \"set\", or feature_x_index_x_random.tsv.")
 
     end
 

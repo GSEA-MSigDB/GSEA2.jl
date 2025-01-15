@@ -603,7 +603,7 @@ function enrich(al, fe_, sc, me___; um = 1, ex = 1)
 
         sc_ = sc[:, id]
 
-        map!(sc -> !isnan(sc), bi_, sc_)
+        map!(!isnan, bi_, sc_)
 
         so_ = sc_[bi_]
 
