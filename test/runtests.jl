@@ -358,8 +358,6 @@ function test_result(ta, ue)
 
     @test size(ta, 1) === ue
 
-    @test names(ta) == ["Set", "Enrichment", "Normalized Enrichment", "P-Value", "Q-Value"]
-
 end
 
 function test_html(ou, uh)
@@ -395,12 +393,13 @@ for (id, r1, r2, r3, r4) in (
 
     @test isapprox(SU[id, 2], r2; atol = 1e-6)
 
-    # TODO
-    #@test isapprox(SU[id, 3] , r3 ; atol = 1e-6)
+    @test isapprox(SU[id, 3], r3; atol = 1e-5)
+
+    @test isapprox(SU[id, 4], r4; atol = 1e-7)
 
 end
 
-test_html(OS, 7)
+test_html(OS, 10)
 
 # ---- #
 

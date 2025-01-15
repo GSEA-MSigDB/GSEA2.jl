@@ -909,7 +909,7 @@ end
 
 function _normalize_enrichment(::Union{KS, KSa}, en, mn, mp, ::Any, ::Any)
 
-    en / en < 0.0 ? -mn : mp
+    en / (en < 0.0 ? -mn : mp)
 
 end
 
@@ -955,7 +955,7 @@ function _normalize_enrichment!(al, en_, ra)
 
         er_[id] = _normalize_enrichment(al, en, mn, mp, sn, sp)
 
-        map!(ra -> _normalize_enrichment(al, ra, mn, mp, sn, sp), ra_, ra_)
+        ra[id, :] = map(rn -> _normalize_enrichment(al, rn, mn, mp, sn, sp), ra_)
 
     end
 
