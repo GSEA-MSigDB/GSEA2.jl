@@ -1200,7 +1200,7 @@ Run metric-rank (standard) GSEA.
 
 # Options
   - `--normalization-dimension`: = 0. 0 (not normalizing) | 1 | 2.
-  - `--normalization-standard-deviation`: = 4.
+  - `--normalization-standard-deviation`: = 4.0.
   - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
   - `--exponent`: = 1.0.
   - `--metric`: = "signal-to-noise-ratio". "mean-difference" | "signal-to-noise-ratio".
