@@ -828,7 +828,7 @@ end
 """
 Run data-rank (single-sample) GSEA.
 
-# Args
+# Arguments
 
   - `output_directory`:
   - `feature_x_sample_x_score_tsv`:
@@ -1092,7 +1092,7 @@ end
 """
 Run user-rank (pre-rank) GSEA.
 
-# Args
+# Arguments
 
   - `output_directory`:
   - `feature_x_metric_x_score_tsv`:
@@ -1198,7 +1198,7 @@ end
 """
 Run metric-rank (standard) GSEA.
 
-# Args
+# Arguments
 
   - `output_directory`:
   - `target_x_sample_x_number_tsv`:
@@ -1211,10 +1211,10 @@ Run metric-rank (standard) GSEA.
   - `--normalization-standard-deviation`: = 4.
   - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
   - `--exponent`: = 1.0.
+  - `--metric`: = "signal-to-noise-ratio". "mean-difference" | "signal-to-noise-ratio".
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
   - `--minimum-set-fraction`: = 0.0.
-  - `--metric`: = "signal-to-noise-ratio". "mean-difference" | "signal-to-noise-ratio".
   - `--permutation`: = "sample". "sample" | "set" | feature_x_index_x_random.tsv.
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
