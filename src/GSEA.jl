@@ -74,15 +74,15 @@ end
 
 # ---- #
 
-function _map_sort(fu, is_, sc, fe_)
+function _map_sort(fu, is_, nu, fe_)
 
     io_ = map(!, is_)
 
-    mt_ = map(sc_ -> fu(sc_[io_], sc_[is_]), eachrow(sc))
+    re_ = map(nu_ -> fu(nu_[io_], nu_[is_]), eachrow(nu))
 
-    id_ = sortperm(mt_; rev = true)
+    id_ = sortperm(re_; rev = true)
 
-    fe_[id_], mt_[id_]
+    fe_[id_], re_[id_]
 
 end
 
@@ -835,7 +835,7 @@ Run data-rank (single-sample) GSEA.
 
 # Options
   - `--normalization-dimension`: = 0. 0 (not normalizing) | 1 | 2.
-  - `--normalization-standard-deviation`: = 4.
+  - `--normalization-standard-deviation`: = 4.0.
   - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
   - `--exponent`: = 1.0.
   - `--post-skip-minimum-set-size`: = 1.
