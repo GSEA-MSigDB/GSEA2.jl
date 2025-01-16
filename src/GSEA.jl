@@ -829,11 +829,13 @@ end
 Run data-rank (single-sample) GSEA.
 
 # Arguments
+
   - `output_directory`:
   - `feature_x_sample_x_score_tsv`:
   - `set_features_json`:
 
 # Options
+
   - `--normalization-dimension`: = 0. 0 (not normalizing) | 1 | 2.
   - `--normalization-standard-deviation`: = 4.0.
   - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
@@ -844,6 +846,7 @@ Run data-rank (single-sample) GSEA.
   - `--minimum-set-fraction`: = 0.0.
 
 # Flags
+
   - `--skip-0`: = false. Set this to true for single-cell or other sparse data.
 """
 @cast function data_rank(
@@ -1090,11 +1093,13 @@ end
 Run user-rank (pre-rank) GSEA.
 
 # Arguments
+
   - `output_directory`:
   - `feature_x_metric_x_score_tsv`:
   - `set_features_json`:
 
 # Options
+
   - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
   - `--exponent`: = 1.0.
   - `--minimum-set-size`: = 15.
@@ -1111,6 +1116,7 @@ Run user-rank (pre-rank) GSEA.
   - `--score-name`: = "Metric".
 
 # Flags
+
   - `--write-set-x-index-x-random-tsv`: = false.
 """
 @cast function user_rank(
@@ -1193,12 +1199,14 @@ end
 Run metric-rank (standard) GSEA.
 
 # Arguments
+
   - `output_directory`:
   - `target_x_sample_x_number_tsv`:
   - `feature_x_sample_x_score_tsv`:
   - `set_features_json`:
 
 # Options
+
   - `--normalization-dimension`: = 0. 0 (not normalizing) | 1 | 2.
   - `--normalization-standard-deviation`: = 4.0.
   - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
@@ -1218,6 +1226,7 @@ Run metric-rank (standard) GSEA.
   - `--score-name`: = "Signal-to-Noise Ratio".
 
 # Flags
+
   - `--write-set-x-index-x-random-tsv`: = false.
 """
 @cast function metric_rank(
