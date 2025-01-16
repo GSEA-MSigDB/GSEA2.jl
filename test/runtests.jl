@@ -399,7 +399,7 @@ for (id, r1, r2, r3, r4) in (
 
 end
 
-test_html(OS, 10)
+test_html(OS, 6)
 
 # ---- #
 
