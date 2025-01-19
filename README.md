@@ -46,9 +46,11 @@ PATH=$(pwd)/gsea/bin:$PATH
 
 ## Build
 
-```bash
-julia --project deps/build.jl
+```julia
+]build
+```
 
+```bash
 PATH=~/.julia/bin:$PATH
 ```
 

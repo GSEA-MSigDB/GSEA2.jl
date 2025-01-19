@@ -1107,7 +1107,7 @@ Run user-rank (pre-rank) GSEA.
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
   - `--minimum-set-fraction`: = 0.0.
-  - `--permutation`: = "set". "set" | feature_x_index_x_random.tsv.
+  - `--permutation`: = "set". "set" | "feature_x_index_x_random.tsv".
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
   - `--number-of-sets-to-plot`: = 4.
@@ -1115,7 +1115,7 @@ Run user-rank (pre-rank) GSEA.
   - `--feature-name`: = "Gene".
   - `--low-text`: = "Low".
   - `--high-text`: = "High".
-  - `--score-name`: = "Metric".
+  - `--score-name`: = "User-Defined Score".
 
 # Flags
 
@@ -1217,7 +1217,7 @@ Run metric-rank (standard) GSEA.
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
   - `--minimum-set-fraction`: = 0.0.
-  - `--permutation`: = "sample". "sample" | "set" | feature_x_index_x_random.tsv.
+  - `--permutation`: = "sample". "sample" | "set" | "feature_x_index_x_random.tsv".
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
   - `--number-of-sets-to-plot`: = 4.
