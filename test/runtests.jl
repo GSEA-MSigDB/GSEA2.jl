@@ -262,7 +262,7 @@ for al in AL_
 
     #@btime GSEA.enrich($al, FE_, SC, ME___)
 
-    GSEA.plot(
+    GSEA.write_plot(
         mkpath(joinpath(OU, strin(al))),
         FE_,
         SC,

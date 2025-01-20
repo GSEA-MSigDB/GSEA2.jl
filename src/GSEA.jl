@@ -699,20 +699,18 @@ end
 
 # ---- #
 
-function plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 4)
+function write_plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 4)
 
-    Omics.Plot.plot_heat_map(
-        joinpath(ou, "set_x_sample_x_enrichment.html"),
-        en;
-        ro_ = se_,
-        co_ = sa_,
-        la = Dict(
-            "title" => Dict("text" => "Enrichment using $(string(al)[6:(end - 2)])"),
-            "yaxis" =>
-                Dict("title" => Dict("text" => Omics.Strin.coun(lastindex(se_), "Set"))),
-            "xaxis" =>
-                Dict("title" => Dict("text" => Omics.Strin.coun(lastindex(sa_), ns))),
-        ),
+    pr = joinpath(ou, "set_x_sample_x_enrichment")
+
+    Omics.XSample.write_plot(
+        pr,
+        "Set",
+        se_,
+        ns,
+        sa_,
+        "Enrichment using $(string(al)[6:(end - 2)])",
+        en,
     )
 
     ge_ = map(!isnan, en)
@@ -734,7 +732,7 @@ function plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 4)
         ti = "$(sa_[ia]) Enriching $(se_[ie])"
 
         plot(
-            joinpath(ou, "$ti.html"),
+            joinpath(ou, "$(Omics.Strin.shorten(en[ie, ia])).$ti.html"),
             al,
             fe_[gs_][id_],
             so_[id_],
@@ -896,14 +894,18 @@ Run data-rank (single-sample) GSEA.
         minimum_set_fraction,
     )
 
-    en = enrich(al, fe_, sc, me___; um = post_skip_minimum_set_size, ex = exponent)
-
-    Omics.Table.writ(
-        joinpath(output_directory, "set_x_sample_x_enrichment.tsv"),
-        Omics.Table.make("Set", se_, sa_, en),
+    write_plot(
+        output_directory,
+        fe_,
+        sc,
+        al,
+        se_,
+        me___,
+        "Sample",
+        sa_,
+        enrich(al, fe_, sc, me___; um = post_skip_minimum_set_size, ex = exponent);
+        ex = exponent,
     )
-
-    plot(output_directory, fe_, sc, al, se_, me___, "Sample", sa_, en; ex = exponent)
 
 end
 
