@@ -14,15 +14,15 @@ using StatsBase: mean, sample, std
 
 using Omics
 
-# ---- #
-
+# TODO: Generalize.
 function _is_in(fe_, me_)
 
     map(in(Set(me_)), fe_)
 
 end
 
-function _is_in!(bi_, fe_id, me_)
+# TODO: Generalize.
+function _is_in!(is_, fe_id, me_)
 
     for me in me_
 
@@ -30,7 +30,7 @@ function _is_in!(bi_, fe_id, me_)
 
         if !isnothing(id)
 
-            bi_[id] = true
+            is_[id] = true
 
         end
 
@@ -38,8 +38,7 @@ function _is_in!(bi_, fe_id, me_)
 
 end
 
-# ---- #
-
+# TODO: Generalize.
 function _separate(nu_)
 
     ie_ = findall(<(0), nu_)
@@ -50,55 +49,13 @@ function _separate(nu_)
 
 end
 
-# ---- #
+function _exponentiate(nu, ex)
 
-function _get_mean_difference(n1_, n2_)
+    ab = abs(nu)
 
-    mean(n1_) - mean(n2_)
-
-end
-
-function _get_standard_deviation(nu_, me)
-
-    max(0.2 * abs(me), std(nu_; corrected = true))
+    isone(ex) ? ab : ab^ex
 
 end
-
-function _get_signal_to_noise_ratio(n1_, n2_)
-
-    m1 = mean(n1_)
-
-    m2 = mean(n2_)
-
-    (m1 - m2) / (_get_standard_deviation(n1_, m1) + _get_standard_deviation(n2_, m2))
-
-end
-
-# ---- #
-
-function _map_sort(fu, is_, nu, fe_)
-
-    io_ = map(!, is_)
-
-    re_ = map(nu_ -> fu(nu_[io_], nu_[is_]), eachrow(nu))
-
-    id_ = sortperm(re_; rev = true)
-
-    fe_[id_], re_[id_]
-
-end
-
-# ---- #
-
-function _exponentiate(sc, ex)
-
-    ma = abs(sc)
-
-    isone(ex) ? ma : ma^ex
-
-end
-
-# ---- #
 
 struct KS end
 
@@ -111,8 +68,6 @@ struct KLioP end
 struct KLi end
 
 struct KLi1 end
-
-# ---- #
 
 function _get_delta(::Union{KS, KSa}, sc_, ex, bo_)
 
@@ -182,8 +137,6 @@ function _get_delta(::KLi1, sc_, ex, bo_)
 
 end
 
-# ---- #
-
 function _enrich!(al::KS, sc_, ex, bo_, mo_)
 
     n0, n1 = _get_delta(al, sc_, ex, bo_)
@@ -237,8 +190,6 @@ function _enrich!(al::KSa, sc_, ex, bo_, mo_)
     ar / lastindex(sc_)
 
 end
-
-# ---- #
 
 const ON = 1.0 + 1e-13
 
@@ -380,8 +331,6 @@ function _enrich!(al::KLioP, sc_, ex, bo_, mo_)
 
 end
 
-# ---- #
-
 function _enrich!(al::KLi, sc_, ex, bo_, mo_)
 
     na, n1 = _get_delta(al, sc_, ex, bo_)
@@ -432,8 +381,6 @@ function _enrich!(al::KLi, sc_, ex, bo_, mo_)
 
 end
 
-# ---- #
-
 function _enrich!(al::KLi1, sc_, ex, bo_, mo_)
 
     uf = lastindex(sc_)
@@ -483,8 +430,6 @@ function _enrich!(al::KLi1, sc_, ex, bo_, mo_)
     ar / uf
 
 end
-
-# ---- #
 
 function _get_extreme(mo_)
 
@@ -647,8 +592,6 @@ function plot(
 
 end
 
-# ---- #
-
 function enrich(al, fe_, sc_::AbstractVector, me___; um = 1, ex = 1)
 
     en_ = Vector{Float64}(undef, lastindex(me___))
@@ -697,8 +640,6 @@ function enrich(al, fe_, sc, me___; um = 1, ex = 1)
 
 end
 
-# ---- #
-
 function write_plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 4)
 
     pr = joinpath(ou, "set_x_sample_x_enrichment")
@@ -745,8 +686,6 @@ function write_plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 4)
 
 end
 
-# ---- #
-
 function _standardize_clamp!(ma, di, st)
 
     if isone(di)
@@ -764,8 +703,6 @@ function _standardize_clamp!(ma, di, st)
     clamp!(ma, -st, st)
 
 end
-
-# ---- #
 
 function _set_algorithm(al)
 
@@ -822,8 +759,6 @@ function _read_set(js, fe_, mi, ma, fr)
     collect(keys(se_me_))[ke_], me___[ke_]
 
 end
-
-# ---- #
 
 """
 Run data-rank (single-sample) GSEA.
@@ -909,8 +844,6 @@ Run data-rank (single-sample) GSEA.
 
 end
 
-# ---- #
-
 function _normalize_enrichment(::Union{KS, KSa}, en, mn, mp, ::Any, ::Any)
 
     en / (en < 0.0 ? -mn : mp)
@@ -966,8 +899,6 @@ function _normalize_enrichment!(al, en_, ra)
     er_
 
 end
-
-# ---- #
 
 function _write(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, nl, nh, ns)
 
@@ -1044,8 +975,6 @@ function _write(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, nl, 
 
 end
 
-# ---- #
-
 function _permute_set(ur, se, al, fe_, sc_, me___, ex)
 
     ra = Matrix{Float64}(undef, lastindex(me___), ur)
@@ -1090,8 +1019,6 @@ function _use_permutation(permutation, al, fe_, me___, ex)
     ra
 
 end
-
-# ---- #
 
 """
 Run user-rank (pre-rank) GSEA.
@@ -1197,7 +1124,15 @@ Run user-rank (pre-rank) GSEA.
 
 end
 
-# ---- #
+function _target(fu, is_, sc, fe_)
+
+    re_ = map(sc_ -> Omics.Target.go(fu, is_, sc_), eachrow(sc))
+
+    id_ = sortperm(re_; rev = true)
+
+    fe_[id_], re_[id_]
+
+end
 
 """
 Run metric-rank (standard) GSEA.
@@ -1215,7 +1150,7 @@ Run metric-rank (standard) GSEA.
   - `--normalization-standard-deviation`: = 4.0.
   - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
   - `--exponent`: = 1.0.
-  - `--metric`: = "signal-to-noise-ratio". "mean-difference" | "signal-to-noise-ratio".
+  - `--metric`: = "signal-to-noise-ratio". "mean-difference" | "log-ratio" | "signal-to-noise-ratio".
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
   - `--minimum-set-fraction`: = 0.0.
@@ -1272,17 +1207,21 @@ Run metric-rank (standard) GSEA.
 
     fu = if metric == "mean-difference"
 
-        _get_mean_difference
+        Omics.Target.get_mean_difference
+
+    elseif metric == "log-ratio"
+
+        Omics.Target.get_log_ratio
 
     elseif metric == "signal-to-noise-ratio"
 
-        _get_signal_to_noise_ratio
+        Omics.Target.get_signal_to_noise_ratio
 
     end
 
     is_ = convert(BitVector, collect(tt[1, 2:end]))
 
-    fe_, mt_ = _map_sort(fu, is_, sc, tf[!, 1])
+    fe_, mt_ = _target(fu, is_, sc, tf[!, 1])
 
     Omics.Table.writ(
         joinpath(output_directory, "feature_x_metric_x_score.tsv"),
@@ -1309,12 +1248,8 @@ Run metric-rank (standard) GSEA.
 
             @showprogress for id in 1:number_of_permutations
 
-                ra[:, id] = enrich(
-                    al,
-                    _map_sort(fu, shuffle!(is_), sc, fe_)...,
-                    me___;
-                    ex = exponent,
-                )
+                ra[:, id] =
+                    enrich(al, _target(fu, shuffle!(is_), sc, fe_)..., me___; ex = exponent)
 
             end
 
@@ -1351,8 +1286,6 @@ Run metric-rank (standard) GSEA.
     )
 
 end
-
-# ---- #
 
 # TODO
 @main

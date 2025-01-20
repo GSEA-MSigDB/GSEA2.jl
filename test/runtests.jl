@@ -12,25 +12,6 @@ using CLSGCTGMT
 
 # ---- #
 
-# 16.073 ns (0 allocations: 0 bytes)
-# 16.533 ns (0 allocations: 0 bytes)
-# 16.367 ns (0 allocations: 0 bytes)
-# 16.366 ns (0 allocations: 0 bytes)
-for (n1_, n2_, re) in (
-    (ones(Int, 3), fill(0.001, 3), 4.990009990009989),
-    (collect(1:3), collect(10:10:30), -1.6363636363636365),
-    (fill(0.001, 3), ones(Int, 3), -4.990009990009989),
-    (fill(0.001, 3), fill(10, 3), -4.999000099990002),
-)
-
-    @test GSEA._get_signal_to_noise_ratio(n1_, n2_) === re
-
-    #@btime GSEA._get_signal_to_noise_ratio($n1_, $n2_)
-
-end
-
-# ---- #
-
 const AL_ = GSEA.KS(), GSEA.KSa(), GSEA.KLioM(), GSEA.KLioP(), GSEA.KLi(), GSEA.KLi1()
 
 function strin(al)
@@ -239,7 +220,7 @@ const SC = hcat(SO_, SO_ * 0.1, fill(0.8, lastindex(FE_)))
 
 const RE = UE, size(SC, 2)
 
-const OU = joinpath(homedir(), "Downloads")
+const OU = joinpath(tempdir(), "GSEA")
 
 # 9.548 ms (370 allocations: 5.51 MiB)
 # 8.382 ms (370 allocations: 5.51 MiB)
@@ -417,7 +398,7 @@ const TM = Omics.Table.rea(joinpath(OM, "feature_x_metric_x_score.tsv"))
 
 @test names(TM) == ["Feature", "signal-to-noise-ratio"]
 
-@test isapprox(TM[[1, 1000], 2], [1.8372355409610066, -1.7411005104346835])
+@test isapprox(TM[[1, 1000], 2], [1.7411005104346835, -1.8372355409610066])
 
 test_result(Omics.Table.rea(joinpath(OM, FS)), 8)
 
