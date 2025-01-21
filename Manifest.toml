@@ -2,7 +2,7 @@
 
 julia_version = "1.11.2"
 manifest_format = "2.0"
-project_hash = "06a9b7300dd4e552dc675cb28ee7e00179e04db2"
+project_hash = "ecfda13fee0d0ef9c4eae4dea8d7a7db93bdd1b0"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -58,7 +58,7 @@ version = "1.11.0"
 deps = ["Comonicon", "Omics", "Test"]
 path = "../CLSGCTGMT.jl"
 uuid = "c3a79164-0bbe-4b8e-a6ff-e928225ba1f6"
-version = "0.2.0"
+version = "0.1.0"
 
 [[deps.CSV]]
 deps = ["CodecZlib", "Dates", "FilePathsBase", "InlineStrings", "Mmap", "Parsers", "PooledArrays", "PrecompileTools", "SentinelArrays", "Tables", "Unicode", "WeakRefStrings", "WorkerUtilities"]
@@ -505,7 +505,7 @@ weakdeps = ["Adapt"]
 deps = ["CSV", "Clustering", "CodecZlib", "ColorSchemes", "Colors", "DataFrames", "Dates", "Distances", "Distributions", "GLM", "JSON", "KernelDensity", "Mmap", "MultipleTesting", "OrderedCollections", "Printf", "Random", "Statistics", "StatsBase", "TOML", "Test", "XLSX"]
 path = "../Omics.jl"
 uuid = "55404059-57b2-473d-9cce-582834f19b54"
-version = "0.6.0"
+version = "0.1.0"
 
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]

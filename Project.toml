@@ -14,5 +14,9 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
+Comonicon = "1.0.8"
 Printf = "1.11.0"
+ProgressMeter = "1.10.2"
+Random = "1.11.0"
+StatsBase = "0.34.4"
 Test = "1.11.0"
