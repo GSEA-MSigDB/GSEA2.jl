@@ -15,13 +15,13 @@ using StatsBase: mean, sample, std
 using Omics
 
 # TODO: Generalize.
+
 function _is_in(fe_, f1_)
 
     map(in(Set(f1_)), fe_)
 
 end
 
-# TODO: Generalize.
 function _is_in!(is_, fe_id, f1_)
 
     for f1 in f1_
@@ -38,7 +38,6 @@ function _is_in!(is_, fe_id, f1_)
 
 end
 
-# TODO: Generalize.
 function _separate(nu_)
 
     ie_ = findall(<(0), nu_)
@@ -49,11 +48,164 @@ function _separate(nu_)
 
 end
 
-function _exponentiate(nu, ex)
+function read_cls(cl)
 
-    ab = abs(nu)
+    l1, l2, l3 = readlines(cl)
 
-    isone(ex) ? ab : ab^ex
+    ph = l2[2:end]
+
+    va_ = split(l3)
+
+    us = lastindex(va_)
+
+    sa_ = Omics.Simulation.label(us, "Sample")
+
+    if l1 == "#numeric"
+
+        Omics.Table.make("Target", ph, sa_, [parse(Float64, va) for _ in 1:1, va in va_])
+
+    else
+
+        l1_ = split(l1)
+
+        u1 = parse(Int, l1_[1])
+
+        if u1 != us
+
+            error("numbers of samples differ: $u1 and $us.")
+
+        end
+
+        u2 = parse(Int, l1_[2])
+
+        ph_ = split(ph)
+
+        up = lastindex(ph_)
+
+        uu = lastindex(unique(va_))
+
+        if !(u2 == up == uu)
+
+            error("numbers of groups differ: $u2, $up, and $uu.")
+
+        end
+
+        ph_id = Dict(ph => id for (id, ph) in enumerate(ph_))
+
+        Omics.Table.make("Target", join(ph_, '_'), sa_, [ph_id[va] for _ in 1:1, va in va_])
+
+    end
+
+end
+
+function read_gct(gc)
+
+    Omics.Table.rea(gc; header = 3, drop = ["Description"])
+
+end
+
+function read_gmt(gm)
+
+    se_ge_ = Dict{String, Vector{String}}()
+
+    for li in eachline(gm)
+
+        sp_ = split(li, '\t')
+
+        se = sp_[1]
+
+        if haskey(se_ge_, se)
+
+            error("there is more than one $se.")
+
+        end
+
+        se_ge_[se] = filter!(!isempty, sp_[3:lastindex(sp_)])
+
+    end
+
+    se_ge_
+
+end
+
+"""
+Convert .cls to .tsv.
+
+# Arguments
+
+  - `tsv`:
+  - `cls`:
+"""
+@cast function cls(tsv, cls)
+
+    ta = read_cls(cls)
+
+    Omics.Table.writ(
+        tsv,
+        Omics.Table.make(
+            "Target",
+            ta[:, 1],
+            names(ta)[2:end],
+            map(nu -> nu - 1.0, Matrix(ta[:, 2:end])),
+        ),
+    )
+
+end
+
+"""
+Convert .gct to .tsv.
+
+# Arguments
+
+  - `tsv`:
+  - `gct`:
+"""
+@cast function gct(tsv, gct)
+
+    ta = read_gct(gct)
+
+    Omics.Table.writ(
+        tsv,
+        Omics.Table.make("Feature", ta[:, 1], names(ta)[2:end], Matrix(ta[:, 2:end])),
+    )
+
+end
+
+"""
+Merge .gmts into .json.
+
+# Arguments
+
+  - `json`:
+  - `gmt_`:
+"""
+@cast function gmt(json, gmt_...)
+
+    Omics.Dic.writ(json, reduce(merge!, (read_gmt(gm) for gm in gmt_)))
+
+end
+
+function select_set(se_me_, fe_, mi, ma, fr)
+
+    me___ = collect(values(se_me_))
+
+    ke_ = BitVector(undef, lastindex(me___))
+
+    for id in eachindex(me___)
+
+        me_ = me___[id]
+
+        ub = lastindex(me_)
+
+        intersect!(me_, fe_)
+
+        ua = lastindex(me_)
+
+        ke_[id] = mi <= ua <= ma && fr <= ua / ub
+
+    end
+
+    collect(keys(se_me_))[ke_], me___[ke_]
 
 end
 
@@ -68,6 +220,14 @@ struct KLioP end
 struct KLi end
 
 struct KLi1 end
+
+function _exponentiate(nu, ex)
+
+    ab = abs(nu)
+
+    isone(ex) ? ab : ab^ex
+
+end
 
 function _get_delta(::Union{KS, KSa}, sc_, ex, is_)
 
@@ -767,30 +927,6 @@ function _set_algorithm(al)
 
 end
 
-function select_set(se_me_, fe_, mi, ma, fr)
-
-    me___ = collect(values(se_me_))
-
-    ke_ = BitVector(undef, lastindex(me___))
-
-    for id in eachindex(me___)
-
-        me_ = me___[id]
-
-        ub = lastindex(me_)
-
-        intersect!(me_, fe_)
-
-        ua = lastindex(me_)
-
-        ke_[id] = mi <= ua <= ma && fr <= ua / ub
-
-    end
-
-    collect(keys(se_me_))[ke_], me___[ke_]
-
-end
-
 """
 Run data-rank (single-sample) GSEA.
 
@@ -931,7 +1067,7 @@ function _normalize_enrichment!(al, en_, ra)
 
 end
 
-function _write(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, nl, nh, ns)
+function _write_plot(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, nl, nh, ns)
 
     ue = lastindex(se_)
 
@@ -1029,6 +1165,7 @@ function _permute_set(ur, se, al, fe_, sc_, me___, ex)
 
 end
 
+# TODO: Retire
 function _use_permutation(permutation, al, fe_, me___, ex)
 
     ta = Omics.Table.rea(permutation)
@@ -1134,7 +1271,7 @@ Run user-rank (pre-rank) GSEA.
 
     end
 
-    _write(
+    _write_plot(
         output_directory,
         write_set_x_index_x_random_tsv,
         al,
@@ -1301,7 +1438,7 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    _write(
+    _write_plot(
         output_directory,
         write_set_x_index_x_random_tsv,
         al,
@@ -1322,7 +1459,9 @@ Run metric-rank (standard) GSEA.
 
 end
 
-# TODO
+"""
+Gene set enrichment analysis.
+"""
 @main
 
 end

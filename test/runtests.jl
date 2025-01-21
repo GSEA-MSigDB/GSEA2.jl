@@ -8,7 +8,114 @@ using Random: seed!
 
 using Omics
 
-using CLSGCTGMT
+# ---- #
+
+const DA = pkgdir(GSEA, "data")
+
+# ---- #
+
+# 401.583 μs (7160 allocations: 473.16 KiB)
+# 10.458 μs (116 allocations: 7.17 KiB)
+# 10.166 μs (114 allocations: 6.84 KiB)
+for (cl, ph, re) in (
+    (
+        "CCLE_mRNA_20Q2_no_haem_phen.cls",
+        "HER2",
+        [1.087973, -1.358492, -1.178614, -0.77898, 0.157222, 1.168224, -0.360195, 0.608629],
+    ),
+    ("GSE76137.cls", "Proliferating_Arrested", [1, 2, 1, 2, 1, 2]),
+    ("a.cls", "CNTRL_LPS", [1, 1, 1, 2, 2, 2]),
+)
+
+    cl = joinpath(DA, cl)
+
+    ta = GSEA.read_cls(cl)
+
+    na_ = names(ta)
+
+    ma = Matrix(ta[:, 2:end])
+
+    @test ta[:, 1][] === ph
+
+    @test na_[1] === "Target"
+
+    @test all(startswith("Sample "), na_[2:end])
+
+    @test eltype(ma) === eltype(re)
+
+    @test ma[1, eachindex(re)] == re
+
+    #@btime GSEA.read_cls($cl)
+
+end
+
+# ---- #
+
+# 102.867 ms (71705 allocations: 23.67 MiB)
+for (gc, re) in (("b.gct", (13321, 190)),)
+
+    gc = joinpath(DA, gc)
+
+    @test size(GSEA.read_gct(gc)) === re
+
+    #@btime GSEA.read_gct($gc)
+
+end
+
+# ---- #
+
+# 286.000 μs (7984 allocations: 1.12 MiB)
+# 22.167 ms (537839 allocations: 62.61 MiB)
+for (gm, re) in (("c.gmt", 50), ("d.gmt", 5529))
+
+    gm = joinpath(DA, gm)
+
+    se_ge_ = GSEA.read_gmt(gm)
+
+    @test typeof(se_ge_) === Dict{String, Vector{String}}
+
+    @test length(se_ge_) === re
+
+    #@btime GSEA.read_gmt($gm)
+
+end
+
+# ---- #
+
+GSEA.cls
+
+# ---- #
+
+GSEA.gct
+
+# ---- #
+
+GSEA.gmt
+
+# ---- #
+
+const JS = joinpath(DA, "set_features.json")
+
+# ---- #
+
+# 34.666 μs (559 allocations: 30.00 KiB)
+# 16.403 ms (253185 allocations: 7.85 MiB)
+# 36.666 μs (577 allocations: 30.72 KiB)
+for (fe_, mi, ma, fr, re) in (
+    (String[], 33, 36, 0, 0),
+    (unique!(vcat(values(Omics.Dic.rea(JS))...)), 33, 36, 0, 2),
+    (["SHH", "XIST"], 1, 5656, 0, 2),
+)
+
+    se_me_ = Omics.Dic.rea(JS)
+
+    se_, me___ = GSEA.select_set(se_me_, fe_, mi, ma, fr)
+
+    @test lastindex(se_) === lastindex(me___) === re
+
+    #@btime GSEA.select_set($se_me_, $fe_, $mi, $ma, $fr)
+
+end
 
 # ---- #
 
@@ -41,17 +148,17 @@ const N0 = -0.25
 # 9.510 ns (0 allocations: 0 bytes)
 # 20.687 ns (0 allocations: 0 bytes)
 #
-# 69.970 ns (0 allocations: 0 bytes)
-# 69.970 ns (0 allocations: 0 bytes)
-# 8.291 ns (0 allocations: 0 bytes)
+# 69.928 ns (0 allocations: 0 bytes)
+# 69.928 ns (0 allocations: 0 bytes)
+# 8.250 ns (0 allocations: 0 bytes)
 # 19.851 ns (0 allocations: 0 bytes)
-# 116.929 ns (0 allocations: 0 bytes)
-# 116.978 ns (0 allocations: 0 bytes)
-# 8.291 ns (0 allocations: 0 bytes)
+# 116.884 ns (0 allocations: 0 bytes)
+# 116.857 ns (0 allocations: 0 bytes)
+# 8.299 ns (0 allocations: 0 bytes)
 # 25.016 ns (0 allocations: 0 bytes)
-# 79.287 ns (0 allocations: 0 bytes)
+# 79.260 ns (0 allocations: 0 bytes)
 # 79.291 ns (0 allocations: 0 bytes)
-# 10.761 ns (0 allocations: 0 bytes)
+# 10.750 ns (0 allocations: 0 bytes)
 # 17.242 ns (0 allocations: 0 bytes)
 for (al, re_) in zip(
     AL_[[1, 3, 6]],
@@ -97,10 +204,6 @@ end
 
 # ---- #
 
-const DA = pkgdir(GSEA, "data")
-
-# ---- #
-
 const FE_, SO_ = eachcol(
     reverse!(
         Omics.Table.rea(joinpath(DA, "gene_x_statistic_x_number.tsv"); select = [1, 2]),
@@ -122,20 +225,20 @@ const FE_, SO_ = eachcol(
 # 186.208 μs (0 allocations: 0 bytes)
 # 164.833 μs (0 allocations: 0 bytes)
 #
-# 233.884 ns (6 allocations: 400 bytes)
+# 233.424 ns (6 allocations: 400 bytes)
 # 17.285 ns (0 allocations: 0 bytes)
 # 16.658 ns (0 allocations: 0 bytes)
-# 284.426 ns (0 allocations: 0 bytes)
-# 284.304 ns (0 allocations: 0 bytes)
-# 156.030 ns (0 allocations: 0 bytes)
-# 143.765 ns (0 allocations: 0 bytes)
-# 463.584 μs (7 allocations: 20.42 KiB)
+# 284.452 ns (0 allocations: 0 bytes)
+# 284.574 ns (0 allocations: 0 bytes)
+# 155.978 ns (0 allocations: 0 bytes)
+# 143.796 ns (0 allocations: 0 bytes)
+# 464.958 μs (7 allocations: 20.42 KiB)
 # 43.375 μs (0 allocations: 0 bytes)
-# 37.542 μs (0 allocations: 0 bytes)
-# 414.375 μs (0 allocations: 0 bytes)
-# 414.375 μs (0 allocations: 0 bytes)
-# 243.166 μs (0 allocations: 0 bytes)
-# 210.250 μs (0 allocations: 0 bytes)
+# 37.500 μs (0 allocations: 0 bytes)
+# 413.041 μs (0 allocations: 0 bytes)
+# 413.000 μs (0 allocations: 0 bytes)
+# 243.209 μs (0 allocations: 0 bytes)
+# 210.291 μs (0 allocations: 0 bytes)
 for (fe_, sc_, me_, re_) in (
     (
         ["K", "Q", "J", "X", "9", "8", "7", "6", "5", "4", "3", "2", "A"],
@@ -146,7 +249,7 @@ for (fe_, sc_, me_, re_) in (
     (
         FE_,
         SO_,
-        CLSGCTGMT.read_gmt(joinpath(DA, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"],
+        GSEA.read_gmt(joinpath(DA, "c2.all.v7.1.symbols.gmt"))["COLLER_MYC_TARGETS_UP"],
         (
             0.7651927829281453,
             0.41482514169516305,
@@ -180,7 +283,7 @@ end
 
 # ---- #
 
-const SE_ME_ = CLSGCTGMT.read_gmt(joinpath(DA, "h.all.v7.1.symbols.gmt"))
+const SE_ME_ = GSEA.read_gmt(joinpath(DA, "h.all.v7.1.symbols.gmt"))
 
 const SE_ = collect(keys(SE_ME_))
 
@@ -197,12 +300,12 @@ const UE = lastindex(SE_)
 # 10.127 ms (108 allocations: 934.22 KiB)
 # 9.001 ms (108 allocations: 934.22 KiB)
 #
-# 2.956 ms (13 allocations: 803.23 KiB)
-# 2.685 ms (13 allocations: 803.23 KiB)
-# 21.334 ms (13 allocations: 803.23 KiB)
-# 21.354 ms (13 allocations: 803.23 KiB)
-# 13.115 ms (13 allocations: 803.23 KiB)
-# 11.449 ms (13 allocations: 803.23 KiB)
+# 2.939 ms (13 allocations: 803.23 KiB)
+# 2.681 ms (13 allocations: 803.23 KiB)
+# 21.308 ms (13 allocations: 803.23 KiB)
+# 21.280 ms (13 allocations: 803.23 KiB)
+# 13.064 ms (13 allocations: 803.23 KiB)
+# 11.444 ms (13 allocations: 803.23 KiB)
 for al in AL_
 
     @test lastindex(GSEA.enrich(al, FE_, SO_, ME___)) === UE
@@ -226,12 +329,12 @@ const OU = joinpath(tempdir(), "GSEA")
 # 30.802 ms (370 allocations: 5.51 MiB)
 # 27.547 ms (370 allocations: 5.51 MiB)
 #
-# 9.440 ms (99 allocations: 6.03 MiB)
-# 8.678 ms (99 allocations: 6.03 MiB)
-# 64.667 ms (99 allocations: 6.03 MiB)
-# 64.667 ms (99 allocations: 6.03 MiB)
-# 39.832 ms (99 allocations: 6.03 MiB)
-# 34.941 ms (99 allocations: 6.03 MiB)
+# 9.386 ms (99 allocations: 6.03 MiB)
+# 8.594 ms (99 allocations: 6.03 MiB)
+# 64.708 ms (99 allocations: 6.03 MiB)
+# 64.689 ms (99 allocations: 6.03 MiB)
+# 39.662 ms (99 allocations: 6.03 MiB)
+# 34.834 ms (99 allocations: 6.03 MiB)
 for al in AL_
 
     en = GSEA.enrich(al, FE_, SC, ME___)
@@ -251,31 +354,6 @@ for al in AL_
         ["Score", "Score x 0.1", "Constant"],
         en,
     )
-
-end
-
-# ---- #
-
-const JS = joinpath(DA, "set_features.json")
-
-# ---- #
-
-# 35.958 μs (559 allocations: 30.00 KiB)
-# 16.732 ms (253185 allocations: 7.85 MiB)
-# 37.958 μs (577 allocations: 30.72 KiB)
-for (fe_, mi, ma, fr, re) in (
-    (String[], 33, 36, 0, 0),
-    (unique!(vcat(values(Omics.Dic.rea(JS))...)), 33, 36, 0, 2),
-    (["SHH", "XIST"], 1, 5656, 0, 2),
-)
-
-    se_me_ = Omics.Dic.rea(JS)
-
-    se_, me___ = GSEA.select_set(se_me_, fe_, mi, ma, fr)
-
-    @test lastindex(se_) === lastindex(me___) === re
-
-    #@btime GSEA.select_set($se_me_, $fe_, $mi, $ma, $fr)
 
 end
 
@@ -314,8 +392,8 @@ const TD = Omics.Table.rea(joinpath(OD, "set_x_sample_x_enrichment.tsv"))
 
 # ---- #
 
-# 491.834 μs (2402 allocations: 3.17 MiB)
-# 399.458 μs (2002 allocations: 3.15 MiB)
+# 490.541 μs (2402 allocations: 3.17 MiB)
+# 399.750 μs (2002 allocations: 3.15 MiB)
 for al in (AL_[1], AL_[end])
 
     seed!(20231103)

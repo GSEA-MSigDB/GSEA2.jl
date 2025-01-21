@@ -1,8 +1,6 @@
 # Gene set enrichment analysis 🏔️
 
-The Julia implementation of the next-generation GSEA is hundreds of times faster and incorporates new information-theoretic algorithms.
-
-Check out [CLSGCTGMT.jl](https://github.com/GSEA-MSigDB/CLSGCTGMT.jl).
+Julia implementation of next-generation Gene Set Enrichment Analysis (GSEA), featuring 200X faster original algorithms and new information-theoretic algorithms for enhanced analysis.
 
 ## Julia
 
@@ -19,6 +17,14 @@ GSEA.metric_rank(
 )
 ```
 
+```julia
+GSEA.read_cls(joinpath("data", "a.cls"))
+
+GSEA.read_gct(joinpath("data", "b.gct"))
+
+GSEA.read_gmt(joinpath("data", "c.gmt"))
+```
+
 ## Command Line Interface
 
 ![The screenshot of the help command](media/help.png)
@@ -31,6 +37,14 @@ gsea metric-rank \
     example/sarcopenia/set_features.json \
     --number-of-permutations 10 \
     --more-sets-to-plot "WP_DNA_MISMATCH_REPAIR WP_CELL_CYCLE"
+```
+
+```bash
+gsea cls ~/Downloads/a.tsv data/a.cls
+
+gsea gct ~/Downloads/b.tsv data/b.gct
+
+gmt ~/Downloads/cd.json data/c.gmt data/d.gmt
 ```
 
 ## Install
