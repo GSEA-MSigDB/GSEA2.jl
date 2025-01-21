@@ -263,20 +263,22 @@ const JS = joinpath(DA, "set_features.json")
 
 # ---- #
 
-# 2.148 ms (48968 allocations: 1.61 MiB)
-# 16.805 ms (260901 allocations: 8.35 MiB)
-# 2.172 ms (48974 allocations: 1.61 MiB)
+# 36.458 μs (559 allocations: 30.00 KiB)
+# 16.882 ms (253185 allocations: 7.85 MiB)
+# 38.500 μs (577 allocations: 30.72 KiB)
 for (fe_, mi, ma, fr, re) in (
     (String[], 33, 36, 0, 0),
     (unique!(vcat(values(Omics.Dic.rea(JS))...)), 33, 36, 0, 2),
     (["SHH", "XIST"], 1, 5656, 0, 2),
 )
 
-    se_, me___ = GSEA._read_set(JS, fe_, mi, ma, fr)
+    se_me_ = Omics.Dic.rea(JS)
+
+    se_, me___ = GSEA.select_set(se_me_, fe_, mi, ma, fr)
 
     @test lastindex(se_) === lastindex(me___) === re
 
-    #@btime GSEA._read_set(JS, $fe_, $mi, $ma, $fr)
+    #@btime GSEA.select_set($se_me_, $fe_, $mi, $ma, $fr)
 
 end
 

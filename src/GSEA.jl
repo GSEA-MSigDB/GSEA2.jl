@@ -734,9 +734,7 @@ function _set_algorithm(al)
 
 end
 
-function _read_set(js, fe_, mi, ma, fr)
-
-    se_me_ = Omics.Dic.rea(js)
+function select_set(se_me_, fe_, mi, ma, fr)
 
     me___ = collect(values(se_me_))
 
@@ -821,8 +819,8 @@ Run data-rank (single-sample) GSEA.
 
     al = _set_algorithm(algorithm)
 
-    se_, me___ = _read_set(
-        set_features_json,
+    se_, me___ = select_set(
+        Omics.Dic.rea(set_features_json),
         fe_,
         minimum_set_size,
         maximum_set_size,
@@ -1085,8 +1083,8 @@ Run user-rank (pre-rank) GSEA.
 
     sc_ = sc_[id_]
 
-    se_, me___ = _read_set(
-        set_features_json,
+    se_, me___ = select_set(
+        Omics.Dic.rea(set_features_json),
         fe_,
         minimum_set_size,
         maximum_set_size,
@@ -1228,8 +1226,8 @@ Run metric-rank (standard) GSEA.
         Omics.Table.make("Feature", fe_, [metric], reshape(mt_, :, 1)),
     )
 
-    se_, me___ = _read_set(
-        set_features_json,
+    se_, me___ = select_set(
+        Omics.Dic.rea(set_features_json),
         fe_,
         minimum_set_size,
         maximum_set_size,
