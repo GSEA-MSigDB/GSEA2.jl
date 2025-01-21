@@ -485,13 +485,35 @@ function plot(
 
     ip_ = findall(>=(0.0), sc_)
 
+    ny = "Δ Enrichment"
+
     da_ = [
-        merge(tr, Dict("y" => sc_[ie_], "x" => xc_[ie_], "fillcolor" => Omics.Color.BL)),
-        merge(tr, Dict("y" => sc_[ip_], "x" => xc_[ip_], "fillcolor" => Omics.Color.RE)),
+        merge(
+            tr,
+            Dict(
+                "name" => "- Score",
+                "y" => sc_[ie_],
+                "x" => xc_[ie_],
+                "text" => fe_[ie_],
+                "fillcolor" => Omics.Color.BL,
+            ),
+        ),
+        merge(
+            tr,
+            Dict(
+                "name" => "+ Score",
+                "y" => sc_[ip_],
+                "x" => xc_[ip_],
+                "text" => fe_[ip_],
+                "fillcolor" => Omics.Color.RE,
+            ),
+        ),
         Dict(
             "yaxis" => "y2",
+            "name" => "Set",
             "y" => zeros(sum(is_)),
             "x" => xc_[is_],
+            "text" => fe_[is_],
             "mode" => "markers",
             "marker" => Dict(
                 "symbol" => "line-ns",
@@ -501,8 +523,19 @@ function plot(
                     "color" => Omics.Color.hexify(Omics.Color.SG, 0.72),
                 ),
             ),
+            "hoverinfo" => "x+text",
         ),
-        merge(tr, Dict("yaxis" => "y3", "y" => mo_, "x" => xc_, "fillcolor" => "#07fa07")),
+        merge(
+            tr,
+            Dict(
+                "yaxis" => "y3",
+                "name" => ny,
+                "y" => mo_,
+                "x" => xc_,
+                "text" => fe_,
+                "fillcolor" => "#07fa07",
+            ),
+        ),
     ]
 
     if typeof(al) == KS
@@ -513,8 +546,10 @@ function plot(
             da_,
             Dict(
                 "yaxis" => "y3",
+                "name" => "Extrema",
                 "y" => mo_[id_],
                 "x" => xc_[id_],
+                "text" => fe_[id_],
                 "mode" => "markers",
                 "marker" =>
                     Dict("size" => 32, "color" => Omics.Color.hexify(Omics.Color.HU, 0.72)),
@@ -546,12 +581,10 @@ function plot(
                     "title" => Dict("text" => "Set"),
                     "tickvals" => (),
                 ),
-                "yaxis3" =>
-                    Dict("domain" => (0.328, 1), "title" => Dict("text" => "Δ Enrichment")),
+                "yaxis3" => Dict("domain" => (0.328, 1), "title" => Dict("text" => ny)),
                 "xaxis" => Dict(
                     "title" => Dict("text" => Omics.Strin.coun(uf, nf)),
                     "showspikes" => true,
-                    "spikesnap" => "cursor",
                     "spikemode" => "across",
                     "spikedash" => "solid",
                     "spikethickness" => 0.8,
@@ -642,7 +675,7 @@ end
 
 function write_plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 4)
 
-    pr = joinpath(ou, "set_x_sample_x_enrichment")
+    pr = joinpath(ou, "enrichment")
 
     Omics.XSample.write_plot(
         pr,
@@ -917,7 +950,7 @@ function _write(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, nl, 
     if wr
 
         Omics.Table.writ(
-            joinpath(ou, "set_x_index_x_random.tsv"),
+            joinpath(ou, "random.tsv"),
             Omics.Table.make("Set", se_, axes(ra, 2), ra),
         )
 
@@ -936,7 +969,7 @@ function _write(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, nl, 
     re = stack((en_, er_, vcat(np_, pp_), vcat(nq_, pq_)))
 
     Omics.Table.writ(
-        joinpath(ou, "set_x_statistic_x_result.tsv"),
+        joinpath(ou, "result.tsv"),
         Omics.Table.make(
             "Set",
             se_,

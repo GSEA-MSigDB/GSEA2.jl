@@ -41,16 +41,16 @@ const N0 = -0.25
 # 9.510 ns (0 allocations: 0 bytes)
 # 20.687 ns (0 allocations: 0 bytes)
 #
-# 69.928 ns (0 allocations: 0 bytes)
-# 69.928 ns (0 allocations: 0 bytes)
+# 69.970 ns (0 allocations: 0 bytes)
+# 69.970 ns (0 allocations: 0 bytes)
 # 8.291 ns (0 allocations: 0 bytes)
-# 19.747 ns (0 allocations: 0 bytes)
-# 116.858 ns (0 allocations: 0 bytes)
-# 116.857 ns (0 allocations: 0 bytes)
+# 19.851 ns (0 allocations: 0 bytes)
+# 116.929 ns (0 allocations: 0 bytes)
+# 116.978 ns (0 allocations: 0 bytes)
 # 8.291 ns (0 allocations: 0 bytes)
 # 25.016 ns (0 allocations: 0 bytes)
-# 79.295 ns (0 allocations: 0 bytes)
 # 79.287 ns (0 allocations: 0 bytes)
+# 79.291 ns (0 allocations: 0 bytes)
 # 10.761 ns (0 allocations: 0 bytes)
 # 17.242 ns (0 allocations: 0 bytes)
 for (al, re_) in zip(
@@ -122,20 +122,20 @@ const FE_, SO_ = eachcol(
 # 186.208 μs (0 allocations: 0 bytes)
 # 164.833 μs (0 allocations: 0 bytes)
 #
-# 195.192 ns (6 allocations: 400 bytes)
+# 233.884 ns (6 allocations: 400 bytes)
 # 17.285 ns (0 allocations: 0 bytes)
 # 16.658 ns (0 allocations: 0 bytes)
-# 284.277 ns (0 allocations: 0 bytes)
 # 284.426 ns (0 allocations: 0 bytes)
-# 155.938 ns (0 allocations: 0 bytes)
+# 284.304 ns (0 allocations: 0 bytes)
+# 156.030 ns (0 allocations: 0 bytes)
 # 143.765 ns (0 allocations: 0 bytes)
-# 462.875 μs (7 allocations: 20.42 KiB)
+# 463.584 μs (7 allocations: 20.42 KiB)
 # 43.375 μs (0 allocations: 0 bytes)
-# 37.541 μs (0 allocations: 0 bytes)
-# 413.833 μs (0 allocations: 0 bytes)
-# 413.791 μs (0 allocations: 0 bytes)
-# 243.292 μs (0 allocations: 0 bytes)
-# 210.291 μs (0 allocations: 0 bytes)
+# 37.542 μs (0 allocations: 0 bytes)
+# 414.375 μs (0 allocations: 0 bytes)
+# 414.375 μs (0 allocations: 0 bytes)
+# 243.166 μs (0 allocations: 0 bytes)
+# 210.250 μs (0 allocations: 0 bytes)
 for (fe_, sc_, me_, re_) in (
     (
         ["K", "Q", "J", "X", "9", "8", "7", "6", "5", "4", "3", "2", "A"],
@@ -163,9 +163,6 @@ for (fe_, sc_, me_, re_) in (
     @test typeof(is_) === Vector{Bool}
 
     #@btime GSEA._is_in($fe_, $me_)
-
-    # TODO
-    GSEA._is_in!
 
     for (al, re) in zip(AL_, re_)
 
@@ -200,12 +197,12 @@ const UE = lastindex(SE_)
 # 10.127 ms (108 allocations: 934.22 KiB)
 # 9.001 ms (108 allocations: 934.22 KiB)
 #
-# 2.944 ms (13 allocations: 803.23 KiB)
-# 2.676 ms (13 allocations: 803.23 KiB)
-# 21.391 ms (13 allocations: 803.23 KiB)
-# 21.517 ms (13 allocations: 803.23 KiB)
-# 13.095 ms (13 allocations: 803.23 KiB)
-# 11.457 ms (13 allocations: 803.23 KiB)
+# 2.956 ms (13 allocations: 803.23 KiB)
+# 2.685 ms (13 allocations: 803.23 KiB)
+# 21.334 ms (13 allocations: 803.23 KiB)
+# 21.354 ms (13 allocations: 803.23 KiB)
+# 13.115 ms (13 allocations: 803.23 KiB)
+# 11.449 ms (13 allocations: 803.23 KiB)
 for al in AL_
 
     @test lastindex(GSEA.enrich(al, FE_, SO_, ME___)) === UE
@@ -229,12 +226,12 @@ const OU = joinpath(tempdir(), "GSEA")
 # 30.802 ms (370 allocations: 5.51 MiB)
 # 27.547 ms (370 allocations: 5.51 MiB)
 #
-# 9.355 ms (99 allocations: 6.03 MiB)
-# 8.613 ms (99 allocations: 6.03 MiB)
-# 64.771 ms (99 allocations: 6.03 MiB)
-# 64.381 ms (99 allocations: 6.03 MiB)
-# 39.669 ms (99 allocations: 6.03 MiB)
-# 34.860 ms (99 allocations: 6.03 MiB)
+# 9.440 ms (99 allocations: 6.03 MiB)
+# 8.678 ms (99 allocations: 6.03 MiB)
+# 64.667 ms (99 allocations: 6.03 MiB)
+# 64.667 ms (99 allocations: 6.03 MiB)
+# 39.832 ms (99 allocations: 6.03 MiB)
+# 34.941 ms (99 allocations: 6.03 MiB)
 for al in AL_
 
     en = GSEA.enrich(al, FE_, SC, ME___)
@@ -263,9 +260,9 @@ const JS = joinpath(DA, "set_features.json")
 
 # ---- #
 
-# 36.458 μs (559 allocations: 30.00 KiB)
-# 16.882 ms (253185 allocations: 7.85 MiB)
-# 38.500 μs (577 allocations: 30.72 KiB)
+# 35.958 μs (559 allocations: 30.00 KiB)
+# 16.732 ms (253185 allocations: 7.85 MiB)
+# 37.958 μs (577 allocations: 30.72 KiB)
 for (fe_, mi, ma, fr, re) in (
     (String[], 33, 36, 0, 0),
     (unique!(vcat(values(Omics.Dic.rea(JS))...)), 33, 36, 0, 2),
@@ -317,8 +314,8 @@ const TD = Omics.Table.rea(joinpath(OD, "set_x_sample_x_enrichment.tsv"))
 
 # ---- #
 
-# 493.000 μs (2402 allocations: 3.17 MiB)
-# 401.916 μs (2002 allocations: 3.15 MiB)
+# 491.834 μs (2402 allocations: 3.17 MiB)
+# 399.458 μs (2002 allocations: 3.15 MiB)
 for al in (AL_[1], AL_[end])
 
     seed!(20231103)
