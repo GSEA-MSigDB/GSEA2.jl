@@ -342,7 +342,7 @@ end
 
 function test_html(ou, uh)
 
-    @test lastindex(filter!(re -> contains(re, r"html$"), readdir(ou))) === uh
+    @test lastindex(filter!(endswith("html"), readdir(ou))) === uh
 
 end
 
