@@ -24,7 +24,7 @@ end
 
 const SC_ = [-2, -1, -0.5, 0, 0, 0.5, 1, 2, 3.4]
 
-const BO_ = [true, false, true, false, true, true, false, false, true]
+const IS_ = [true, false, true, false, true, true, false, false, true]
 
 const N0 = -0.25
 
@@ -74,9 +74,9 @@ for (al, re_) in zip(
 
     for (ex, re) in zip((0.1, 0.5, 1, 2), re_)
 
-        @test GSEA._get_delta(al, SC_, ex, BO_) === re
+        @test GSEA._get_delta(al, SC_, ex, IS_) === re
 
-        #@btime GSEA._get_delta($al, SC_, $ex, BO_)
+        #@btime GSEA._get_delta($al, SC_, $ex, IS_)
 
     end
 
@@ -122,20 +122,20 @@ const FE_, SO_ = eachcol(
 # 186.208 μs (0 allocations: 0 bytes)
 # 164.833 μs (0 allocations: 0 bytes)
 #
-# 233.059 ns (6 allocations: 400 bytes)
+# 195.192 ns (6 allocations: 400 bytes)
 # 17.285 ns (0 allocations: 0 bytes)
 # 16.658 ns (0 allocations: 0 bytes)
-# 284.452 ns (0 allocations: 0 bytes)
 # 284.277 ns (0 allocations: 0 bytes)
-# 155.669 ns (0 allocations: 0 bytes)
-# 143.747 ns (0 allocations: 0 bytes)
-# 462.041 μs (7 allocations: 20.42 KiB)
+# 284.426 ns (0 allocations: 0 bytes)
+# 155.938 ns (0 allocations: 0 bytes)
+# 143.765 ns (0 allocations: 0 bytes)
+# 462.875 μs (7 allocations: 20.42 KiB)
 # 43.375 μs (0 allocations: 0 bytes)
 # 37.541 μs (0 allocations: 0 bytes)
-# 414.583 μs (0 allocations: 0 bytes)
-# 414.500 μs (0 allocations: 0 bytes)
-# 244.541 μs (0 allocations: 0 bytes)
-# 210.250 μs (0 allocations: 0 bytes)
+# 413.833 μs (0 allocations: 0 bytes)
+# 413.791 μs (0 allocations: 0 bytes)
+# 243.292 μs (0 allocations: 0 bytes)
+# 210.291 μs (0 allocations: 0 bytes)
 for (fe_, sc_, me_, re_) in (
     (
         ["K", "Q", "J", "X", "9", "8", "7", "6", "5", "4", "3", "2", "A"],
@@ -158,9 +158,9 @@ for (fe_, sc_, me_, re_) in (
     ),
 )
 
-    bo_ = GSEA._is_in(fe_, me_)
+    is_ = GSEA._is_in(fe_, me_)
 
-    @test typeof(bo_) === Vector{Bool}
+    @test typeof(is_) === Vector{Bool}
 
     #@btime GSEA._is_in($fe_, $me_)
 
@@ -171,9 +171,9 @@ for (fe_, sc_, me_, re_) in (
 
         ex = 1.0
 
-        @test isapprox(GSEA._enrich!(al, sc_, ex, bo_, nothing), re; atol = 1e-11)
+        @test isapprox(GSEA._enrich!(al, sc_, ex, is_, nothing), re; atol = 1e-11)
 
-        #@btime GSEA._enrich!($al, $sc_, $ex, $bo_, nothing)
+        #@btime GSEA._enrich!($al, $sc_, $ex, $is_, nothing)
 
         GSEA.plot("", al, fe_, sc_, me_; la = Dict("title" => Dict("text" => strin(al))))
 
@@ -315,8 +315,8 @@ const TD = Omics.Table.rea(joinpath(OD, "set_x_sample_x_enrichment.tsv"))
 
 # ---- #
 
-# 383.208 μs (2102 allocations: 2.39 MiB)
-# 404.334 μs (2102 allocations: 2.39 MiB)
+# 493.000 μs (2402 allocations: 3.17 MiB)
+# 401.916 μs (2002 allocations: 3.15 MiB)
 for al in (AL_[1], AL_[end])
 
     seed!(20231103)

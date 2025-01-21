@@ -15,18 +15,18 @@ using StatsBase: mean, sample, std
 using Omics
 
 # TODO: Generalize.
-function _is_in(fe_, me_)
+function _is_in(fe_, f1_)
 
-    map(in(Set(me_)), fe_)
+    map(in(Set(f1_)), fe_)
 
 end
 
 # TODO: Generalize.
-function _is_in!(is_, fe_id, me_)
+function _is_in!(is_, fe_id, f1_)
 
-    for me in me_
+    for f1 in f1_
 
-        id = get(fe_id, me, nothing)
+        id = get(fe_id, f1, nothing)
 
         if !isnothing(id)
 
@@ -69,13 +69,13 @@ struct KLi end
 
 struct KLi1 end
 
-function _get_delta(::Union{KS, KSa}, sc_, ex, bo_)
+function _get_delta(::Union{KS, KSa}, sc_, ex, is_)
 
     s0 = s1 = 0.0
 
     for id in eachindex(sc_)
 
-        if bo_[id]
+        if is_[id]
 
             s1 += _exponentiate(sc_[id], ex)
 
@@ -91,7 +91,7 @@ function _get_delta(::Union{KS, KSa}, sc_, ex, bo_)
 
 end
 
-function _get_delta(::Union{KLioM, KLioP, KLi}, sc_, ex, bo_)
+function _get_delta(::Union{KLioM, KLioP, KLi}, sc_, ex, is_)
 
     sa = s1 = 0.0
 
@@ -101,7 +101,7 @@ function _get_delta(::Union{KLioM, KLioP, KLi}, sc_, ex, bo_)
 
         sa += ma
 
-        if bo_[id]
+        if is_[id]
 
             s1 += ma
 
@@ -119,13 +119,13 @@ function _get_delta(na, n1)
 
 end
 
-function _get_delta(::KLi1, sc_, ex, bo_)
+function _get_delta(::KLi1, sc_, ex, is_)
 
     s1 = 0.0
 
     for id in eachindex(sc_)
 
-        if bo_[id]
+        if is_[id]
 
             s1 += _exponentiate(sc_[id], ex)
 
@@ -137,15 +137,15 @@ function _get_delta(::KLi1, sc_, ex, bo_)
 
 end
 
-function _enrich!(al::KS, sc_, ex, bo_, mo_)
+function _enrich!(al::KS, sc_, ex, is_, mo_)
 
-    n0, n1 = _get_delta(al, sc_, ex, bo_)
+    n0, n1 = _get_delta(al, sc_, ex, is_)
 
     mo = be = bs = 0.0
 
     for id in eachindex(sc_)
 
-        mo += bo_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
+        mo += is_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
 
         if !isnothing(mo_)
 
@@ -169,15 +169,15 @@ function _enrich!(al::KS, sc_, ex, bo_, mo_)
 
 end
 
-function _enrich!(al::KSa, sc_, ex, bo_, mo_)
+function _enrich!(al::KSa, sc_, ex, is_, mo_)
 
-    n0, n1 = _get_delta(al, sc_, ex, bo_)
+    n0, n1 = _get_delta(al, sc_, ex, is_)
 
     mo = ar = 0.0
 
     for id in eachindex(sc_)
 
-        ar += mo += bo_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
+        ar += mo += is_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
 
         if !isnothing(mo_)
 
@@ -193,9 +193,9 @@ end
 
 const ON = 1.0 + 1e-13
 
-function _enrich!(al::KLioM, sc_, ex, bo_, mo_)
+function _enrich!(al::KLioM, sc_, ex, is_, mo_)
 
-    na, n1 = _get_delta(al, sc_, ex, bo_)
+    na, n1 = _get_delta(al, sc_, ex, is_)
 
     n0 = _get_delta(na, n1)
 
@@ -211,7 +211,7 @@ function _enrich!(al::KLioM, sc_, ex, bo_, mo_)
 
         da = ma * na
 
-        if bo_[id]
+        if is_[id]
 
             d0 = 0.0
 
@@ -264,9 +264,9 @@ function _enrich!(al::KLioM, sc_, ex, bo_, mo_)
 
 end
 
-function _enrich!(al::KLioP, sc_, ex, bo_, mo_)
+function _enrich!(al::KLioP, sc_, ex, is_, mo_)
 
-    na, n1 = _get_delta(al, sc_, ex, bo_)
+    na, n1 = _get_delta(al, sc_, ex, is_)
 
     n0 = _get_delta(na, n1)
 
@@ -282,7 +282,7 @@ function _enrich!(al::KLioP, sc_, ex, bo_, mo_)
 
         da = ma * na
 
-        if bo_[id]
+        if is_[id]
 
             d0 = 0.0
 
@@ -331,9 +331,9 @@ function _enrich!(al::KLioP, sc_, ex, bo_, mo_)
 
 end
 
-function _enrich!(al::KLi, sc_, ex, bo_, mo_)
+function _enrich!(al::KLi, sc_, ex, is_, mo_)
 
-    na, n1 = _get_delta(al, sc_, ex, bo_)
+    na, n1 = _get_delta(al, sc_, ex, is_)
 
     ra = r1 = eps()
 
@@ -347,7 +347,7 @@ function _enrich!(al::KLi, sc_, ex, bo_, mo_)
 
         da = ma * na
 
-        d1 = bo_[id] ? ma * n1 : 0.0
+        d1 = is_[id] ? ma * n1 : 0.0
 
         ra += da
 
@@ -381,11 +381,11 @@ function _enrich!(al::KLi, sc_, ex, bo_, mo_)
 
 end
 
-function _enrich!(al::KLi1, sc_, ex, bo_, mo_)
+function _enrich!(al::KLi1, sc_, ex, is_, mo_)
 
     uf = lastindex(sc_)
 
-    n1 = _get_delta(al, sc_, ex, bo_)
+    n1 = _get_delta(al, sc_, ex, is_)
 
     ra = r1 = eps()
 
@@ -399,7 +399,7 @@ function _enrich!(al::KLi1, sc_, ex, bo_, mo_)
 
     for id in eachindex(sc_)
 
-        d1 = bo_[id] ? _exponentiate(sc_[id], ex) * n1 : 0.0
+        d1 = is_[id] ? _exponentiate(sc_[id], ex) * n1 : 0.0
 
         ra += da
 
@@ -473,11 +473,11 @@ function plot(
 
     xc_ = collect(1:uf)
 
-    bo_ = _is_in(fe_, me_)
+    is_ = _is_in(fe_, me_)
 
     mo_ = Vector{Float64}(undef, uf)
 
-    en = _enrich!(al, sc_, ex, bo_, mo_)
+    en = _enrich!(al, sc_, ex, is_, mo_)
 
     tr = Dict("mode" => "lines", "line" => Dict("width" => 0), "fill" => "tozeroy")
 
@@ -490,8 +490,8 @@ function plot(
         merge(tr, Dict("y" => sc_[ip_], "x" => xc_[ip_], "fillcolor" => Omics.Color.RE)),
         Dict(
             "yaxis" => "y2",
-            "y" => zeros(sum(bo_)),
-            "x" => xc_[bo_],
+            "y" => zeros(sum(is_)),
+            "x" => xc_[is_],
             "mode" => "markers",
             "marker" => Dict(
                 "symbol" => "line-ns",
@@ -596,17 +596,17 @@ function enrich(al, fe_, sc_::AbstractVector, me___; um = 1, ex = 1)
 
     en_ = Vector{Float64}(undef, lastindex(me___))
 
-    bi_ = falses(lastindex(fe_))
+    is_ = falses(lastindex(fe_))
 
     fe_id = Dict(fe_[id] => id for id in eachindex(fe_))
 
     for id in eachindex(me___)
 
-        _is_in!(bi_, fe_id, me___[id])
+        _is_in!(is_, fe_id, me___[id])
 
-        en_[id] = sum(bi_) < um ? NaN : _enrich!(al, sc_, ex, bi_, nothing)
+        en_[id] = sum(is_) < um ? NaN : _enrich!(al, sc_, ex, is_, nothing)
 
-        bi_[bi_] .= false
+        is_[is_] .= false
 
     end
 
@@ -620,19 +620,19 @@ function enrich(al, fe_, sc, me___; um = 1, ex = 1)
 
     en = Matrix{Float64}(undef, lastindex(me___), us)
 
-    bi_ = BitVector(undef, lastindex(fe_))
+    is_ = BitVector(undef, lastindex(fe_))
 
     for id in 1:us
 
         sc_ = sc[:, id]
 
-        map!(!isnan, bi_, sc_)
+        map!(!isnan, is_, sc_)
 
-        so_ = sc_[bi_]
+        so_ = sc_[is_]
 
         id_ = sortperm(so_; rev = true)
 
-        en[:, id] = enrich(al, fe_[bi_][id_], so_[id_], me___; um, ex)
+        en[:, id] = enrich(al, fe_[is_][id_], so_[id_], me___; um, ex)
 
     end
 
@@ -1124,7 +1124,7 @@ Run user-rank (pre-rank) GSEA.
 
 end
 
-function _target(fu, is_, sc, fe_)
+function _target_sort(fu, is_, sc, fe_)
 
     re_ = map(sc_ -> Omics.Target.go(fu, is_, sc_), eachrow(sc))
 
@@ -1221,7 +1221,7 @@ Run metric-rank (standard) GSEA.
 
     is_ = convert(BitVector, collect(tt[1, 2:end]))
 
-    fe_, mt_ = _target(fu, is_, sc, tf[!, 1])
+    fe_, mt_ = _target_sort(fu, is_, sc, tf[!, 1])
 
     Omics.Table.writ(
         joinpath(output_directory, "feature_x_metric_x_score.tsv"),
@@ -1248,8 +1248,12 @@ Run metric-rank (standard) GSEA.
 
             @showprogress for id in 1:number_of_permutations
 
-                ra[:, id] =
-                    enrich(al, _target(fu, shuffle!(is_), sc, fe_)..., me___; ex = exponent)
+                ra[:, id] = enrich(
+                    al,
+                    _target_sort(fu, shuffle!(is_), sc, fe_)...,
+                    me___;
+                    ex = exponent,
+                )
 
             end
 
