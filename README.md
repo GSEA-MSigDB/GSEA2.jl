@@ -9,9 +9,9 @@ using GSEA
 
 GSEA.metric_rank(
     joinpath(homedir(), "Downloads"),
-    joinpath("example", "sarcopenia", "target_x_sample_x_number.tsv"),
-    joinpath("example", "sarcopenia", "feature_x_sample_x_number.tsv"),
-    joinpath("example", "sarcopenia", "set_features.json");
+    joinpath("example", "sarcopenia", "target.tsv"),
+    joinpath("example", "sarcopenia", "data.tsv"),
+    joinpath("example", "sarcopenia", "set.json");
     number_of_permutations = 10,
     more_sets_to_plot = "WP_DNA_MISMATCH_REPAIR WP_CELL_CYCLE",
 )
@@ -32,9 +32,9 @@ GSEA.read_gmt(joinpath("data", "c.gmt"))
 ```bash
 gsea metric-rank \
     ~/Downloads \
-    example/sarcopenia/target_x_sample_x_number.tsv \
-    example/sarcopenia/feature_x_sample_x_number.tsv \
-    example/sarcopenia/set_features.json \
+    example/sarcopenia/target.tsv \
+    example/sarcopenia/data.tsv \
+    example/sarcopenia/set.json \
     --number-of-permutations 10 \
     --more-sets-to-plot "WP_DNA_MISMATCH_REPAIR WP_CELL_CYCLE"
 ```

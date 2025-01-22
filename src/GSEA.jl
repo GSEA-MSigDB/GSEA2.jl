@@ -1392,7 +1392,7 @@ Run metric-rank (standard) GSEA.
     fe_, mt_ = _target_sort(fu, is_, sc, tf[!, 1])
 
     Omics.Table.writ(
-        joinpath(output_directory, "feature_x_metric_x_score.tsv"),
+        joinpath(output_directory, "metric.tsv"),
         Omics.Table.make("Feature", fe_, [metric], reshape(mt_, :, 1)),
     )
 

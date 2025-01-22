@@ -94,7 +94,7 @@ GSEA.gmt
 
 # ---- #
 
-const JS = joinpath(DA, "set_features.json")
+const JS = joinpath(DA, "set.json")
 
 # ---- #
 
@@ -204,11 +204,8 @@ end
 
 # ---- #
 
-const FE_, SO_ = eachcol(
-    reverse!(
-        Omics.Table.rea(joinpath(DA, "gene_x_statistic_x_number.tsv"); select = [1, 2]),
-    ),
-)
+const FE_, SO_ =
+    eachcol(reverse!(Omics.Table.rea(joinpath(DA, "myc.tsv"); select = [1, 2])))
 
 # ---- #
 
@@ -367,7 +364,7 @@ end
 
 # ---- #
 
-const TF = joinpath(DA, "feature_x_sample_x_number.tsv")
+const TF = joinpath(DA, "data.tsv")
 
 # ---- #
 
@@ -430,7 +427,7 @@ const OS = mkpath(joinpath(OU, "user_rank"))
 
 GSEA.user_rank(
     OS,
-    joinpath(DA, "feature_x_metric_x_score.tsv"),
+    joinpath(DA, "metric.tsv"),
     JS;
     number_of_sets_to_plot = 2,
     more_sets_to_plot = "HALLMARK_MYC_TARGETS_V1 HALLMARK_UV_RESPONSE_DN HALLMARK_UV_RESPONSE_UP ALIEN",
@@ -461,7 +458,7 @@ test_html(OS, 6)
 
 # ---- #
 
-const TT = joinpath(DA, "target_x_sample_x_number.tsv")
+const TT = joinpath(DA, "target.tsv")
 
 # ---- #
 
@@ -469,7 +466,7 @@ const OM = mkpath(joinpath(OU, "metric_rank"))
 
 GSEA.metric_rank(OM, TT, TF, JS)
 
-const TM = Omics.Table.rea(joinpath(OM, "feature_x_metric_x_score.tsv"))
+const TM = Omics.Table.rea(joinpath(OM, "metric.tsv"))
 
 @test size(TM) === (1000, 2)
 
