@@ -863,7 +863,7 @@ function write_plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 4)
 
         id_ = sortperm(so_; rev = true)
 
-        ti = "$(sa_[ia]) Enriching $(se_[ie])"
+        ti = "$(sa_[ia]) vs $(se_[ie])"
 
         plot(
             joinpath(ou, "$(Omics.Strin.shorten(en[ie, ia])).$ti.html"),
@@ -872,7 +872,7 @@ function write_plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 4)
             so_[id_],
             me___[ie];
             ex,
-            la = Dict("title" => Dict("text" => ti)),
+            la = Dict("title" => Dict("text" => Omics.Strin.limit(ti, 40))),
         )
 
     end
@@ -1460,7 +1460,6 @@ Run metric-rank (standard) GSEA.
 end
 
 """
-Gene set enrichment analysis.
 """
 @main
 
