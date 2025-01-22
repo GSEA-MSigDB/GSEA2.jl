@@ -13,7 +13,7 @@ GSEA.metric_rank(
     joinpath("example", "sarcopenia", "feature_x_sample_x_number.tsv"),
     joinpath("example", "sarcopenia", "set_features.json");
     number_of_permutations = 10,
-    more_sets_to_plot = ["WP_DNA_MISMATCH_REPAIR", "WP_CELL_CYCLE"],
+    more_sets_to_plot = "WP_DNA_MISMATCH_REPAIR WP_CELL_CYCLE",
 )
 ```
 
@@ -44,7 +44,7 @@ gsea cls ~/Downloads/a.tsv data/a.cls
 
 gsea gct ~/Downloads/b.tsv data/b.gct
 
-gmt ~/Downloads/cd.json data/c.gmt data/d.gmt
+gsea gmt ~/Downloads/cd.json data/c.gmt data/d.gmt
 ```
 
 ## Install
