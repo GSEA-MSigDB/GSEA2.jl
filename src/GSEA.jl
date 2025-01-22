@@ -833,7 +833,7 @@ function enrich(al, fe_, sc, me___; um = 1, ex = 1)
 
 end
 
-function write_plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 4)
+function write_plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 2)
 
     pr = joinpath(ou, "enrichment")
 
@@ -872,7 +872,7 @@ function write_plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 4)
             so_[id_],
             me___[ie];
             ex,
-            la = Dict("title" => Dict("text" => Omics.Strin.limit(ti, 40))),
+            la = Dict("title" => Dict("text" => Omics.Strin.limit(ti, 64))),
         )
 
     end
@@ -1207,7 +1207,7 @@ Run user-rank (pre-rank) GSEA.
   - `--permutation`: = "set". "set" | "feature_x_index_x_random.tsv".
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
-  - `--number-of-sets-to-plot`: = 4.
+  - `--number-of-sets-to-plot`: = 2.
   - `--more-sets-to-plot`: = "". Space-separated set names.
   - `--feature-name`: = "Gene".
   - `--low-text`: = "Low".
@@ -1231,7 +1231,7 @@ Run user-rank (pre-rank) GSEA.
     number_of_permutations::Int = 100,
     random_seed::Int = 20150603,
     write_set_x_index_x_random_tsv::Bool = false,
-    number_of_sets_to_plot::Int = 4,
+    number_of_sets_to_plot::Int = 2,
     more_sets_to_plot = "",
     feature_name = "Gene",
     low_text = "Low",
@@ -1325,7 +1325,7 @@ Run metric-rank (standard) GSEA.
   - `--permutation`: = "sample". "sample" | "set" | "feature_x_index_x_random.tsv".
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
-  - `--number-of-sets-to-plot`: = 4.
+  - `--number-of-sets-to-plot`: = 2.
   - `--more-sets-to-plot`: = "". Space-separated set names.
   - `--feature-name`: = "Gene".
   - `--low-text`: = "Low".
@@ -1353,7 +1353,7 @@ Run metric-rank (standard) GSEA.
     number_of_permutations::Int = 100,
     random_seed::Int = 20150603,
     write_set_x_index_x_random_tsv::Bool = false,
-    number_of_sets_to_plot::Int = 4,
+    number_of_sets_to_plot::Int = 2,
     more_sets_to_plot = "",
     feature_name = "Gene",
     low_text = "Low",
