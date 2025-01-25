@@ -940,7 +940,7 @@ function data_rank!(
     st = Inf,
     mi = 3,
     ma = Inf,
-    fr = 2 // 3,
+    fr = 2 / 3,
     ex = 1.0,
 )
 
@@ -1261,6 +1261,8 @@ Run user-rank (pre-rank) GSEA.
     fe_ = ta[!, 1]
 
     sc_ = ta[!, 2]
+
+    #
 
     id_ = sortperm(sc_; rev = true)
 
