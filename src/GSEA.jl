@@ -106,7 +106,7 @@ end
 
 function read_gmt(gm)
 
-    se_ge_ = Dict{String, Vector{String}}()
+    se_me_ = Dict{String, Vector{String}}()
 
     for li in eachline(gm)
 
@@ -114,17 +114,17 @@ function read_gmt(gm)
 
         se = sp_[1]
 
-        if haskey(se_ge_, se)
+        if haskey(se_me_, se)
 
             error("there is more than one $se.")
 
         end
 
-        se_ge_[se] = filter!(!isempty, sp_[3:lastindex(sp_)])
+        se_me_[se] = filter!(!isempty, sp_[3:lastindex(sp_)])
 
     end
 
-    se_ge_
+    se_me_
 
 end
 
@@ -833,7 +833,7 @@ function enrich(al, fe_, sc, me___; um = 1, ex = 1)
 
 end
 
-function write_plot(ou, fe_, sc, al, se_, me___, ns, sa_, en; ex = 1.0, up = 2)
+function write_plot(ou, al, fe_, sc, se_, me___, ns, sa_, en; ex = 1.0, up = 2)
 
     pr = joinpath(ou, "enrichment")
 
@@ -927,6 +927,45 @@ function _set_algorithm(al)
 
 end
 
+function data_rank!(
+    di,
+    al,
+    fe_,
+    sc,
+    js,
+    ns,
+    sa_;
+    sk = false,
+    no = 2,
+    st = Inf,
+    mi = 3,
+    ma = Inf,
+    fr = 2 // 3,
+    ex = 1.0,
+)
+
+    if sk
+
+        replace!(sc, 0.0 => NaN)
+
+    end
+
+    if !iszero(no)
+
+        _standardize_clamp!(sc, no, st)
+
+    end
+
+    se_, me___ = select_set(js, fe_, mi, ma, fr)
+
+    en = enrich(al, fe_, sc, me___; um = mi, ex)
+
+    write_plot(di, al, fe_, sc, se_, me___, "Sample", sa_, en; ex)
+
+    se_, en
+
+end
+
 """
 Run data-rank (single-sample) GSEA.
 
@@ -968,44 +1007,20 @@ Run data-rank (single-sample) GSEA.
 
     ta = Omics.Table.rea(feature_x_sample_x_score_tsv)
 
-    fe_ = ta[!, 1]
-
-    sa_ = names(ta)[2:end]
-
-    sc = Matrix(ta[!, 2:end])
-
-    if skip_0
-
-        replace!(sc, 0.0 => NaN)
-
-    end
-
-    if !iszero(normalization_dimension)
-
-        _standardize_clamp!(sc, normalization_dimension, normalization_standard_deviation)
-
-    end
-
-    al = _set_algorithm(algorithm)
-
-    se_, me___ = select_set(
-        Omics.Dic.rea(set_features_json),
-        fe_,
-        minimum_set_size,
-        maximum_set_size,
-        minimum_set_fraction,
-    )
-
-    write_plot(
+    data_rank!(
         output_directory,
-        fe_,
-        sc,
-        al,
-        se_,
-        me___,
+        _set_algorithm(algorithm),
+        ta[!, 1],
+        Matrix(ta[!, 2:end]),
+        Omics.Dic.rea(set_features_json),
         "Sample",
-        sa_,
-        enrich(al, fe_, sc, me___; um = post_skip_minimum_set_size, ex = exponent);
+        names(ta)[2:end];
+        sk = skip_0,
+        no = normalization_dimension,
+        st = normalization_standard_deviation,
+        mi = minimum_set_size,
+        ma = maximum_set_size,
+        fr = minimum_set_fraction,
         ex = exponent,
     )
 

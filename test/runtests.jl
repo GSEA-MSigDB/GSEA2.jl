@@ -342,9 +342,9 @@ for al in AL_
 
     GSEA.write_plot(
         mkpath(joinpath(OU, strin(al))),
+        al,
         FE_,
         SC,
-        al,
         SE_,
         ME___,
         "Sample",
