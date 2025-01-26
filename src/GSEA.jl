@@ -47,17 +47,6 @@ function _is_in!(ii_, fe_id, f1_)
 
 end
 
-# TODO: Generalize.
-function _separate(nu_)
-
-    ie_ = findall(<(0), nu_)
-
-    ip_ = findall(>=(0), nu_)
-
-    nu_[ie_], nu_[ip_]
-
-end
-
 function read_cls(cl)
 
     l1, l2, l3 = readlines(cl)
@@ -628,9 +617,9 @@ function plot(
 
     tr = Dict("mode" => "lines", "line" => Dict("width" => 0), "fill" => "tozeroy")
 
-    ie_ = findall(<(0.0), sc_)
+    ie_ = map(<(0.0), sc_)
 
-    ip_ = findall(>=(0.0), sc_)
+    ip_ = map(>=(0.0), sc_)
 
     ny = "Δ Enrichment"
 
@@ -687,16 +676,16 @@ function plot(
 
     if typeof(al) == KS
 
-        ex_ = findall(in(_get_extreme(mo_)), mo_)
+        ix_ = map(in(_get_extreme(mo_)), mo_)
 
         push!(
             da_,
             Dict(
                 "yaxis" => "y3",
                 "name" => "Extrema",
-                "y" => mo_[ex_],
-                "x" => xc_[ex_],
-                "text" => fe_[ex_],
+                "y" => mo_[ix_],
+                "x" => xc_[ix_],
+                "text" => fe_[ix_],
                 "mode" => "markers",
                 "marker" =>
                     Dict("size" => 32, "color" => Omics.Color.hexify(Omics.Color.HU, 0.72)),
@@ -792,7 +781,7 @@ function _select_sort(fe_, sc_)
 
 end
 
-function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 10^6, fr = 1.0)
+function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 10^6, fr = 0.5)
 
     fe_, sc_ = _select_sort(fe_, sc_)
 
@@ -823,7 +812,7 @@ function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 10^6, fr = 1.0)
 
 end
 
-function write_plot(di, al, fe_, sc, se_, me___, ns, sa_, en; up = 2)
+function _write_plot(di, al, f1_, sc, se_, me___, ns, sa_, en, up)
 
     pr = joinpath(di, "enrichment")
 
@@ -835,14 +824,19 @@ function write_plot(di, al, fe_, sc, se_, me___, ns, sa_, en; up = 2)
 
         is, ia = Tuple(id_)
 
-        fe_, sc_ = _select_sort(fe_, sc[:, ia])
+        se = se_[is]
+
+        sa = sa_[ia]
+
+        f2_, sc_ = _select_sort(f1_, sc[:, ia])
 
         plot(
-            joinpath(di, "$(Omics.Strin.shorten(en[is, ia])).$(se_[is]).$(sa_[ia]).html"),
+            joinpath(di, "$(Omics.Strin.shorten(en[is, ia])).$sa.$se.html"),
             al,
-            fe_,
+            f2_,
             sc_,
-            me___[is],
+            me___[is];
+            la = Dict("title" => Dict("text" => "$sa vs $se")),
         )
 
     end
@@ -913,9 +907,17 @@ function data_rank!(di, al, fe_, sc, se_me_, ns, sa_; no = 2, st = Inf, up = 2, 
 
     se_, me___ = _separat(se_me_)
 
-    en = stack(map(sc_ -> enrich(al, fe_, sc_, me___; ke_ar...), eachcol(sc)))
+    en = stack((enrich(al, fe_, sc_, me___; ke_ar...) for sc_ in eachcol(sc)))
 
-    write_plot(di, al, fe_, sc, se_, me___, "Sample", sa_, en; up)
+    ig_ = map(en_ -> all(!isnan, en_), eachrow(en))
+
+    se_ = se_[ig_]
+
+    me___ = me___[ig_]
+
+    en = en[ig_, :]
+
+    _write_plot(di, al, fe_, sc, se_, me___, "Sample", sa_, en, up)
 
     se_, en
 
@@ -1015,7 +1017,7 @@ function _normalize_enrichment!(al, en_, ra)
 
         ra_ = ra[id, :]
 
-        rn_, rp_ = _separate(ra_)
+        rn_, rp_ = Omics.Significance._separate(ra_)
 
         mn = mean(rn_)
 
@@ -1037,24 +1039,19 @@ end
 
 function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns, nl, nh)
 
-    # TODO: Do not sort.
+    ig_ = map(!isnan, en_)
 
-    is_ = sortperm(en_)
+    se_ = se_[ig_]
 
-    se_ = se_[is_]
+    me___ = me___[ig_]
 
-    me___ = me___[is_]
+    en_ = en_[ig_]
 
-    en_ = en_[is_]
-
-    ra = ra[is_, :]
+    ra = ra[ig_, :]
 
     no_ = _normalize_enrichment!(al, en_, ra)
 
-    # TODO: Check `en_` or `no_`.
-    iz = findlast(<(0.0), en_)
-
-    np_, nq_, pp_, pq_ = Omics.Significance.ge(ra, no_, 1:iz, (iz + 1):lastindex(en_))
+    pn_, qn_, pp_, qp_ = Omics.Significance.ge(ra, no_)
 
     Omics.Table.writ(
         joinpath(di, "result.tsv"),
@@ -1062,22 +1059,16 @@ function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns,
             "Set",
             se_,
             ["Enrichment", "Normalized Enrichment", "P-Value", "Q-Value"],
-            stack((en_, no_, vcat(np_, pp_), vcat(nq_, pq_))),
+            stack((en_, no_, vcat(pn_, pp_), vcat(qn_, qp_))),
         ),
     )
 
     fe_, sc_ = _select_sort(fe_, sc_)
 
-    for is in unique!(vcat(Omics.Extreme.ge(no_, up), indexin(pl_, se_)))
-
-        if isnothing(is)
-
-            continue
-
-        end
+    for is in
+        unique!(vcat(Omics.Extreme.ge(en_, up), filter!(!isnothing, indexin(pl_, se_))))
 
         ti = "$is $(se_[is])"
-
 
         plot(
             joinpath(di, "$ti.html"),
