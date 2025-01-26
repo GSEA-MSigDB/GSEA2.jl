@@ -15,14 +15,23 @@ using StatsBase: mean, sample, std
 using Omics
 
 # TODO: Generalize.
+function _exponentiate(nu, ex)
 
+    ab = abs(nu)
+
+    isone(ex) ? ab : ab^ex
+
+end
+
+# TODO: Generalize.
 function _is_in(fe_, f1_)
 
     map(in(Set(f1_)), fe_)
 
 end
 
-function _is_in!(is_, fe_id, f1_)
+# TODO: Generalize.
+function _is_in!(ii_, fe_id, f1_)
 
     for f1 in f1_
 
@@ -30,7 +39,7 @@ function _is_in!(is_, fe_id, f1_)
 
         if !isnothing(id)
 
-            is_[id] = true
+            ii_[id] = true
 
         end
 
@@ -38,6 +47,7 @@ function _is_in!(is_, fe_id, f1_)
 
 end
 
+# TODO: Generalize.
 function _separate(nu_)
 
     ie_ = findall(<(0), nu_)
@@ -52,6 +62,8 @@ function read_cls(cl)
 
     l1, l2, l3 = readlines(cl)
 
+    np = "Phenotype"
+
     ph = l2[2:end]
 
     va_ = split(l3)
@@ -62,7 +74,8 @@ function read_cls(cl)
 
     if l1 == "#numeric"
 
-        Omics.Table.make("Target", ph, sa_, [parse(Float64, va) for _ in 1:1, va in va_])
+        # TODO: Benchmark reshape.
+        Omics.Table.make(np, ph, sa_, [parse(Float64, va) for _ in 1:1, va in va_])
 
     else
 
@@ -92,7 +105,8 @@ function read_cls(cl)
 
         ph_id = Dict(ph => id for (id, ph) in enumerate(ph_))
 
-        Omics.Table.make("Target", join(ph_, '_'), sa_, [ph_id[va] for _ in 1:1, va in va_])
+        # TODO: Benchmark reshape.
+        Omics.Table.make(np, join(ph_, '_'), sa_, [ph_id[va] for _ in 1:1, va in va_])
 
     end
 
@@ -120,7 +134,7 @@ function read_gmt(gm)
 
         end
 
-        se_me_[se] = filter!(!isempty, sp_[3:lastindex(sp_)])
+        se_me_[se] = filter!(!isempty, sp_[3:end])
 
     end
 
@@ -140,14 +154,13 @@ Convert .cls to .tsv.
 
     ta = read_cls(cls)
 
+    na_ = names(ta)
+
+    va = Matrix(ta[!, 2:end])
+
     Omics.Table.writ(
         tsv,
-        Omics.Table.make(
-            "Target",
-            ta[:, 1],
-            names(ta)[2:end],
-            map(nu -> nu - 1.0, Matrix(ta[:, 2:end])),
-        ),
+        Omics.Table.make(na_[1], ta[!, 1], na_[2:end], map!(nu -> nu - 1, va, va)),
     )
 
 end
@@ -166,7 +179,7 @@ Convert .gct to .tsv.
 
     Omics.Table.writ(
         tsv,
-        Omics.Table.make("Feature", ta[:, 1], names(ta)[2:end], Matrix(ta[:, 2:end])),
+        Omics.Table.make("Feature", ta[!, 1], names(ta)[2:end], Matrix(ta[!, 2:end])),
     )
 
 end
@@ -185,30 +198,6 @@ Merge .gmts into .json.
 
 end
 
-function select_set(se_me_, fe_, mi, ma, fr)
-
-    me___ = collect(values(se_me_))
-
-    ke_ = BitVector(undef, lastindex(me___))
-
-    for id in eachindex(me___)
-
-        me_ = me___[id]
-
-        ub = lastindex(me_)
-
-        intersect!(me_, fe_)
-
-        ua = lastindex(me_)
-
-        ke_[id] = mi <= ua <= ma && fr <= ua / ub
-
-    end
-
-    collect(keys(se_me_))[ke_], me___[ke_]
-
-end
-
 struct KS end
 
 struct KSa end
@@ -221,21 +210,19 @@ struct KLi end
 
 struct KLi1 end
 
-function _exponentiate(nu, ex)
+function strin(al)
 
-    ab = abs(nu)
-
-    isone(ex) ? ab : ab^ex
+    string(al)[6:(end - 2)]
 
 end
 
-function _get_delta(::Union{KS, KSa}, sc_, ex, is_)
+function _get_normalizer(::Union{KS, KSa}, sc_, ex, ii_)
 
     s0 = s1 = 0.0
 
     for id in eachindex(sc_)
 
-        if is_[id]
+        if ii_[id]
 
             s1 += _exponentiate(sc_[id], ex)
 
@@ -251,19 +238,19 @@ function _get_delta(::Union{KS, KSa}, sc_, ex, is_)
 
 end
 
-function _get_delta(::Union{KLioM, KLioP, KLi}, sc_, ex, is_)
+function _get_normalizer(::Union{KLioM, KLioP, KLi}, sc_, ex, ii_)
 
     sa = s1 = 0.0
 
     for id in eachindex(sc_)
 
-        ma = _exponentiate(sc_[id], ex)
+        am = _exponentiate(sc_[id], ex)
 
-        sa += ma
+        sa += am
 
-        if is_[id]
+        if ii_[id]
 
-            s1 += ma
+            s1 += am
 
         end
 
@@ -273,19 +260,19 @@ function _get_delta(::Union{KLioM, KLioP, KLi}, sc_, ex, is_)
 
 end
 
-function _get_delta(na, n1)
+function _get_normalizer(na, n1)
 
     inv(inv(na) - inv(n1))
 
 end
 
-function _get_delta(::KLi1, sc_, ex, is_)
+function _get_normalizer(::KLi1, sc_, ex, ii_)
 
     s1 = 0.0
 
     for id in eachindex(sc_)
 
-        if is_[id]
+        if ii_[id]
 
             s1 += _exponentiate(sc_[id], ex)
 
@@ -297,15 +284,15 @@ function _get_delta(::KLi1, sc_, ex, is_)
 
 end
 
-function _enrich!(al::KS, sc_, ex, is_, mo_)
+function _enrich!(al::KS, sc_, ex, ii_, mo_)
 
-    n0, n1 = _get_delta(al, sc_, ex, is_)
+    n0, n1 = _get_normalizer(al, sc_, ex, ii_)
 
-    mo = be = bs = 0.0
+    mo = ba = bm = 0.0
 
     for id in eachindex(sc_)
 
-        mo += is_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
+        mo += ii_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
 
         if !isnothing(mo_)
 
@@ -313,31 +300,31 @@ function _enrich!(al::KS, sc_, ex, is_, mo_)
 
         end
 
-        cu = abs(mo)
+        ab = abs(mo)
 
-        if be < cu
+        if ba < ab
 
-            be = cu
+            ba = ab
 
-            bs = mo
+            bm = mo
 
         end
 
     end
 
-    bs
+    bm
 
 end
 
-function _enrich!(al::KSa, sc_, ex, is_, mo_)
+function _enrich!(al::KSa, sc_, ex, ii_, mo_)
 
-    n0, n1 = _get_delta(al, sc_, ex, is_)
+    n0, n1 = _get_normalizer(al, sc_, ex, ii_)
 
     mo = ar = 0.0
 
     for id in eachindex(sc_)
 
-        ar += mo += is_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
+        ar += mo += ii_[id] ? _exponentiate(sc_[id], ex) * n1 : n0
 
         if !isnothing(mo_)
 
@@ -353,33 +340,33 @@ end
 
 const ON = 1.0 + 1e-13
 
-function _enrich!(al::KLioM, sc_, ex, is_, mo_)
+function _enrich!(al::KLioM, sc_, ex, ii_, mo_)
 
-    na, n1 = _get_delta(al, sc_, ex, is_)
+    na, n1 = _get_normalizer(al, sc_, ex, ii_)
 
-    n0 = _get_delta(na, n1)
+    n0 = _get_normalizer(na, n1)
 
     ra = r0 = r1 = eps()
 
-    pa = p0 = p1 = ar = 0.0
-
     la = l0 = l1 = ON
+
+    pa = p0 = p1 = ar = 0.0
 
     for id in eachindex(sc_)
 
-        ma = _exponentiate(sc_[id], ex)
+        am = _exponentiate(sc_[id], ex)
 
-        da = ma * na
+        da = am * na
 
-        if is_[id]
+        if ii_[id]
 
             d0 = 0.0
 
-            d1 = ma * n1
+            d1 = am * n1
 
         else
 
-            d0 = ma * n0
+            d0 = am * n0
 
             d1 = 0.0
 
@@ -424,33 +411,33 @@ function _enrich!(al::KLioM, sc_, ex, is_, mo_)
 
 end
 
-function _enrich!(al::KLioP, sc_, ex, is_, mo_)
+function _enrich!(al::KLioP, sc_, ex, ii_, mo_)
 
-    na, n1 = _get_delta(al, sc_, ex, is_)
+    na, n1 = _get_normalizer(al, sc_, ex, ii_)
 
-    n0 = _get_delta(na, n1)
+    n0 = _get_normalizer(na, n1)
 
     ra = r0 = r1 = eps()
 
-    pa = p0 = p1 = ar = 0.0
-
     la = l0 = l1 = ON
+
+    pa = p0 = p1 = ar = 0.0
 
     for id in eachindex(sc_)
 
-        ma = _exponentiate(sc_[id], ex)
+        am = _exponentiate(sc_[id], ex)
 
-        da = ma * na
+        da = am * na
 
-        if is_[id]
+        if ii_[id]
 
             d0 = 0.0
 
-            d1 = ma * n1
+            d1 = am * n1
 
         else
 
-            d0 = ma * n0
+            d0 = am * n0
 
             d1 = 0.0
 
@@ -491,23 +478,23 @@ function _enrich!(al::KLioP, sc_, ex, is_, mo_)
 
 end
 
-function _enrich!(al::KLi, sc_, ex, is_, mo_)
+function _enrich!(al::KLi, sc_, ex, ii_, mo_)
 
-    na, n1 = _get_delta(al, sc_, ex, is_)
+    na, n1 = _get_normalizer(al, sc_, ex, ii_)
 
     ra = r1 = eps()
 
-    pa = p1 = ar = 0.0
-
     la = l1 = ON
+
+    pa = p1 = ar = 0.0
 
     for id in eachindex(sc_)
 
-        ma = _exponentiate(sc_[id], ex)
+        am = _exponentiate(sc_[id], ex)
 
-        da = ma * na
+        da = am * na
 
-        d1 = is_[id] ? ma * n1 : 0.0
+        d1 = ii_[id] ? am * n1 : 0.0
 
         ra += da
 
@@ -541,25 +528,25 @@ function _enrich!(al::KLi, sc_, ex, is_, mo_)
 
 end
 
-function _enrich!(al::KLi1, sc_, ex, is_, mo_)
+function _enrich!(al::KLi1, sc_, ex, ii_, mo_)
 
     uf = lastindex(sc_)
 
-    n1 = _get_delta(al, sc_, ex, is_)
-
-    ra = r1 = eps()
+    n1 = _get_normalizer(al, sc_, ex, ii_)
 
     da = inv(uf)
 
-    p1 = ar = 0.0
+    ra = r1 = eps()
 
     la = ON + da
 
     l1 = ON
 
+    p1 = ar = 0.0
+
     for id in eachindex(sc_)
 
-        d1 = is_[id] ? _exponentiate(sc_[id], ex) * n1 : 0.0
+        d1 = ii_[id] ? _exponentiate(sc_[id], ex) * n1 : 0.0
 
         ra += da
 
@@ -599,7 +586,7 @@ function _get_extreme(mo_)
 
     aa = abs(ma)
 
-    if ai == aa
+    if isapprox(ai, aa)
 
         (mi, ma)
 
@@ -623,9 +610,9 @@ function plot(
     me_;
     ex = 1.0,
     nf = "Feature",
+    ns = "Score",
     nl = "Low",
     nh = "High",
-    ns = "Score",
     la = Dict{String, Any}(),
 )
 
@@ -633,11 +620,11 @@ function plot(
 
     xc_ = collect(1:uf)
 
-    is_ = _is_in(fe_, me_)
+    ii_ = _is_in(fe_, me_)
 
     mo_ = Vector{Float64}(undef, uf)
 
-    en = _enrich!(al, sc_, ex, is_, mo_)
+    en = _enrich!(al, sc_, ex, ii_, mo_)
 
     tr = Dict("mode" => "lines", "line" => Dict("width" => 0), "fill" => "tozeroy")
 
@@ -671,9 +658,9 @@ function plot(
         Dict(
             "yaxis" => "y2",
             "name" => "Set",
-            "y" => zeros(sum(is_)),
-            "x" => xc_[is_],
-            "text" => fe_[is_],
+            "y" => zeros(sum(ii_)),
+            "x" => xc_[ii_],
+            "text" => fe_[ii_],
             "mode" => "markers",
             "marker" => Dict(
                 "symbol" => "line-ns",
@@ -700,16 +687,16 @@ function plot(
 
     if typeof(al) == KS
 
-        id_ = findall(in(_get_extreme(mo_)), mo_)
+        ex_ = findall(in(_get_extreme(mo_)), mo_)
 
         push!(
             da_,
             Dict(
                 "yaxis" => "y3",
                 "name" => "Extrema",
-                "y" => mo_[id_],
-                "x" => xc_[id_],
-                "text" => fe_[id_],
+                "y" => mo_[ex_],
+                "x" => xc_[ex_],
+                "text" => fe_[ex_],
                 "mode" => "markers",
                 "marker" =>
                     Dict("size" => 32, "color" => Omics.Color.hexify(Omics.Color.HU, 0.72)),
@@ -727,7 +714,13 @@ function plot(
         "showarrow" => false,
     )
 
-    ex = uf * 0.008
+    ax = uf * 0.008
+
+    if haskey(la, "title") && haskey(la["title"], "text")
+
+        la["title"]["text"] = Omics.Strin.limit(la["title"]["text"], 64)
+
+    end
 
     Omics.Plot.plot(
         ht,
@@ -743,7 +736,7 @@ function plot(
                 ),
                 "yaxis3" => Dict("domain" => (0.328, 1), "title" => Dict("text" => ny)),
                 "xaxis" => Dict(
-                    "title" => Dict("text" => Omics.Strin.coun(uf, nf)),
+                    "title" => Dict("text" => "$nf ($uf)"),
                     "showspikes" => true,
                     "spikemode" => "across",
                     "spikedash" => "solid",
@@ -762,7 +755,7 @@ function plot(
                     merge(
                         an,
                         Dict(
-                            "x" => 1.0 - ex,
+                            "x" => 1.0 - ax,
                             "xanchor" => "right",
                             "text" => nh,
                             "font" => Dict("color" => Omics.Color.RE),
@@ -771,7 +764,7 @@ function plot(
                     merge(
                         an,
                         Dict(
-                            "x" => uf + ex,
+                            "x" => uf + ax,
                             "xanchor" => "left",
                             "text" => nl,
                             "font" => Dict("color" => Omics.Color.BL),
@@ -785,21 +778,44 @@ function plot(
 
 end
 
-function enrich(al, fe_, sc_::AbstractVector, me___; um = 1, ex = 1)
+function _select_sort(fe_, sc_)
+
+    id_ = findall(!isnan, sc_)
+
+    fe_ = fe_[id_]
+
+    sc_ = sc_[id_]
+
+    sortperm!(id_, sc_; rev = true)
+
+    fe_[id_], sc_[id_]
+
+end
+
+function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 10^6, fr = 1.0)
+
+    fe_, sc_ = _select_sort(fe_, sc_)
 
     en_ = Vector{Float64}(undef, lastindex(me___))
 
-    is_ = falses(lastindex(fe_))
+    ii_ = falses(lastindex(fe_))
 
-    fe_id = Dict(fe_[id] => id for id in eachindex(fe_))
+    fe_ie = Dict(fe_[ie] => ie for ie in eachindex(fe_))
 
-    for id in eachindex(me___)
+    for is in eachindex(me___)
 
-        _is_in!(is_, fe_id, me___[id])
+        me_ = me___[is]
 
-        en_[id] = sum(is_) < um ? NaN : _enrich!(al, sc_, ex, is_, nothing)
+        _is_in!(ii_, fe_ie, me_)
 
-        is_[is_] .= false
+        ui = sum(ii_)
+
+        en_[is] =
+            ui < mi || ma < ui || ui / lastindex(me_) < fr ? NaN :
+            _enrich!(al, sc_, ex, ii_, nothing)
+
+        # TODO: Avoid broadcasting.
+        ii_[ii_] .= false
 
     end
 
@@ -807,93 +823,29 @@ function enrich(al, fe_, sc_::AbstractVector, me___; um = 1, ex = 1)
 
 end
 
-function enrich(al, fe_, sc, me___; um = 1, ex = 1)
+function write_plot(di, al, fe_, sc, se_, me___, ns, sa_, en; up = 2)
 
-    us = size(sc, 2)
+    pr = joinpath(di, "enrichment")
 
-    en = Matrix{Float64}(undef, lastindex(me___), us)
+    Omics.XSample.write_plot(pr, "Set", se_, ns, sa_, strin(al), en)
 
-    is_ = BitVector(undef, lastindex(fe_))
+    ig_ = map(!isnan, en)
 
-    for id in 1:us
+    for id_ in CartesianIndices(en)[ig_][Omics.Extreme.ge(en[ig_], up)]
 
-        sc_ = sc[:, id]
+        is, ia = Tuple(id_)
 
-        map!(!isnan, is_, sc_)
-
-        so_ = sc_[is_]
-
-        id_ = sortperm(so_; rev = true)
-
-        en[:, id] = enrich(al, fe_[is_][id_], so_[id_], me___; um, ex)
-
-    end
-
-    en
-
-end
-
-function write_plot(ou, al, fe_, sc, se_, me___, ns, sa_, en; ex = 1.0, up = 2)
-
-    pr = joinpath(ou, "enrichment")
-
-    Omics.XSample.write_plot(
-        pr,
-        "Set",
-        se_,
-        ns,
-        sa_,
-        "Enrichment using $(string(al)[6:(end - 2)])",
-        en,
-    )
-
-    ge_ = map(!isnan, en)
-
-    gs_ = BitVector(undef, lastindex(fe_))
-
-    for id_ in CartesianIndices(en)[ge_][Omics.Extreme.ge(en[ge_], up)]
-
-        ie, ia = Tuple(id_)
-
-        sc_ = sc[:, ia]
-
-        map!(!isnan, gs_, sc_)
-
-        so_ = sc_[gs_]
-
-        id_ = sortperm(so_; rev = true)
-
-        ti = "$(sa_[ia]) vs $(se_[ie])"
+        fe_, sc_ = _select_sort(fe_, sc[:, ia])
 
         plot(
-            joinpath(ou, "$(Omics.Strin.shorten(en[ie, ia])).$ti.html"),
+            joinpath(di, "$(Omics.Strin.shorten(en[is, ia])).$(se_[is]).$(sa_[ia]).html"),
             al,
-            fe_[gs_][id_],
-            so_[id_],
-            me___[ie];
-            ex,
-            la = Dict("title" => Dict("text" => Omics.Strin.limit(ti, 64))),
+            fe_,
+            sc_,
+            me___[is],
         )
 
     end
-
-end
-
-function _standardize_clamp!(ma, di, st)
-
-    if isone(di)
-
-        ea = eachrow
-
-    elseif di == 2
-
-        ea = eachcol
-
-    end
-
-    foreach(Omics.Normalization.normalize_with_0!, ea(ma))
-
-    clamp!(ma, -st, st)
 
 end
 
@@ -927,28 +879,31 @@ function _set_algorithm(al)
 
 end
 
-function data_rank!(
-    di,
-    al,
-    fe_,
-    sc,
-    js,
-    ns,
-    sa_;
-    sk = false,
-    no = 2,
-    st = Inf,
-    mi = 3,
-    ma = Inf,
-    fr = 2 / 3,
-    ex = 1.0,
-)
+function _standardize_clamp!(va, di, st)
 
-    if sk
+    if isone(di)
 
-        replace!(sc, 0.0 => NaN)
+        ea = eachrow
+
+    elseif di == 2
+
+        ea = eachcol
 
     end
+
+    foreach(Omics.Normalization.normalize_with_0!, ea(va))
+
+    clamp!(va, -st, st)
+
+end
+
+function _separat(se_me_)
+
+    collect(keys(se_me_)), collect(values(se_me_))
+
+end
+
+function data_rank!(di, al, fe_, sc, se_me_, ns, sa_; no = 2, st = Inf, up = 2, ke_ar...)
 
     if !iszero(no)
 
@@ -956,11 +911,11 @@ function data_rank!(
 
     end
 
-    se_, me___ = select_set(js, fe_, mi, ma, fr)
+    se_, me___ = _separat(se_me_)
 
-    en = enrich(al, fe_, sc, me___; um = mi, ex)
+    en = stack(map(sc_ -> enrich(al, fe_, sc_, me___; ke_ar...), eachcol(sc)))
 
-    write_plot(di, al, fe_, sc, se_, me___, "Sample", sa_, en; ex)
+    write_plot(di, al, fe_, sc, se_, me___, "Sample", sa_, en; up)
 
     se_, en
 
@@ -981,28 +936,23 @@ Run data-rank (single-sample) GSEA.
   - `--normalization-standard-deviation`: = 4.0.
   - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
   - `--exponent`: = 1.0.
-  - `--post-skip-minimum-set-size`: = 1.
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
-  - `--minimum-set-fraction`: = 0.0.
-
-# Flags
-
-  - `--skip-0`: = false. Set this to true for single-cell or other sparse data.
+  - `--set-fraction`: = 0.0.
+  - `--number-of-sets-to-plot`: = 2.
 """
 @cast function data_rank(
     output_directory,
     feature_x_sample_x_score_tsv,
     set_features_json;
-    skip_0::Bool = false,
     normalization_dimension::Int = 0,
     normalization_standard_deviation::Float64 = 4.0,
     algorithm = "ks",
     exponent::Float64 = 1.0,
-    post_skip_minimum_set_size::Int = 1,
     minimum_set_size::Int = 15,
     maximum_set_size::Int = 500,
-    minimum_set_fraction::Float64 = 0.0,
+    set_fraction::Float64 = 0.0,
+    number_of_sets_to_plot::Int = 2,
 )
 
     ta = Omics.Table.rea(feature_x_sample_x_score_tsv)
@@ -1015,13 +965,13 @@ Run data-rank (single-sample) GSEA.
         Omics.Dic.rea(set_features_json),
         "Sample",
         names(ta)[2:end];
-        sk = skip_0,
         no = normalization_dimension,
         st = normalization_standard_deviation,
+        ex = exponent,
         mi = minimum_set_size,
         ma = maximum_set_size,
-        fr = minimum_set_fraction,
-        ex = exponent,
+        fr = set_fraction,
+        up = number_of_sets_to_plot,
     )
 
 end
@@ -1048,108 +998,98 @@ function _normalize_enrichment(::Any, en, mn, mp, sn, sp)
 
     end
 
+    # TODO: Check `3 * st` or `(3 * st)`.
     1.0 + (en - me) / 3.0 * st
 
 end
 
 function _normalize_enrichment!(al, en_, ra)
 
-    er_ = Vector{Float64}(undef, lastindex(en_))
+    us = lastindex(en_)
 
-    for id in eachindex(en_)
+    no_ = Vector{Float64}(undef, us)
+
+    for id in 1:us
 
         en = en_[id]
 
         ra_ = ra[id, :]
 
-        ne_, po_ = _separate(ra_)
+        rn_, rp_ = _separate(ra_)
 
-        mn = mean(ne_)
+        mn = mean(rn_)
 
-        mp = mean(po_)
+        mp = mean(rp_)
 
-        sn = std(ne_)
+        sn = std(rn_)
 
-        sp = std(po_)
+        sp = std(rp_)
 
-        er_[id] = _normalize_enrichment(al, en, mn, mp, sn, sp)
+        no_[id] = _normalize_enrichment(al, en, mn, mp, sn, sp)
 
-        ra[id, :] = map(rn -> _normalize_enrichment(al, rn, mn, mp, sn, sp), ra_)
+        ra[id, :] = map(ra -> _normalize_enrichment(al, ra, mn, mp, sn, sp), ra_)
 
     end
 
-    er_
+    no_
 
 end
 
-function _write_plot(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, nl, nh, ns)
+function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns, nl, nh)
 
-    ue = lastindex(se_)
+    # TODO: Do not sort.
 
-    re = fill(NaN, ue, 4)
+    is_ = sortperm(en_)
 
-    id_ = sortperm(en_)
+    se_ = se_[is_]
 
-    se_ = se_[id_]
+    me___ = me___[is_]
 
-    me___ = me___[id_]
+    en_ = en_[is_]
 
-    en_ = en_[id_]
+    ra = ra[is_, :]
 
-    ra = ra[id_, :]
+    no_ = _normalize_enrichment!(al, en_, ra)
 
-    if wr
+    # TODO: Check `en_` or `no_`.
+    iz = findlast(<(0.0), en_)
 
-        Omics.Table.writ(
-            joinpath(ou, "random.tsv"),
-            Omics.Table.make("Set", se_, axes(ra, 2), ra),
-        )
-
-    end
-
-    er_ = _normalize_enrichment!(al, en_, ra)
-
-    id = findlast(<(0.0), en_)
-
-    ie_ = 1:id
-
-    ip_ = (id + 1):ue
-
-    np_, nq_, pp_, pq_ = Omics.Significance.ge(ra, er_, ie_, ip_)
-
-    re = stack((en_, er_, vcat(np_, pp_), vcat(nq_, pq_)))
+    np_, nq_, pp_, pq_ = Omics.Significance.ge(ra, no_, 1:iz, (iz + 1):lastindex(en_))
 
     Omics.Table.writ(
-        joinpath(ou, "result.tsv"),
+        joinpath(di, "result.tsv"),
         Omics.Table.make(
             "Set",
             se_,
             ["Enrichment", "Normalized Enrichment", "P-Value", "Q-Value"],
-            re,
+            stack((en_, no_, vcat(np_, pp_), vcat(nq_, pq_))),
         ),
     )
 
-    for id in unique!(vcat(Omics.Extreme.ge(er_, up), indexin(pl_, se_)))
+    fe_, sc_ = _select_sort(fe_, sc_)
 
-        if isnothing(id)
+    for is in unique!(vcat(Omics.Extreme.ge(no_, up), indexin(pl_, se_)))
+
+        if isnothing(is)
 
             continue
 
         end
 
-        ti = "$id $(se_[id])"
+        ti = "$is $(se_[is])"
+
 
         plot(
-            joinpath(ou, "$ti.html"),
+            joinpath(di, "$ti.html"),
             al,
             fe_,
             sc_,
-            me___[id];
+            me___[is];
             ex,
             nf,
+            ns,
             nl,
             nh,
-            ns,
             la = Dict("title" => Dict("text" => ti)),
         )
 
@@ -1157,7 +1097,7 @@ function _write_plot(ou, wr, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf,
 
 end
 
-function _permute_set(ur, se, al, fe_, sc_, me___, ex)
+function _permute_set(ur, sd, al, fe_, sc_, me___; ke_ar...)
 
     ra = Matrix{Float64}(undef, lastindex(me___), ur)
 
@@ -1165,37 +1105,19 @@ function _permute_set(ur, se, al, fe_, sc_, me___, ex)
 
         um_ = map(lastindex, me___)
 
-        seed!(se)
+        seed!(sd)
 
         @showprogress for id in 1:ur
 
-            ra[:, id] =
-                enrich(al, fe_, sc_, map(um -> sample(fe_, um; replace = false), um_); ex)
+            ra[:, id] = enrich(
+                al,
+                fe_,
+                sc_,
+                map(um -> sample(fe_, um; replace = false), um_);
+                ke_ar...,
+            )
 
         end
-
-    end
-
-    ra
-
-end
-
-# TODO: Retire
-function _use_permutation(permutation, al, fe_, me___, ex)
-
-    ta = Omics.Table.rea(permutation)
-
-    sc = Matrix(ta[indexin(fe_, ta[!, 1]), 2:end])
-
-    ra = Matrix{Float64}(undef, lastindex(me___), size(ra, 2))
-
-    @showprogress for id in axes(sc, 2)
-
-        sc_ = sc[:, id]
-
-        id_ = sortperm(sc_; rev = true)
-
-        ra[:, id] = enrich(al, fe_[id_], sc_[id_], me___; ex)
 
     end
 
@@ -1218,20 +1140,15 @@ Run user-rank (pre-rank) GSEA.
   - `--exponent`: = 1.0.
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
-  - `--minimum-set-fraction`: = 0.0.
-  - `--permutation`: = "set". "set" | "feature_x_index_x_random.tsv".
+  - `--set-fraction`: = 0.0.
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
   - `--number-of-sets-to-plot`: = 2.
   - `--more-sets-to-plot`: = "". Space-separated set names.
   - `--feature-name`: = "Gene".
+  - `--score-name`: = "My Score".
   - `--low-text`: = "Low".
   - `--high-text`: = "High".
-  - `--score-name`: = "User-Defined Score".
-
-# Flags
-
-  - `--write-set-x-index-x-random-tsv`: = false.
 """
 @cast function user_rank(
     output_directory,
@@ -1241,81 +1158,44 @@ Run user-rank (pre-rank) GSEA.
     exponent::Float64 = 1.0,
     minimum_set_size::Int = 15,
     maximum_set_size::Int = 500,
-    minimum_set_fraction::Float64 = 0.0,
-    permutation = "set",
+    set_fraction::Float64 = 0.0,
     number_of_permutations::Int = 100,
     random_seed::Int = 20150603,
-    write_set_x_index_x_random_tsv::Bool = false,
     number_of_sets_to_plot::Int = 2,
     more_sets_to_plot = "",
     feature_name = "Gene",
+    score_name = "My Score",
     low_text = "Low",
     high_text = "High",
-    score_name = "User-Defined Score",
 )
 
     al = _set_algorithm(algorithm)
 
     ta = Omics.Table.rea(feature_x_metric_x_score_tsv)
 
-    fe_ = ta[!, 1]
+    fe_, sc_ = _select_sort(ta[!, 1], ta[!, 2])
 
-    sc_ = ta[!, 2]
+    se_, me___ = _separat(Omics.Dic.rea(set_features_json))
 
-    #
-
-    id_ = sortperm(sc_; rev = true)
-
-    fe_ = fe_[id_]
-
-    sc_ = sc_[id_]
-
-    se_, me___ = select_set(
-        Omics.Dic.rea(set_features_json),
-        fe_,
-        minimum_set_size,
-        maximum_set_size,
-        minimum_set_fraction,
-    )
-
-    ra = if permutation == "set"
-
-        _permute_set(number_of_permutations, random_seed, al, fe_, sc_, me___, exponent)
-
-    elseif isfile(permutation)
-
-        _use_permutation(permutation, al, fe_, me___, exponent)
-
-    end
+    ke_ar = (ex = exponent, mi = minimum_set_size, ma = maximum_set_size, fr = set_fraction)
 
     _write_plot(
         output_directory,
-        write_set_x_index_x_random_tsv,
         al,
         fe_,
         sc_,
         exponent,
         se_,
         me___,
-        enrich(al, fe_, sc_, me___; ex = exponent),
-        ra,
+        enrich(al, fe_, sc_, me___; ke_ar...),
+        _permute_set(number_of_permutations, random_seed, al, fe_, sc_, me___; ke_ar...),
         number_of_sets_to_plot,
         split(more_sets_to_plot),
         feature_name,
+        score_name,
         low_text,
         high_text,
-        score_name,
     )
-
-end
-
-function _target_sort(fu, is_, sc, fe_)
-
-    re_ = map(sc_ -> Omics.Target.go(fu, is_, sc_), eachrow(sc))
-
-    id_ = sortperm(re_; rev = true)
-
-    fe_[id_], re_[id_]
 
 end
 
@@ -1338,20 +1218,16 @@ Run metric-rank (standard) GSEA.
   - `--metric`: = "signal-to-noise-ratio". "mean-difference" | "log-ratio" | "signal-to-noise-ratio".
   - `--minimum-set-size`: = 15.
   - `--maximum-set-size`: = 500.
-  - `--minimum-set-fraction`: = 0.0.
-  - `--permutation`: = "sample". "sample" | "set" | "feature_x_index_x_random.tsv".
+  - `--set-fraction`: = 0.0.
+  - `--permutation`: = "sample". "sample" | "set".
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
   - `--number-of-sets-to-plot`: = 2.
   - `--more-sets-to-plot`: = "". Space-separated set names.
   - `--feature-name`: = "Gene".
+  - `--score-name`: = "Signal-to-Noise Ratio".
   - `--low-text`: = "Low".
   - `--high-text`: = "High".
-  - `--score-name`: = "Signal-to-Noise Ratio".
-
-# Flags
-
-  - `--write-set-x-index-x-random-tsv`: = false.
 """
 @cast function metric_rank(
     output_directory,
@@ -1365,28 +1241,31 @@ Run metric-rank (standard) GSEA.
     metric = "signal-to-noise-ratio",
     minimum_set_size::Int = 15,
     maximum_set_size::Int = 500,
-    minimum_set_fraction::Float64 = 0.0,
+    set_fraction::Float64 = 0.0,
     permutation = "sample",
     number_of_permutations::Int = 100,
     random_seed::Int = 20150603,
-    write_set_x_index_x_random_tsv::Bool = false,
     number_of_sets_to_plot::Int = 2,
     more_sets_to_plot = "",
     feature_name = "Gene",
+    score_name = "Signal-to-Noise Ratio",
     low_text = "Low",
     high_text = "High",
-    score_name = "Signal-to-Noise Ratio",
 )
 
     tt = Omics.Table.rea(target_x_sample_x_number_tsv)
 
     tf = Omics.Table.rea(feature_x_sample_x_score_tsv)
 
-    sc = Matrix(tf[!, indexin(names(tt)[2:end], names(tf))])
+    vt_ = convert(BitVector, collect(tt[1, 2:end]))
+
+    fe_ = tf[!, 1]
+
+    s1 = Matrix(tf[!, indexin(names(tt)[2:end], names(tf))])
 
     if !iszero(normalization_dimension)
 
-        _standardize_clamp!(sc, normalization_dimension, normalization_standard_deviation)
+        _standardize_clamp!(s1, normalization_dimension, normalization_standard_deviation)
 
     end
 
@@ -1404,26 +1283,25 @@ Run metric-rank (standard) GSEA.
 
     end
 
-    is_ = convert(BitVector, collect(tt[1, 2:end]))
-
-    fe_, mt_ = _target_sort(fu, is_, sc, tf[!, 1])
+    s2_ = map(s1_ -> Omics.Target.go(fu, vt_, s1_), eachrow(s1))
 
     Omics.Table.writ(
         joinpath(output_directory, "metric.tsv"),
-        Omics.Table.make("Feature", fe_, [metric], reshape(mt_, :, 1)),
-    )
-
-    se_, me___ = select_set(
-        Omics.Dic.rea(set_features_json),
-        fe_,
-        minimum_set_size,
-        maximum_set_size,
-        minimum_set_fraction,
+        Omics.Table.make("Feature", fe_, [metric], reshape(s2_, :, 1)),
     )
 
     al = _set_algorithm(algorithm)
 
-    if permutation == "sample"
+    se_, me___ = _separat(Omics.Dic.rea(set_features_json))
+
+    ke_ar = (ex = exponent, mi = minimum_set_size, ma = maximum_set_size, fr = set_fraction)
+
+    if permutation == "set"
+
+        ra =
+            _permute_set(number_of_permutations, random_seed, al, fe_, s2_, me___; ke_ar...)
+
+    elseif permutation == "sample"
 
         ra = Matrix{Float64}(undef, lastindex(se_), number_of_permutations)
 
@@ -1435,43 +1313,34 @@ Run metric-rank (standard) GSEA.
 
                 ra[:, id] = enrich(
                     al,
-                    _target_sort(fu, shuffle!(is_), sc, fe_)...,
+                    fe_,
+                    map(s1_ -> Omics.Target.go(fu, shuffle!(vt_), s1_), eachrow(s1)),
                     me___;
-                    ex = exponent,
+                    ke_ar...,
                 )
 
             end
 
         end
 
-    elseif permutation == "set"
-
-        ra =
-            _permute_set(number_of_permutations, random_seed, al, fe_, mt_, me___, exponent)
-
-    elseif isfile(permutation)
-
-        ra = _use_permutation(permutation, al, fe_, me___, exponent)
-
     end
 
     _write_plot(
         output_directory,
-        write_set_x_index_x_random_tsv,
         al,
         fe_,
-        mt_,
+        s2_,
         exponent,
         se_,
         me___,
-        enrich(al, fe_, mt_, me___; ex = exponent),
+        enrich(al, fe_, s2_, me___; ke_ar...),
         ra,
         number_of_sets_to_plot,
         split(more_sets_to_plot),
         feature_name,
+        score_name,
         low_text,
         high_text,
-        score_name,
     )
 
 end
