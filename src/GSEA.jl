@@ -781,7 +781,7 @@ function _select_sort(fe_, sc_)
 
 end
 
-function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 10^6, fr = 0.5)
+function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 1000, fr = 0.0)
 
     fe_, sc_ = _select_sort(fe_, sc_)
 
@@ -873,35 +873,17 @@ function _set_algorithm(al)
 
 end
 
-function _standardize_clamp!(va, di, st)
-
-    if isone(di)
-
-        ea = eachrow
-
-    elseif di == 2
-
-        ea = eachcol
-
-    end
-
-    foreach(Omics.Normalization.normalize_with_0!, ea(va))
-
-    clamp!(va, -st, st)
-
-end
-
 function _separat(se_me_)
 
     collect(keys(se_me_)), collect(values(se_me_))
 
 end
 
-function data_rank!(di, al, fe_, sc, se_me_, ns, sa_; no = 2, st = Inf, up = 2, ke_ar...)
+function data_rank!(di, al, fe_, sc, se_me_, ns, sa_; st = 0.0, up = 2, ke_ar...)
 
-    if !iszero(no)
+    if !iszero(st)
 
-        _standardize_clamp!(sc, no, st)
+        foreach(sc_ -> Omics.XSample.standardize_clamp!(sc_, st), eachcol(sc))
 
     end
 
@@ -934,12 +916,11 @@ Run data-rank (single-sample) GSEA.
 
 # Options
 
-  - `--normalization-dimension`: = 0. 0 (not normalizing) | 1 | 2.
-  - `--normalization-standard-deviation`: = 4.0.
+  - `--standard-deviation`: = 0.0. For normalization by column. 0.0 skips normalization.
   - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
   - `--exponent`: = 1.0.
-  - `--minimum-set-size`: = 15.
-  - `--maximum-set-size`: = 500.
+  - `--minimum-set-size`: = 1.
+  - `--maximum-set-size`: = 1000.
   - `--set-fraction`: = 0.0.
   - `--number-of-sets-to-plot`: = 2.
 """
@@ -947,12 +928,11 @@ Run data-rank (single-sample) GSEA.
     output_directory,
     feature_x_sample_x_score_tsv,
     set_features_json;
-    normalization_dimension::Int = 0,
-    normalization_standard_deviation::Float64 = 4.0,
+    standard_deviation::Float64 = 0.0,
     algorithm = "ks",
     exponent::Float64 = 1.0,
-    minimum_set_size::Int = 15,
-    maximum_set_size::Int = 500,
+    minimum_set_size::Int = 1,
+    maximum_set_size::Int = 1000,
     set_fraction::Float64 = 0.0,
     number_of_sets_to_plot::Int = 2,
 )
@@ -967,8 +947,7 @@ Run data-rank (single-sample) GSEA.
         Omics.Dic.rea(set_features_json),
         "Sample",
         names(ta)[2:end];
-        no = normalization_dimension,
-        st = normalization_standard_deviation,
+        st = standard_deviation,
         ex = exponent,
         mi = minimum_set_size,
         ma = maximum_set_size,
@@ -1129,8 +1108,8 @@ Run user-rank (pre-rank) GSEA.
 
   - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
   - `--exponent`: = 1.0.
-  - `--minimum-set-size`: = 15.
-  - `--maximum-set-size`: = 500.
+  - `--minimum-set-size`: = 1.
+  - `--maximum-set-size`: = 1000.
   - `--set-fraction`: = 0.0.
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
@@ -1147,8 +1126,8 @@ Run user-rank (pre-rank) GSEA.
     set_features_json;
     algorithm = "ks",
     exponent::Float64 = 1.0,
-    minimum_set_size::Int = 15,
-    maximum_set_size::Int = 500,
+    minimum_set_size::Int = 1,
+    maximum_set_size::Int = 1000,
     set_fraction::Float64 = 0.0,
     number_of_permutations::Int = 100,
     random_seed::Int = 20150603,
@@ -1202,13 +1181,12 @@ Run metric-rank (standard) GSEA.
 
 # Options
 
-  - `--normalization-dimension`: = 0. 0 (not normalizing) | 1 | 2.
-  - `--normalization-standard-deviation`: = 4.0.
+  - `--standard-deviation`: = 0.0. For normalization by column. 0.0 skips normalization.
   - `--algorithm`: = "ks". "ks" | "ksa" | "kliom" | "kliop" | "kli" | "kli1".
   - `--exponent`: = 1.0.
   - `--metric`: = "signal-to-noise-ratio". "mean-difference" | "log-ratio" | "signal-to-noise-ratio".
-  - `--minimum-set-size`: = 15.
-  - `--maximum-set-size`: = 500.
+  - `--minimum-set-size`: = 1.
+  - `--maximum-set-size`: = 1000.
   - `--set-fraction`: = 0.0.
   - `--permutation`: = "sample". "sample" | "set".
   - `--number-of-permutations`: = 100.
@@ -1225,13 +1203,12 @@ Run metric-rank (standard) GSEA.
     target_x_sample_x_number_tsv,
     feature_x_sample_x_score_tsv,
     set_features_json;
-    normalization_dimension::Int = 0,
-    normalization_standard_deviation::Float64 = 4.0,
+    standard_deviation::Float64 = 0.0,
     algorithm = "ks",
     exponent::Float64 = 1.0,
     metric = "signal-to-noise-ratio",
-    minimum_set_size::Int = 15,
-    maximum_set_size::Int = 500,
+    minimum_set_size::Int = 1,
+    maximum_set_size::Int = 1000,
     set_fraction::Float64 = 0.0,
     permutation = "sample",
     number_of_permutations::Int = 100,
@@ -1254,9 +1231,12 @@ Run metric-rank (standard) GSEA.
 
     s1 = Matrix(tf[!, indexin(names(tt)[2:end], names(tf))])
 
-    if !iszero(normalization_dimension)
+    if !iszero(standard_deviation)
 
-        _standardize_clamp!(s1, normalization_dimension, normalization_standard_deviation)
+        foreach(
+            s1_ -> Omics.XSample.standardize_clamp!(s1_, standard_deviation),
+            eachcol(s1),
+        )
 
     end
 

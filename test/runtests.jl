@@ -320,7 +320,7 @@ const FD = joinpath(DD, "data.tsv")
 
 const OD = mkpath(joinpath(DG, "data_rank"))
 
-const SD_, ED = GSEA.data_rank(OD, FD, FS)
+const SD_, ED = GSEA.data_rank(OD, FD, FS; minimum_set_size = 15, maximum_set_size = 500)
 
 @test isfile(joinpath(OD, "enrichment.tsv"))
 
@@ -402,7 +402,14 @@ end
 
 const OM = mkpath(joinpath(DG, "metric_rank"))
 
-GSEA.metric_rank(OM, joinpath(DD, "target.tsv"), FD, FS)
+GSEA.metric_rank(
+    OM,
+    joinpath(DD, "target.tsv"),
+    FD,
+    FS;
+    minimum_set_size = 15,
+    maximum_set_size = 500,
+)
 
 const ME = Omics.Table.rea(joinpath(OM, "metric.tsv"))
 
