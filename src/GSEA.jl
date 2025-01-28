@@ -327,6 +327,7 @@ function _enrich!(al::KSa, sc_, ex, ii_, mo_)
 
 end
 
+# TODO: Clip.
 const ON = 1.0 + 1e-13
 
 function _enrich!(al::KLioM, sc_, ex, ii_, mo_)
