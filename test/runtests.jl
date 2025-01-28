@@ -372,7 +372,7 @@ GSEA.user_rank(
     OU,
     joinpath(DD, "metric.tsv"),
     FS;
-    more_sets_to_plot = "HALLMARK_MYC_TARGETS_V1 HALLMARK_UV_RESPONSE_DN HALLMARK_UV_RESPONSE_UP ALIEN",
+    more_sets_to_plot = "HALLMARK_MYC_TARGETS_V1;HALLMARK_UV_RESPONSE_DN;HALLMARK_UV_RESPONSE_UP;ALIEN",
 )
 
 const RU = Omics.Table.rea(joinpath(OU, "result.tsv"))

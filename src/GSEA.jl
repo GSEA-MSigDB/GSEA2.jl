@@ -1114,7 +1114,7 @@ Run user-rank (pre-rank) GSEA.
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
   - `--number-of-sets-to-plot`: = 2.
-  - `--more-sets-to-plot`: = "". Space-separated set names.
+  - `--more-sets-to-plot`: = "". ;-separated set names.
   - `--feature-name`: = "Gene".
   - `--score-name`: = "My Score".
   - `--low-text`: = "Low".
@@ -1160,7 +1160,7 @@ Run user-rank (pre-rank) GSEA.
         enrich(al, fe_, sc_, me___; ke_ar...),
         _permute_set(number_of_permutations, random_seed, al, fe_, sc_, me___; ke_ar...),
         number_of_sets_to_plot,
-        split(more_sets_to_plot),
+        split(more_sets_to_plot, ';'),
         feature_name,
         score_name,
         low_text,
@@ -1192,7 +1192,7 @@ Run metric-rank (standard) GSEA.
   - `--number-of-permutations`: = 100.
   - `--random-seed`: = 20150603.
   - `--number-of-sets-to-plot`: = 2.
-  - `--more-sets-to-plot`: = "". Space-separated set names.
+  - `--more-sets-to-plot`: = "". ;-separated set names.
   - `--feature-name`: = "Gene".
   - `--score-name`: = "Signal-to-Noise Ratio".
   - `--low-text`: = "Low".
@@ -1307,7 +1307,7 @@ Run metric-rank (standard) GSEA.
         enrich(al, fe_, s2_, me___; ke_ar...),
         ra,
         number_of_sets_to_plot,
-        split(more_sets_to_plot),
+        split(more_sets_to_plot, ';'),
         feature_name,
         score_name,
         low_text,
