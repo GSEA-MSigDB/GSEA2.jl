@@ -708,7 +708,7 @@ function plot(
 
     if haskey(la, "title") && haskey(la["title"], "text")
 
-        la["title"]["text"] = Omics.Strin.limit(la["title"]["text"], 64)
+        la["title"]["text"] = Omics.Strin.limit(la["title"]["text"], 56)
 
     end
 
@@ -813,37 +813,6 @@ function enrich(al, fe_, sc_, me___; ex = 1.0, mi = 1, ma = 1000, fr = 0.0)
 
 end
 
-function _write_plot(di, al, f1_, sc, se_, me___, ns, sa_, en, up)
-
-    pr = joinpath(di, "enrichment")
-
-    Omics.XSample.write_plot(pr, "Set", se_, ns, sa_, strin(al), en)
-
-    ig_ = map(!isnan, en)
-
-    for id_ in CartesianIndices(en)[ig_][Omics.Extreme.ge(en[ig_], up)]
-
-        is, ia = Tuple(id_)
-
-        se = se_[is]
-
-        sa = sa_[ia]
-
-        f2_, sc_ = _select_sort(f1_, sc[:, ia])
-
-        plot(
-            joinpath(di, "$(Omics.Strin.shorten(en[is, ia])).$sa.$se.html"),
-            al,
-            f2_,
-            sc_,
-            me___[is];
-            la = Dict("title" => Dict("text" => "$sa vs $se")),
-        )
-
-    end
-
-end
-
 function _set_algorithm(al)
 
     if al == "ks"
@@ -880,7 +849,7 @@ function _separat(se_me_)
 
 end
 
-function data_rank!(di, al, fe_, sc, se_me_, ns, sa_; st = 0.0, up = 2, ke_ar...)
+function data_rank!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_ar...)
 
     if !iszero(st)
 
@@ -900,7 +869,30 @@ function data_rank!(di, al, fe_, sc, se_me_, ns, sa_; st = 0.0, up = 2, ke_ar...
 
     en = en[ig_, :]
 
-    _write_plot(di, al, fe_, sc, se_, me___, "Sample", sa_, en, up)
+    pr = joinpath(di, "enrichment")
+
+    Omics.XSample.write_plot(pr, ne, se_, ns, sa_, strin(al), en)
+
+    ig_ = map(!isnan, en)
+
+    for id_ in CartesianIndices(en)[ig_][Omics.Extreme.ge(en[ig_], up)]
+
+        is, ia = Tuple(id_)
+
+        se = se_[is]
+
+        sa = sa_[ia]
+
+        plot(
+            joinpath(di, "$(Omics.Strin.shorten(en[is, ia])).$sa.$se.html"),
+            al,
+            _select_sort(fe_, sc[:, ia])...,
+            me___[is];
+            ns = sa,
+            la = Dict("title" => Dict("text" => se)),
+        )
+
+    end
 
     se_, en
 
@@ -924,6 +916,8 @@ Run data-rank (single-sample) GSEA.
   - `--maximum-set-size`: = 1000.
   - `--set-fraction`: = 0.0.
   - `--number-of-sets-to-plot`: = 2.
+  - `--set-name`: = "Set".
+  - `--sample-name`: = "Sample".
 """
 @cast function data_rank(
     output_directory,
@@ -936,6 +930,8 @@ Run data-rank (single-sample) GSEA.
     maximum_set_size::Int = 1000,
     set_fraction::Float64 = 0.0,
     number_of_sets_to_plot::Int = 2,
+    set_name = "Set",
+    sample_name = "Sample",
 )
 
     ta = Omics.Table.rea(feature_x_sample_x_score_tsv)
@@ -945,15 +941,16 @@ Run data-rank (single-sample) GSEA.
         _set_algorithm(algorithm),
         ta[!, 1],
         Matrix(ta[!, 2:end]),
+        set_name,
         Omics.Dic.rea(set_features_json),
-        "Sample",
+        sample_name,
         names(ta)[2:end];
         st = standard_deviation,
+        up = number_of_sets_to_plot,
         ex = exponent,
         mi = minimum_set_size,
         ma = maximum_set_size,
         fr = set_fraction,
-        up = number_of_sets_to_plot,
     )
 
 end
@@ -1048,10 +1045,10 @@ function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns,
     for is in
         unique!(vcat(Omics.Extreme.ge(en_, up), filter!(!isnothing, indexin(pl_, se_))))
 
-        ti = "$is $(se_[is])"
+        se = se_[is]
 
         plot(
-            joinpath(di, "$ti.html"),
+            joinpath(di, "$(Omics.Strin.shorten(en_[is])).$se.html"),
             al,
             fe_,
             sc_,
@@ -1061,7 +1058,7 @@ function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns,
             ns,
             nl,
             nh,
-            la = Dict("title" => Dict("text" => ti)),
+            la = Dict("title" => Dict("text" => se)),
         )
 
     end
