@@ -884,7 +884,7 @@ function data_rank!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_a
         sa = sa_[ia]
 
         plot(
-            joinpath(di, "$(Omics.Strin.shorten(en[is, ia])).$sa.$se.html"),
+            joinpath(di, "$(Omics.Numbe.shorten(en[is, ia])).$sa.$se.html"),
             al,
             _select_sort(fe_, sc[:, ia])...,
             me___[is];
@@ -1048,7 +1048,7 @@ function _write_plot(di, al, fe_, sc_, ex, se_, me___, en_, ra, up, pl_, nf, ns,
         se = se_[is]
 
         plot(
-            joinpath(di, "$(Omics.Strin.shorten(en_[is])).$se.html"),
+            joinpath(di, "$(Omics.Numbe.shorten(en_[is])).$se.html"),
             al,
             fe_,
             sc_,
