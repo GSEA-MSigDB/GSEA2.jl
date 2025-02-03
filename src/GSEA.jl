@@ -853,7 +853,7 @@ function data_rank!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_a
 
     if !iszero(st)
 
-        foreach(sc_ -> Omics.XSample.standardize_clamp!(sc_, st), eachcol(sc))
+        foreach(sc_ -> Omics.Normalization.standardize_clamp!(sc_, st), eachcol(sc))
 
     end
 
@@ -871,7 +871,7 @@ function data_rank!(di, al, fe_, sc, ne, se_me_, ns, sa_; st = 0.0, up = 2, ke_a
 
     pr = joinpath(di, "enrichment")
 
-    Omics.XSample.write_plot(pr, ne, se_, ns, sa_, strin(al), en)
+    Omics.XSampleFeature.writ(pr, ne, se_, ns, sa_, strin(al), en)
 
     ig_ = map(!isnan, en)
 
@@ -1232,7 +1232,7 @@ Run metric-rank (standard) GSEA.
     if !iszero(standard_deviation)
 
         foreach(
-            s1_ -> Omics.XSample.standardize_clamp!(s1_, standard_deviation),
+            s1_ -> Omics.Normalization.standardize_clamp!(s1_, standard_deviation),
             eachcol(s1),
         )
 
